@@ -1,16 +1,21 @@
 {
   "hosting": {
-    "public": "public",
+    "public": "A&J",
     "ignore": [
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
     ],
     "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
+      { "source": "/admin", "destination": "/admin.html" },
+      { "source": "/news", "destination": "/news.html" },
+      { "source": "/news/**", "destination": "/news-detail.html" },
+      { "source": "/products", "destination": "/products.html" },
+      { "source": "/products/**", "destination": "/product-detail.html" },
+      { "source": "/index", "destination": "/index.html" },
+      { "source": "**", "destination": "./" }
     ]
-  }
+  },
+  "firestore": { "rules": "firestore.rules", "indexes": "firestore.indexes.json" },
+  "storage": { "rules": "storage.rules" }
 }

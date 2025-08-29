@@ -1,0 +1,102 @@
+<!doctype html><html lang="en"><head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>News — A&J Logistics</title>
+  <link rel="stylesheet" href="/styles.css?v=2">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+
+</head><body>
+  <header class="site-header solid2" role="banner">
+    <div class="container header-inner">
+      <a href="/" class="brand" aria-label="A and J Logistics home">
+        <img class="brand-logo" src="./images/A&J Logo (PNG).png" alt="A&J Logistics" />
+      </a>
+      <nav class="primary-nav" aria-label="Primary">
+        <button class="nav-toggle" aria-expanded="false" aria-controls="nav-list">
+          <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+        </button>
+        <ul id="nav-list" class="nav-list">
+          <li><a href="/" data-i18n="nav.home">Home</a></li>
+          <li><a href="/#about" data-i18n="nav.about">About Us</a></li>
+          <li><a href="/services" data-i18n="nav.services">Our Services</a></li>
+          <li><a href="/#products" data-i18n="nav.products">Our Products</a></li>
+          <li><a href="/news" data-i18n="nav.news">News</a></li>
+          <li><a href="/#location" data-i18n="nav.contact">Contact</a></li>
+        </ul>
+        <button class="nav-close" aria-label="Close menu" aria-controls="nav-list" type="button">×</button>
+      </nav>
+      <div class="lang-switch" aria-label="Language selector">
+        <button class="lang-btn" data-lang="jp" aria-pressed="false">
+          <span class="flag-circle" aria-hidden="true"><img src="./images/jp.svg" width="20" height="15" alt="Japan" /></span>
+          <span class="label">JP</span>
+        </button>
+        <button class="lang-btn" data-lang="en" aria-pressed="true">
+          <span class="flag-circle" aria-hidden="true"><img src="./images/gb.svg" width="20" height="15" alt="English" /></span>
+          <span class="label">EN</span>
+        </button>
+        <button class="lang-btn" data-lang="zh" aria-pressed="false">
+          <span class="flag-circle" aria-hidden="true"><img src="./images/cn.svg" width="20" height="15" alt="中文" /></span>
+          <span class="label">中文</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="section" style="padding-top: calc(var(--header-h,72px) + 24px)">
+    <div class="container">
+      <h1 class="section-title" data-i18n="nav.news">News</h1>
+      <div id="news-list" class="news-grid" aria-live="polite"></div>
+      <div style="display:flex;gap:8px;justify-content:center;margin-top:16px">
+        <button id="next" class="btn btn-accent">Load more</button>
+      </div>
+    </div>
+  </main>
+
+   
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, query, where, orderBy, limit, getDocs, startAfter } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { firebaseConfig } from "/firebase-config.js";
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const lang = localStorage.getItem('lang') || 'en';
+    const listRef = collection(db, 'news');
+    let cursor = null;
+    async function load() {
+      const base = query(
+        listRef,
+        where('published', '==', true),
+        where('lang', '==', lang),
+        orderBy('publishedAt', 'desc'),
+        limit(9)
+      );
+      const q = cursor ? query(base, startAfter(cursor)) : base;
+      const snap = await getDocs(q);
+      const grid = document.getElementById('news-list');
+      grid.insertAdjacentHTML('beforeend', snap.docs.map(d => {
+        const n = d.data();
+        const date = n.publishedAt?.toDate ? n.publishedAt.toDate() : (n.publishedAt ? new Date(n.publishedAt) : new Date());
+        const cover = n.coverUrl || (Array.isArray(n.imageUrls) && n.imageUrls.length ? n.imageUrls[0] : null);
+        const preview = String((n.body || '')).replace(/<[^>]*>/g,'');
+        return `
+        <article class="news-card">
+          ${cover ? `<img src="${cover}" alt="">` : ''}
+          <div class="pad">
+            <time datetime="${date.toISOString()}">${date.toLocaleDateString()}</time>
+            <h3>${n.title || ''}</h3>
+            <p>${preview}</p>
+          </div>
+          <a class="btn btn-accent" href="/news/${encodeURIComponent(n.slug)}">Read</a>
+        </article>`;
+      }).join(''));
+      cursor = snap.docs[snap.docs.length - 1] || cursor;
+      const next = document.getElementById('next');
+      if (next) next.disabled = !snap.docs.length;
+    }
+    document.getElementById('next').addEventListener('click', load);
+    load();
+  </script>
+</body></html>
+
+

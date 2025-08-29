@@ -10,42 +10,43 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./styles.css?v=2" />
   </head>
   <body>
     <a class="skip-link" href="#home">Skip to content</a>
 
     <header class="site-header" role="banner">
       <div class="container header-inner">
-        <a href="#home" class="brand" aria-label="A and J Logistics home">
+        <a href="/" class="brand" aria-label="A and J Logistics home">
           <img class="brand-logo" src="./images/A&J Logo (PNG).png" alt="A&J Logistics" />
         </a>
 
         <nav class="primary-nav" aria-label="Primary">
           <button class="nav-toggle" aria-expanded="false" aria-controls="nav-list">
-            <span class="sr-only">Toggle navigation</span>
             <span class="bar"></span><span class="bar"></span><span class="bar"></span>
           </button>
           <ul id="nav-list" class="nav-list">
-            <li><a data-i18n="nav.home" href="#home">Home</a></li>
-            <li><a data-i18n="nav.about" href="#about">About Us</a></li>
-            <li><a data-i18n="nav.services" href="#services">Our Services</a></li>
-            <li><a data-i18n="nav.products" href="#products">Our Products</a></li>
-            <li><a data-i18n="nav.contact" href="#location">Contact</a></li>
+            <li><a data-i18n="nav.home" href="/">Home</a></li>
+            <li><a data-i18n="nav.about" href="/#about">About Us</a></li>
+            <li><a data-i18n="nav.services" href="/#services">Our Services</a></li>
+            <li><a data-i18n="nav.products" href="/#products">Our Products</a></li>
+            <li><a data-i18n="nav.news" href="/news">News</a></li>
+            <li><a data-i18n="nav.contact" href="/#location">Contact</a></li>
           </ul>
+          <button class="nav-close" aria-label="Close menu" aria-controls="nav-list" type="button">×</button>
         </nav>
 
         <div class="lang-switch" aria-label="Language selector">
           <button class="lang-btn" data-lang="jp" aria-pressed="false">
-            <span class="flag-circle" aria-hidden="true"><img src="https://flagcdn.com/w20/jp.png" width="20" height="15" alt="Japan" /></span>
+            <span class="flag-circle" aria-hidden="true"><img src="./images/jp.svg" width="20" height="15" alt="Japan" /></span>
             <span class="label">JP</span>
           </button>
           <button class="lang-btn" data-lang="en" aria-pressed="true">
-            <span class="flag-circle" aria-hidden="true"><img src="https://flagcdn.com/w20/gb.png" width="20" height="15" alt="English" /></span>
+            <span class="flag-circle" aria-hidden="true"><img src="./images/gb.svg" width="20" height="15" alt="English" /></span>
             <span class="label">EN</span>
           </button>
           <button class="lang-btn" data-lang="zh" aria-pressed="false">
-            <span class="flag-circle" aria-hidden="true"><img src="https://flagcdn.com/w20/cn.png" width="20" height="15" alt="中文" /></span>
+            <span class="flag-circle" aria-hidden="true"><img src="./images/cn.svg" width="20" height="15" alt="中文" /></span>
             <span class="label">中文</span>
           </button>
         </div>
@@ -78,15 +79,11 @@
       <section id="about" class="section section-divider" aria-labelledby="about-title">
         <div class="container about-grid">
           <div class="about-left reveal">
-            <h2 id="about-title" class="section-title" data-i18n="about.title">About Us</h2>
+            <h2 id="about-title" class="section-title" data-i18n="about.subtitle">Bringing Asia Closer Together</h2>
             <p class="about-text" data-i18n="about.body">
-              A&J is a cross‑border logistics partner focused on reliability and transparency. We operate seamlessly across MY and SG with strong carrier and customs relationships.
+              A&J HAKKO is dedicated to delivering the finest Japanese food products not only domestically but throughout Asia. Rooted in Hakko Transport Co., Ltd., a company with over 70 years of history since its founding, we have cultivated logistics expertise that preserves food quality while delivering products intact across Asia. We adapt to diverse international logistics practices and support bringing authentic Japanese flavors to the world.
             </p>
-            <ul class="about-bullets">
-              <li data-i18n="about.b1">Regional lane expertise</li>
-              <li data-i18n="about.b2">Compliance-first operations</li>
-              <li data-i18n="about.b3">Service SLAs you can trust</li>
-            </ul>
+            <a href="/company" class="btn btn-primary" data-i18n="about.learnMore">Learn More About Us</a>
           </div>
           <div class="about-right reveal" aria-hidden="true">
             <img src="./images/aj02.jpg" alt="About A&J logistics team" loading="lazy" />
@@ -94,25 +91,7 @@
         </div>
       </section>
 
-
-      <!-- Brand (full-width marquee) -->
-      <section id="brand" class="section section-divider" aria-labelledby="brand-title">
-        <div class="container">
-          <h2 id="brand-title" class="section-title" data-i18n="brand.title" style="text-align: center;">Brand</h2>
-        </div>
-        <div class="brand-viewport" aria-label="Partner logos">
-          <div class="brand-track">
-            <div class="logo-dummy" aria-hidden="true"></div>
-            <div class="logo-dummy" aria-hidden="true"></div>
-            <div class="logo-dummy" aria-hidden="true"></div>
-            <div class="logo-dummy" aria-hidden="true"></div>
-            <div class="logo-dummy" aria-hidden="true"></div>
-            <div class="logo-dummy" aria-hidden="true"></div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Services Slider Overview -->
+      <!-- Services Overview -->
       <section id="services" class="section section-divider" aria-labelledby="services-title">
         <div class="container">
           <div class="section-head">
@@ -127,120 +106,81 @@
               </button>
             </div>
           </div>
+          <div class="carousel">
+            <div class="carousel-track">
+              <div class="card reveal">
+                <img src="./images/HP5.png" alt="Logistics operations" loading="lazy" />
+                <h3 data-i18n="services.logistics.title">Logistics Business</h3>
+                <p class="value" data-i18n="services.logistics.summary">One-stop food import/export, delivery and wholesale services from Japan to Singapore with cold chain logistics.</p>
+                <a href="/services#logistics" class="details" data-i18n="services.details">Details</a>
+              </div>
 
-          <div class="carousel" role="region" aria-roledescription="carousel" aria-label="Services slider">
-            <ul class="carousel-track" tabindex="0">
-              <li class="card reveal" aria-roledescription="slide">
-                <img src="./images/HP5.png" alt="Sea freight containers at port" loading="lazy" />
-                <h3 data-i18n="services.sea.title">Sea Freight</h3>
-                <p class="value" data-i18n="services.sea.value">Reliable schedules for regional and global routes.</p>
-                <ul class="bullets">
-                  <li data-i18n="services.sea.b1">FCL/LCL options</li>
-                  <li data-i18n="services.sea.b2">Door-to-door</li>
-                  <li data-i18n="services.sea.b3">Competitive lead times</li>
-                </ul>
-                <a href="./services.html#sea" class="details" data-i18n="services.details">Details</a>
-              </li>
+              <div class="card reveal">
+                <img src="./images/ISETAN FAIR.jpg" alt="Event support operations" loading="lazy" />
+                <h3 data-i18n="services.events.title">Event Support Business</h3>
+                <p class="value" data-i18n="services.events.summary">Support for Japanese food event exhibitions at local department stores with end-to-end logistics.</p>
+                <a href="/services#events" class="details" data-i18n="services.details">Details</a>
+              </div>
 
-              <li class="card reveal" aria-roledescription="slide">
-                <img src="./images/ISETAN FAIR.jpg" alt="Air freight aircraft on apron" loading="lazy" />
-                <h3 data-i18n="services.air.title">Air Freight</h3>
-                <p class="value" data-i18n="services.air.value">Express options for time-critical shipments.</p>
-                <ul class="bullets">
-                  <li data-i18n="services.air.b1">Consolidated rates</li>
-                  <li data-i18n="services.air.b2">Temperature control</li>
-                  <li data-i18n="services.air.b3">Proactive tracking</li>
-                </ul>
-                <a href="./services.html#air" class="details" data-i18n="services.details">Details</a>
-              </li>
-
-              <li class="card reveal" aria-roledescription="slide">
-                <img src="https://images.unsplash.com/photo-1557800636-894a64c1696f?q=80&w=900&auto=format&fit=crop" alt="Customs documents and compliance" loading="lazy" />
-                <h3 data-i18n="services.customs.title">Customs & Compliance</h3>
-                <p class="value" data-i18n="services.customs.value">Fast, accurate declarations and permits.</p>
-                <ul class="bullets">
-                  <li data-i18n="services.customs.b1">HS classification</li>
-                  <li data-i18n="services.customs.b2">License handling</li>
-                  <li data-i18n="services.customs.b3">Audit-ready records</li>
-                </ul>
-                <a href="./services.html#customs" class="details" data-i18n="services.details">Details</a>
-              </li>
-
-              <li class="card reveal" aria-roledescription="slide">
-                <img src="./images/slide02.jpg" alt="Warehouse racking and pallets" loading="lazy" />
-                <h3 data-i18n="services.warehousing.title">Warehousing</h3>
-                <p class="value" data-i18n="services.warehousing.value">Secure storage with inventory visibility.</p>
-                <ul class="bullets">
-                  <li data-i18n="services.warehousing.b1">FIFO/FEFO support</li>
-                  <li data-i18n="services.warehousing.b2">Value-added services</li>
-                  <li data-i18n="services.warehousing.b3">Cycle counts</li>
-                </ul>
-                <a href="./services.html#warehousing" class="details" data-i18n="services.details">Details</a>
-              </li>
-
-              <li class="card reveal" aria-roledescription="slide">
-                <img src="https://images.unsplash.com/photo-1586521995568-39cfbd6994ec?q=80&w=900&auto=format&fit=crop" alt="Last-mile delivery vans" loading="lazy" />
-                <h3 data-i18n="services.consolidation.title">Consolidation & Last‑Mile</h3>
-                <p class="value" data-i18n="services.consolidation.value">Smarter loads, efficient delivery to door.</p>
-                <ul class="bullets">
-                  <li data-i18n="services.consolidation.b1">Cross-dock flows</li>
-                  <li data-i18n="services.consolidation.b2">Route optimization</li>
-                  <li data-i18n="services.consolidation.b3">POD visibility</li>
-                </ul>
-                <a href="./services.html#consolidation" class="details" data-i18n="services.details">Details</a>
-              </li>
-
-              <li class="card reveal" aria-roledescription="slide">
-                <img src="https://images.unsplash.com/photo-1581094589753-c6e53c11fb5f?q=80&w=900&auto=format&fit=crop" alt="Trade support paperwork" loading="lazy" />
-                <h3 data-i18n="services.trade.title">Trade Support</h3>
-                <p class="value" data-i18n="services.trade.value">Documentation and lane setup made simple.</p>
-                <ul class="bullets">
-                  <li data-i18n="services.trade.b1">FTA utilization</li>
-                  <li data-i18n="services.trade.b2">Supplier onboarding</li>
-                  <li data-i18n="services.trade.b3">Exception handling</li>
-                </ul>
-                <a href="./services.html#trade" class="details" data-i18n="services.details">Details</a>
-              </li>
-            </ul>
+              <div class="card reveal">
+                <img src="./images/slide02.jpg" alt="Investment business" loading="lazy" />
+                <h3 data-i18n="services.investment.title">Investment Business</h3>
+                <p class="value" data-i18n="services.investment.summary">Strategic investments in Asian food and beverage businesses to expand Japanese food accessibility.</p>
+                <a href="/services#investment" class="details" data-i18n="services.details">Details</a>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      
+      <!-- Brand (full-width marquee) -->
+      <section id="brand" class="section section-divider" aria-labelledby="brand-title">
+        <div class="container">
+          <h2 id="brand-title" class="section-title" data-i18n="brand.title" style="text-align: center;">Our Customers</h2>
+        </div>
+        <div class="brand-viewport" aria-label="Customer logos">
+          <div class="brand-track">
+            <img src="./images/customers/Acrro.jpg" alt="Acrro" loading="lazy" />
+            <img src="./images/customers/cainiyap.png" alt="Cainiyap" loading="lazy" />
+            <img src="./images/customers/CFC-Logo.jpg" alt="CFC" loading="lazy" />
+            <img src="./images/customers/chateraise.jpg" alt="Chateraise" loading="lazy" />
+            <img src="./images/customers/FOOD BASE LOGO.jpg" alt="Food Base" loading="lazy" />
+            <img src="./images/customers/ISetan Singapore Ltd.png" alt="Isetan Singapore" loading="lazy" />
+            <img src="./images/customers/KANENA MISO LOGO.jpg" alt="Kanena Miso" loading="lazy" />
+            <img src="./images/customers/NISHIKIYA KITCHEN LOGO.jpg" alt="Nishikiya Kitchen" loading="lazy" />
+            <img src="./images/customers/PIONEER LOGO.jpg" alt="Pioneer" loading="lazy" />
+            <img src="./images/customers/Rubicon.jpg" alt="Rubicon" loading="lazy" />
+            <img src="./images/customers/URESHINO LABO LOGO.jpg" alt="Ureshino Labo" loading="lazy" />
+            <img src="./images/customers/ZENNOH.png" alt="Zennoh" loading="lazy" />
+          </div>
+        </div>
+      </section>
 
       <!-- Products Auto Carousel (2 rows, 4 each) -->
       <section id="products" class="section section-divider" aria-labelledby="products-title">
         <div class="container">
           <h2 id="products-title" class="section-title" data-i18n="products.title">Our Products</h2>
           <div class="products-viewport">
-            <div class="products-row" data-row="1">
-              <div class="products-track">
-                <article class="product-card"><img src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?q=80&w=900&auto=format&fit=crop" alt="Premium packaged product" loading="lazy" /><h4 data-i18n="products.p1">Premium Supplements</h4></article>
-                <article class="product-card"><img src="https://images.unsplash.com/photo-1585386959984-a4155223168f?q=80&w=900&auto=format&fit=crop" alt="Skincare product" loading="lazy" /><h4 data-i18n="products.p2">Skincare Essentials</h4></article>
-                <article class="product-card"><img src="https://images.unsplash.com/photo-1585386959984-d4a2e4e77a36?q=80&w=900&auto=format&fit=crop" alt="Cosmetic product" loading="lazy" /><h4 data-i18n="products.p3">Cosmetics</h4></article>
-                <article class="product-card"><img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?q=80&w=900&auto=format&fit=crop" alt="Packaged snacks" loading="lazy" /><h4 data-i18n="products.p4">Snacks & Beverages</h4></article>
-                <article class="product-card"><img src="https://images.unsplash.com/photo-1622396481248-77db4b6a1605?q=80&w=900&auto=format&fit=crop" alt="Vitamins bottle" loading="lazy" /><h4>Vitamins</h4></article>
-                <article class="product-card"><img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?q=80&w=900&auto=format&fit=crop" alt="Packaged tea" loading="lazy" /><h4>Premium Tea</h4></article>
-                <article class="product-card"><img src="https://images.unsplash.com/photo-1543682701-57fe572299c2?q=80&w=900&auto=format&fit=crop" alt="Coffee beans" loading="lazy" /><h4>Coffee Beans</h4></article>
-                <article class="product-card"><img src="https://images.unsplash.com/photo-1545912452-0ceac9a5d1c7?q=80&w=900&auto=format&fit=crop" alt="Gift set" loading="lazy" /><h4>Gift Sets</h4></article>
-              </div>
-            </div>
-            <div class="products-row" data-row="2">
-              <div class="products-track">
-                <article class="product-card"><img src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?q=80&w=900&auto=format&fit=crop" alt="Premium packaged product" loading="lazy" /><h4 data-i18n="products.p1">Premium Supplements</h4></article>
-                <article class="product-card"><img src="https://images.unsplash.com/photo-1585386959984-a4155223168f?q=80&w=900&auto=format&fit=crop" alt="Skincare product" loading="lazy" /><h4 data-i18n="products.p2">Skincare Essentials</h4></article>
-                <article class="product-card"><img src="https://images.unsplash.com/photo-1585386959984-d4a2e4e77a36?q=80&w=900&auto=format&fit=crop" alt="Cosmetic product" loading="lazy" /><h4 data-i18n="products.p3">Cosmetics</h4></article>
-                <article class="product-card"><img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?q=80&w=900&auto=format&fit=crop" alt="Packaged snacks" loading="lazy" /><h4 data-i18n="products.p4">Snacks & Beverages</h4></article>
-                <article class="product-card"><img src="https://images.unsplash.com/photo-1622396481248-77db4b6a1605?q=80&w=900&auto=format&fit=crop" alt="Vitamins bottle" loading="lazy" /><h4>Vitamins</h4></article>
-                <article class="product-card"><img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?q=80&w=900&auto=format&fit=crop" alt="Packaged tea" loading="lazy" /><h4>Premium Tea</h4></article>
-                <article class="product-card"><img src="https://images.unsplash.com/photo-1543682701-57fe572299c2?q=80&w=900&auto=format&fit=crop" alt="Coffee beans" loading="lazy" /><h4>Coffee Beans</h4></article>
-                <article class="product-card"><img src="https://images.unsplash.com/photo-1545912452-0ceac9a5d1c7?q=80&w=900&auto=format&fit=crop" alt="Gift set" loading="lazy" /><h4>Gift Sets</h4></article>
-              </div>
-            </div>
+            <button class="products-btn prev" aria-label="Previous products">◀</button>
+            <div class="products-row" data-row="1"><div class="products-track" id="home-products-track-1"></div></div>
+            <div class="products-row" data-row="2"><div class="products-track" id="home-products-track-2"></div></div>
+            <button class="products-btn next" aria-label="Next products">▶</button>
           </div>
           <div class="products-cta">
-            <a class="btn btn-accent" href="https://www.lazada.com/" target="_blank" rel="noopener" data-i18n="products.shopNow">Shop Now</a>
+            <a class="btn" href="/products" data-i18n="products.viewAll" style="border:1px solid #e5e7eb;background:#fff;">View all</a>
+            <a class="btn btn-accent" href="https://s.lazada.sg/s.XP6SY" target="_blank" rel="noopener" data-i18n="products.shopNow">Shop Now</a>
           </div>
+        </div>
+      </section>
+
+      <!-- News preview -->
+      <section id="news" class="section section-divider" aria-labelledby="news-title">
+        <div class="container">
+          <div class="section-head" style="align-items: end; justify-content: space-between; gap: 12px;">
+            <h2 id="news-title" class="section-title" data-i18n="news.title">Latest News</h2>
+            <a class="btn btn-accent" href="/news" data-i18n="news.viewAll">View all news</a>
+          </div>
+          <div id="news-cards" class="news-grid" aria-live="polite" aria-busy="true"></div>
         </div>
       </section>
 
@@ -284,35 +224,43 @@
           <div class="locations">
             <div class="locations-featured">
               <article class="location-featured reveal" aria-labelledby="loc-sg">
-                <iframe class="map" title="Singapore map" src="https://www.google.com/maps?q=Jurong%20Logistics%20Hub&output=embed" loading="lazy"></iframe>
+                <div class="map-wrap">
+                  <iframe class="map" title="Singapore map" src="https://www.openstreetmap.org/export/embed.html?bbox=103.699939%2C1.291912%2C103.739939%2C1.331912&layer=mapnik&marker=1.311912%2C103.719939" loading="lazy"></iframe>
+                  <div class="map-badge"><span data-i18n="location.sg.title">Singapore</span></div>
+                </div>
                 <div class="loc-meta">
                   <h3 id="loc-sg" data-i18n="location.sg.title">Singapore</h3>
                   <p class="addr" data-i18n="location.sg.addr">88 Logistics Ave, Jurong</p>
                   <p class="hours"><span data-i18n="location.hours">Business hours</span>: 09:00–18:00</p>
                   <p class="contact-line"><span data-i18n="location.email">Email</span>: <a href="mailto:sg@aj-logistics.com">sg@aj-logistics.com</a></p>
-                  <p class="contact-line"><span data-i18n="location.phone">Phone</span>: <a href="tel:+6561234567">+65 6123 4567</a></p>
+                  <p class="contact-line"><span data-i18n="location.phone">Phone</span>: <a href="tel:+6562656942">(+65) 6265 6942</a></p>
                   <a class="open-maps" href="https://maps.google.com/?q=Jurong+Logistics+Hub" target="_blank" rel="noopener" data-i18n="location.openMaps">Open in Maps</a>
                 </div>
               </article>
             </div>
             <div class="locations-grid">
               <article class="location-card reveal" aria-labelledby="loc-my">
-                <iframe class="map" title="Malaysia map" src="https://www.google.com/maps?q=Johor%20Bahru%20Industrial%20Park&output=embed" loading="lazy"></iframe>
-                <h3 id="loc-my" data-i18n="location.my.title">Malaysia</h3>
-                <p class="addr" data-i18n="location.my.addr">No. 123, Industrial Park, Johor Bahru</p>
+                <div class="map-wrap">
+                  <iframe class="map" title="Malaysia map" src="https://www.openstreetmap.org/export/embed.html?bbox=103.711356%2C1.462659%2C103.771356%2C1.522659&layer=mapnik&marker=1.492659%2C103.741356" loading="lazy"></iframe>
+                  <div class="map-badge"><span data-i18n="location.my.title">Malaysia</span></div>
+                </div>
+                <h3 id="loc-my" data-i18n="location.my.title"><a href="https://www.aj-hakko.com.my/">Malaysia</a></h3>
+                <p class="addr" data-i18n="location.my.addr">No. 33-5, 5th Floor, The Boulevard Office, Mid Valley City, Lingkaran Syed Putra, 59200, Kuala Lumpur, Malaysia</p>
                 <p class="hours"><span data-i18n="location.hours">Business hours</span>: 09:00–18:00</p>
-                <p class="contact-line"><span data-i18n="location.email">Email</span>: <a href="mailto:my@aj-logistics.com">my@aj-logistics.com</a></p>
-                <p class="contact-line"><span data-i18n="location.phone">Phone</span>: <a href="tel:+6071234567">+60 7-123 4567</a></p>
+                <p class="contact-line"><span data-i18n="location.email">Email</span>: <a href="mailto:info@aj-hakko.com.my">info@aj-hakko.com.my</a></p>
+                <p class="contact-line"><span data-i18n="location.phone">Phone</span>: <a href="tel:+60327046275">+60 03-2704-6275</a></p>
                 <a class="open-maps" href="https://maps.google.com/?q=Johor+Bahru+Industrial+Park" target="_blank" rel="noopener" data-i18n="location.openMaps">Open in Maps</a>
               </article>
 
               <article class="location-card reveal" aria-labelledby="loc-jp">
-                <iframe class="map" title="Japan map" src="https://www.google.com/maps?q=Chiyoda%20City%20Tokyo&output=embed" loading="lazy"></iframe>
-                <h3 id="loc-jp" data-i18n="location.jp.title">Japan</h3>
-                <p class="addr" data-i18n="location.jp.addr">Chiyoda City, Tokyo</p>
+                <div class="map-wrap">
+                  <iframe class="map" title="Japan map" src="https://www.openstreetmap.org/export/embed.html?bbox=139.6417%2C35.6395%2C139.7417%2C35.7395&layer=mapnik&marker=35.6895%2C139.6917" loading="lazy"></iframe>
+                  <div class="map-badge"><span data-i18n="location.jp.title">Japan</span></div>
+                </div>
+                <h3 id="loc-jp" data-i18n="location.jp.title"><a href="http://hakkoshoji.com/">Japan</a></h3>
+                <p class="addr" data-i18n="location.jp.addr">〒8830-0062宮崎県日向市大字日知屋16392番地</p>
                 <p class="hours"><span data-i18n="location.hours">Business hours</span>: 09:00–18:00</p>
-                <p class="contact-line"><span data-i18n="location.email">Email</span>: <a href="mailto:jp@aj-logistics.com">jp@aj-logistics.com</a></p>
-                <p class="contact-line"><span data-i18n="location.phone">Phone</span>: <a href="tel:+81300000000">+81 3-0000-0000</a></p>
+                <p class="contact-line"><span data-i18n="location.phone">Phone</span>: <a href="tel:+8109825736600">+81 0982-57-3660</a></p>
                 <a class="open-maps" href="https://maps.google.com/?q=Chiyoda+City+Tokyo" target="_blank" rel="noopener" data-i18n="location.openMaps">Open in Maps</a>
               </article>
             </div>
@@ -327,17 +275,17 @@
           <div class="brand-row">
             <span class="brand-text">A&J Logistics</span>
             <div class="lang-switch small">
-              <button class="lang-btn" data-lang="jp" aria-pressed="false"><span class="flag-circle"><img src="https://flagcdn.com/w20/jp.png" width="20" height="15" alt="Japan" /></span><span class="label">JP</span></button>
-              <button class="lang-btn" data-lang="en" aria-pressed="true"><span class="flag-circle"><img src="https://flagcdn.com/w20/gb.png" width="20" height="15" alt="English" /></span><span class="label">EN</span></button>
-              <button class="lang-btn" data-lang="zh" aria-pressed="false"><span class="flag-circle"><img src="https://flagcdn.com/w20/cn.png" width="20" height="15" alt="中文" /></span><span class="label">中文</span></button>
+              <button class="lang-btn" data-lang="jp" aria-pressed="false"><span class="flag-circle"><img src="./images/jp.svg" width="20" height="15" alt="Japan" /></span><span class="label">JP</span></button>
+              <button class="lang-btn" data-lang="en" aria-pressed="true"><span class="flag-circle"><img src="./images/gb.svg" width="20" height="15" alt="English" /></span><span class="label">EN</span></button>
+              <button class="lang-btn" data-lang="zh" aria-pressed="false"><span class="flag-circle"><img src="./images/cn.svg" width="20" height="15" alt="中文" /></span><span class="label">中文</span></button>
             </div>
           </div>
           <p class="copy">© <span id="year"></span> A&J Logistics</p>
         </div>
         <div class="footer-right">
           <div class="contacts">
-            <p><strong>MY</strong>: <a href="mailto:my@aj-logistics.com">my@aj-logistics.com</a>, <a href="tel:+6071234567">+60 7-123 4567</a></p>
-            <p><strong>SG</strong>: <a href="mailto:sg@aj-logistics.com">sg@aj-logistics.com</a>, <a href="tel:+6561234567">+65 6123 4567</a></p>
+            <p><strong>MY</strong>: <a href="mailto:info@aj-hakko.com.my">info@aj-hakko.com.my</a>, <a href="tel:+60327046275">+60 03-2704-6275</a></p>
+            <p><strong>SG</strong>: <a href="mailto:sg@aj-logistics.com">sg@aj-logistics.com</a>, <a href="tel:+6562656942">(+65) 6265 6942</a></p>
           </div>
           <div class="policies">
             <a href="#" role="link">Terms</a>
@@ -348,6 +296,89 @@
     </footer>
 
     <script src="./script.js" defer></script>
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+      import { getFirestore, collection, query, where, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+      import { firebaseConfig } from "./firebase-config.js";
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      const grid = document.getElementById('news-cards');
+      if (grid) {
+        const lang = localStorage.getItem('lang') || 'en';
+        const listRef = collection(db, 'news');
+        const q = query(
+          listRef,
+          where('published', '==', true),
+          where('lang', '==', lang),
+          orderBy('publishedAt', 'desc'),
+          limit(3)
+        );
+        try {
+          const snap = await getDocs(q);
+          grid.setAttribute('aria-busy', 'false');
+          grid.innerHTML = snap.docs.map(d => {
+            const n = d.data();
+            const date = n.publishedAt?.toDate ? n.publishedAt.toDate() : (n.publishedAt ? new Date(n.publishedAt) : new Date());
+            const cover = n.coverUrl || (Array.isArray(n.imageUrls) && n.imageUrls.length ? n.imageUrls[0] : null);
+            return `
+            <article class="news-card">
+              ${cover ? `<img src="${cover}" alt="">` : ''}
+              <div class="pad">
+                <time datetime="${date.toISOString()}">${date.toLocaleDateString()}</time>
+                <h3>${n.title || ''}</h3>
+                <p>${(n.body || '').replace(/<[^>]*>/g,'').slice(0,120)}</p>
+              </div>
+              <a class="btn btn-accent" href="/news/${encodeURIComponent(n.slug)}" aria-label="Read: ${n.title || ''}">Read</a>
+            </article>`;
+          }).join('') || '<p>No news yet.</p>';
+        } catch(err) {
+          grid.innerHTML = '<p style="color:#ef4444">Failed to load news.</p>';
+        }
+      }
+      // Load products (published) into the two home tracks
+      try {
+        const ps = await getDocs(query(collection(db,'products'), where('published','==', true), limit(8))); 
+        const cards = ps.docs.map(d => {
+          const p = d.data();
+          return `<article class="product-card">${p.imageUrl?`<img src="${p.imageUrl}" alt="">`:''}<h4>${p.name||''}</h4></article>`;
+        });
+        const half = Math.ceil(cards.length/2);
+        const t1 = document.getElementById('home-products-track-1');
+        const t2 = document.getElementById('home-products-track-2');
+        if (t1) t1.innerHTML = cards.slice(0, half).join('');
+        if (t2) t2.innerHTML = cards.slice(half).join('');
+      } catch (e) { console.error('Products error:', e); }
+      
+      // Load customer logos dynamically from Firebase Storage
+      try {
+        const { getStorage, ref, listAll, getDownloadURL } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js");
+        const storage = getStorage(app);
+        const customersRef = ref(storage, 'customers');
+        const customersList = await listAll(customersRef);
+        
+        if (customersList.items.length > 0) {
+          const track = document.querySelector('.brand-track');
+          if (track) {
+            // Clear existing logos
+            track.innerHTML = '';
+            
+            // Add logos from Firebase Storage
+            for (const item of customersList.items) {
+              const url = await getDownloadURL(item);
+              const name = item.name.replace(/\.[^/.]+$/, '').replace(/[_-]/g, ' ');
+              track.insertAdjacentHTML('beforeend', `<img src="${url}" alt="${name}" loading="lazy" />`);
+            }
+            console.log('Loaded', customersList.items.length, 'customer logos from Firebase Storage');
+          }
+        } else {
+          console.log('No customer logos found in Firebase Storage, using static images');
+        }
+      } catch (e) { 
+        console.log('Using static customer logos:', e.message); 
+      }
+    </script>
   </body>
   </html>
 

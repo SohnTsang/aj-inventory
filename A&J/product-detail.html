@@ -1,0 +1,63 @@
+<!doctype html><html lang="en"><head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Product — A&J Logistics</title>
+  <link rel="stylesheet" href="/styles.css?v=2">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+  <style>
+    .product-detail { display:grid; grid-template-columns: 1.2fr 1fr; gap: 18px; }
+    @media (max-width: 900px){ .product-detail { grid-template-columns: 1fr; } }
+    .product-detail img { width: 100%; border-radius: 12px; aspect-ratio: 1/1; object-fit: cover; }
+  </style>
+</head><body>
+  <header class="site-header" style="background: #0e1030; color: #fff;" role="banner">
+    <div class="container header-inner">
+      <a href="/" class="brand" aria-label="A and J Logistics home">
+        <img class="brand-logo" src="/images/A&J Logo (PNG).png" alt="A&J Logistics" />
+      </a>
+      <nav class="primary-nav" aria-label="Primary">
+        <button class="nav-toggle" aria-expanded="false" aria-controls="nav-list"><span class="bar"></span><span class="bar"></span><span class="bar"></span></button>
+        <ul id="nav-list" class="nav-list">
+          <li><a href="/">Home</a></li>
+          <li><a href="/products">Our Products</a></li>
+          <li><a href="/news">News</a></li>
+        </ul>
+        <button class="nav-close" aria-label="Close menu" aria-controls="nav-list" type="button">×</button>
+      </nav>
+    </div>
+  </header>
+  <main class="section" style="padding-top: calc(var(--header-h,72px) + 24px)">
+    <div class="container">
+      <div id="product" class="product-detail">
+        <div class="copy"><h1>Loading…</h1></div>
+      </div>
+    </div>
+  </main>
+   
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { firebaseConfig } from "/firebase-config.js";
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const id = location.pathname.split('/').filter(Boolean)[1] || '';
+    const ref = doc(db,'products', id);
+    const snap = await getDoc(ref);
+    const el = document.getElementById('product');
+    if (!snap.exists()) { el.innerHTML = '<p>Not found.</p>'; throw new Error('Not found'); }
+    const p = snap.data();
+    el.innerHTML = `
+      <div class="copy">
+        <h1>${p.name||''}</h1>
+        <p>${p.intro||''}</p>
+      </div>
+      <div class="media">
+        ${p.imageUrl ? `<img src="${p.imageUrl}" alt="">` : ''}
+      </div>
+    `;
+    document.title = (p.name||'Product') + ' — Products';
+  </script>
+</body></html>
+
+

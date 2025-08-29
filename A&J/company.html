@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Company Information — A&J Logistics</title>
+  <link rel="stylesheet" href="./styles.css?v=2">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+  <style>
+    .hero-company { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #fff; padding: 120px 0 80px; position: relative; overflow: hidden; }
+    .hero-company::before { content: ''; position: absolute; top: 0; right: 0; width: 50%; height: 100%; background: url('./images/aj02.jpg') center/cover; opacity: 0.15; }
+    .hero-content { position: relative; z-index: 2; max-width: 600px; }
+    .hero-company h1 { font-size: clamp(36px, 5vw, 56px); font-weight: 800; line-height: 1.1; margin-bottom: 24px; background: linear-gradient(135deg, #fff 0%, #e2e8f0 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero-company .lead { font-size: 20px; color: #cbd5e1; line-height: 1.6; margin-bottom: 32px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-top: 48px; }
+    .stat-card { background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); border-radius: 16px; padding: 24px; text-align: center; transition: transform 0.3s ease; }
+    .stat-card:hover { transform: translateY(-4px); }
+    .stat-card .num { font-size: 32px; font-weight: 800; color: var(--accent); margin-bottom: 8px; }
+    .stat-card .label { font-size: 14px; color: #e2e8f0; }
+    
+    .content-section { padding: 80px 0; }
+    .section-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+    .content-card { background: #fff; border-radius: 24px; padding: 48px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); border: 1px solid #f1f5f9; }
+    .content-card h2 { font-size: 32px; font-weight: 700; color: var(--navy); margin-bottom: 24px; }
+    .content-card p { font-size: 16px; line-height: 1.7; color: #64748b; margin-bottom: 24px; font-weight: 500;}
+    .heritage-card { background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); }
+    .heritage-card h3 { font-size: 24px; font-weight: 600; color: var(--navy); margin-bottom: 16px; }
+    .image-card { position: relative; border-radius: 24px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.15); transform: perspective(1500px) rotateY(-10deg) !important; box-shadow: rgba(0, 0, 0, 0.25) 0px 55px 50px -12px !important; transition: transform 1s ease 0s !important;}
+    .image-card img { width: 100%; height: 400px; object-fit: cover; }
+    .image-overlay { position: absolute; inset: 0; background: linear-gradient(45deg, rgba(15,23,42,0.3) 0%, transparent 100%); }
+    
+    @media (max-width: 1024px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .section-grid { grid-template-columns: 1fr; gap: 40px; }
+      .content-card { padding: 32px; }
+    }
+    @media (max-width: 640px) {
+      .hero-company { padding: 80px 0 60px; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .content-card { padding: 24px; }
+      .stat-card { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header solid2" role="banner">
+    <div class="container header-inner">
+      <a href="/" class="brand" aria-label="A and J Logistics home">
+        <img class="brand-logo" src="./images/A&J Logo (PNG).png" alt="A&J Logistics" />
+      </a>
+      <nav class="primary-nav" aria-label="Primary">
+        <button class="nav-toggle" aria-expanded="false" aria-controls="nav-list">
+          <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+        </button>
+        <ul id="nav-list" class="nav-list">
+          <li><a href="/" data-i18n="nav.home">Home</a></li>
+          <li><a href="/#about" data-i18n="nav.about">About Us</a></li>
+          <li><a href="/services" data-i18n="nav.services">Our Services</a></li>
+          <li><a href="/#products" data-i18n="nav.products">Our Products</a></li>
+          <li><a href="/news" data-i18n="nav.news">News</a></li>
+          <li><a href="/#location" data-i18n="nav.contact">Contact</a></li>
+        </ul>
+        <button class="nav-close" aria-label="Close menu" aria-controls="nav-list" type="button">×</button>
+      </nav>
+      <div class="lang-switch" aria-label="Language selector">
+        <button class="lang-btn" data-lang="jp" aria-pressed="false">
+          <span class="flag-circle" aria-hidden="true"><img src="./images/jp.svg" width="20" height="15" alt="Japan" /></span>
+          <span class="label">JP</span>
+        </button>
+        <button class="lang-btn" data-lang="en" aria-pressed="true">
+          <span class="flag-circle" aria-hidden="true"><img src="./images/gb.svg" width="20" height="15" alt="English" /></span>
+          <span class="label">EN</span>
+        </button>
+        <button class="lang-btn" data-lang="zh" aria-pressed="false">
+          <span class="flag-circle" aria-hidden="true"><img src="./images/cn.svg" width="20" height="15" alt="中文" /></span>
+          <span class="label">中文</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero Section -->
+    <section class="hero-company">
+      <div class="container">
+        <div class="hero-content">
+          <h1 data-i18n="about.subtitle">Bringing Asia Closer Together</h1>
+          <p class="lead" data-i18n="company.intro">
+            A&J HAKKO is dedicated to delivering the finest Japanese food products not only domestically but throughout Asia. Rooted in Hakko Transport Co., Ltd., a company with over 70 years of history since its founding, we have cultivated logistics expertise that preserves food quality while delivering products intact across Asia.
+          </p>
+          
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="num">70+</div>
+              <div class="label" data-i18n="company.stat1">Years of Experience</div>
+            </div>
+            <div class="stat-card">
+              <div class="num">2000+</div>
+              <div class="label" data-i18n="company.stat2">Pallet Capacity</div>
+            </div>
+            <div class="stat-card">
+              <div class="num">3</div>
+              <div class="label" data-i18n="company.stat3">Countries</div>
+            </div>
+            <div class="stat-card">
+              <div class="num">24/7</div>
+              <div class="label" data-i18n="company.stat4">Cold Chain</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Content Section -->
+    <section class="content-section">
+      <div class="container">
+        <div class="section-grid">
+          <div class="content-card heritage-card">
+            <h3 data-i18n="company.history.title">Our Heritage</h3>
+            <p data-i18n="company.history.body">
+              Founded on the strong foundation of Hakko Transport Co., Ltd., which has been operating for over 70 years, A&J HAKKO brings decades of logistics expertise to the Asian market. We have developed specialized knowledge in food transportation, ensuring that products maintain their quality and freshness throughout the supply chain.
+            </p>
+          </div>
+          
+          <div class="image-card">
+            <img src="./images/aj02.jpg" alt="A&J HAKKO operations" loading="lazy" />
+            <div class="image-overlay"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-left">
+        <div class="brand-row">
+          <span class="brand-text">A&J Logistics</span>
+          <div class="lang-switch small">
+            <button class="lang-btn" data-lang="jp" aria-pressed="false"><span class="flag-circle"><img src="./images/jp.svg" width="20" height="15" alt="Japan" /></span><span class="label">JP</span></button>
+            <button class="lang-btn" data-lang="en" aria-pressed="true"><span class="flag-circle"><img src="./images/gb.svg" width="20" height="15" alt="English" /></span><span class="label">EN</span></button>
+            <button class="lang-btn" data-lang="zh" aria-pressed="false"><span class="flag-circle"><img src="./images/cn.svg" width="20" height="15" alt="中文" /></span><span class="label">中文</span></button>
+          </div>
+        </div>
+        <p class="copy">© <span id="year"></span> A&J Logistics</p>
+      </div>
+      <div class="footer-right">
+        <div class="contacts">
+          <p><strong>MY</strong>: <a href="mailto:info@aj-hakko.com.my">info@aj-hakko.com.my</a>, <a href="tel:+60327046275">+60 03-2704-6275</a></p>
+          <p><strong>SG</strong>: <a href="mailto:sg@aj-logistics.com">sg@aj-logistics.com</a>, <a href="tel:+6562656942">(+65) 6265 6942</a></p>
+        </div>
+        <div class="policies">
+          <a href="#" role="link">Terms</a>
+          <a href="#" role="link">Privacy</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+  
+   
+  <script src="./script.js" defer></script>
+
+</body>
+</html>

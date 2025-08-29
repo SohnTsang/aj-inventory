@@ -1,0 +1,442 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin — News</title><link rel="stylesheet" href="./styles.css?v=2"></head>
+<body>
+<main class="section"><div class="container" style="max-width:980px">
+  <h1>Admin</h1>
+
+  <form id="login" novalidate>
+    <h3>Sign in</h3>
+    <div class="form-grid">
+      <div class="field"><label>Email</label><input id="email" class="input" type="email" placeholder="email"></div>
+      <div class="field"><label>Password</label><input id="pw" class="input" type="password" placeholder="password"></div>
+      <div class="full"><button class="btn btn-accent">Sign in</button></div>
+    </div>
+  </form>
+  <div id="tabs" class="row" style="gap:8px; margin:10px 0; display:none">
+    <button id="tab-news" class="btn btn-accent" type="button">News</button>
+    <button id="tab-products" class="btn" type="button">Products</button>
+  </div>
+
+  <form id="editor" style="display:none" novalidate>
+    <div id="saving" style="display:none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 9999; place-items: center; color: #fff; font-weight: 700; font-size: 18px;">
+      <div style="display:grid;gap:8px;place-items:center">
+        <div class="spinner"></div>
+        <div>Saving…</div>
+      </div>
+    </div>
+    <div class="toast-wrap" id="toasts" aria-live="polite" aria-atomic="true"></div>
+    <div id="confirm" style="display:none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 10000; place-items: center;">
+      <div style="background:#fff; color:#111827; border-radius:12px; box-shadow: var(--shadow); width:min(92vw,420px); padding:16px; display:grid; gap:10px;">
+        <h3 style="margin:0; font-size:18px;">Confirm delete</h3>
+        <p id="confirm-message" style="margin:0 0 6px; color:#374151;">Are you sure?</p>
+        <div style="display:flex; justify-content:flex-end; gap:8px;">
+          <button id="confirm-cancel" class="btn" type="button" style="background:#fff; border-color:#e5e7eb; color:#111827;">Cancel</button>
+          <button id="confirm-ok" class="btn btn-accent" type="button">Delete</button>
+        </div>
+      </div>
+    </div>
+    <h3 id="form-title">Create / Update <span id="edit-badge" style="display:none; background:#f59e0b; color:#fff; padding:4px 8px; border-radius:6px; font-size:12px; margin-left:8px; cursor:pointer;">Editing ×</span></h3>
+    <div class="form-grid">
+      <div class="field full"><label>Title</label><input id="title" class="input" placeholder="Title"></div>
+      <div class="field"><label>Language</label><select id="lang" class="select"><option value="en">en</option><option value="jp">jp</option><option value="zh">zh</option></select></div>
+      <div class="field"><label>Author</label><input id="author" class="input" placeholder="Author (optional)"></div>
+      <div class="field full"><label>Body</label><textarea id="body" class="textarea" placeholder="Body (HTML or Markdown)"></textarea></div>
+      <div class="field full">
+        <label>Images</label>
+        <div class="row"><input type="file" id="images" accept="image/*" multiple></div>
+        <div id="thumbs" class="thumb-grid" aria-live="polite"></div>
+        <div class="hint">First image will be used as cover. Drag order not supported yet.</div>
+      </div>
+      <div class="field full"><button id="save" class="btn btn-accent">Save</button></div>
+    </div>
+  </form>
+
+  <section id="manager" style="display:none">
+    <section id="news-manager-pane">
+      <h3>Manage News</h3>
+      <div id="list" class="news-grid"></div>
+    </section>
+    <section id="products-pane" style="display:none;">
+      <h3>Create / Update <span id="p-edit-badge" style="display:none; background:#f59e0b; color:#fff; padding:4px 8px; border-radius:6px; font-size:12px; margin-left:8px; cursor:pointer;">Editing ×</span></h3>
+      <div class="form-grid" style="margin-bottom:12px">
+        <div class="field full"><label>Product Name</label><input id="p_name" class="input" placeholder="Name"></div>
+        <div class="field full"><label>Introduction</label><textarea id="p_intro" class="textarea" placeholder="Short introduction"></textarea></div>
+        <div class="field full"><label>Image</label><input type="file" id="p_image" accept="image/*"></div>
+        <div class="field full"><button id="p_save" class="btn btn-accent" type="button">Save Product</button></div>
+      </div>
+      <h3>Manage Products</h3>
+      <div id="p_list" class="products-grid"></div>
+    </section>
+  </section>
+</div></main>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc, serverTimestamp, collection, query, where, orderBy, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getStorage, ref, uploadBytesResumable, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+import { firebaseConfig } from "./firebase-config.js";
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const st = getStorage(app);
+
+const login = document.getElementById('login');
+const editor = document.getElementById('editor');
+
+login.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('email').value.trim();
+  const pw = document.getElementById('pw').value.trim();
+  try {
+    await signInWithEmailAndPassword(auth, email, pw);
+  } catch (err) {
+    alert(err.message || 'Sign-in failed');
+  }
+});
+
+onAuthStateChanged(auth, (user) => {
+  const signedIn = !!user;
+  login.style.display = signedIn ? 'none' : 'block';
+  editor.style.display = signedIn ? 'block' : 'none';
+  document.getElementById('manager').style.display = signedIn ? 'block' : 'none';
+  document.getElementById('tabs').style.display = signedIn ? 'flex' : 'none';
+  if (signedIn) { loadList(); loadProducts(); initTabs(); }
+});
+// expose for console debugging with modular SDK
+// usage in DevTools: __auth.currentUser?.uid
+window.__auth = auth;
+
+// Images state
+let imageUrls = [];
+
+function renderThumbs() {
+  const wrap = document.getElementById('thumbs');
+  wrap.innerHTML = imageUrls.map((u, i) => `
+    <div class="thumb"><img src="${u}" alt=""><button class="remove" data-i="${i}" title="Remove">×</button></div>
+  `).join('');
+  wrap.querySelectorAll('.remove').forEach(btn => btn.addEventListener('click', () => {
+    const i = parseInt(btn.getAttribute('data-i'));
+    imageUrls.splice(i, 1);
+    renderThumbs();
+  }));
+}
+
+document.getElementById('save').addEventListener('click', async (e) => {
+  e.preventDefault();
+  const title = titleEl.value.trim();
+  const slug = currentSlug || generateSlug();
+  const body = bodyEl.value;
+  const lang = langEl.value.trim() || 'en';
+  const author = authorEl.value.trim();
+  if (!title) return showToast('Title is required', 'error');
+  if (!body) return showToast('Body is required', 'error');
+  try {
+    const overlay = document.getElementById('saving');
+    if (overlay) overlay.style.display = 'grid';
+    // Upload chosen files now
+    const files = Array.from(images.files || []);
+    let nextImageUrls = imageUrls.slice();
+    if (files.length) {
+      console.log('[admin] Uploading', files.length, 'file(s). UID:', __auth.currentUser?.uid, 'origin:', location.origin);
+      const uploaded = [];
+      for (const f of files) {
+        const clean = f.name.replace(/[^a-zA-Z0-9_.-]/g, '_');
+        const r = ref(st, `news/${slug}/${Date.now()}-${clean}`);
+        console.log('[admin] Start upload:', r.fullPath, f.type, f.size);
+        await new Promise((resolve, reject) => {
+          const task = uploadBytesResumable(r, f, { cacheControl: 'public,max-age=31536000,immutable', contentType: f.type || 'application/octet-stream' });
+          task.on('state_changed',
+            (snap) => {
+              const pct = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
+              console.log('[admin] Progress', r.fullPath, pct + '%');
+            },
+            (err) => { console.error('[admin] Upload error', r.fullPath, err.code, err.message); reject(err); },
+            async () => {
+              try { const url = await getDownloadURL(task.snapshot.ref); console.log('[admin] Upload complete', r.fullPath, url); uploaded.push(url); resolve(); }
+              catch(e){ console.error('[admin] getDownloadURL error', r.fullPath, e); reject(e); }
+            }
+          );
+        });
+      }
+      nextImageUrls = uploaded;
+    }
+    await setDoc(doc(db, 'news', slug), {
+    title, slug, body, lang, author,
+    coverUrl: nextImageUrls[0] || null,
+    imageUrls: nextImageUrls,
+    published: true, publishedAt: serverTimestamp()
+    }, { merge: true });
+    showToast('Saved!', 'success');
+    clearNewsForm();
+    loadList();
+  } catch (err) {
+    console.error('[admin] Save failed', err);
+    showToast(err.message || 'Save failed', 'error');
+  }
+  finally {
+    const overlay = document.getElementById('saving');
+    if (overlay) overlay.style.display = 'none';
+  }
+});
+
+const titleEl = document.getElementById('title');
+let currentSlug = null;
+let currentProductId = null;
+
+function clearNewsForm() {
+  titleEl.value = '';
+  bodyEl.value = '';
+  langEl.value = 'en';
+  authorEl.value = '';
+  images.value = '';
+  imageUrls = [];
+  renderThumbs();
+  currentSlug = null;
+  document.getElementById('edit-badge').style.display = 'none';
+}
+
+function clearProductForm() {
+  pName.value = '';
+  pIntro.value = '';
+  pImage.value = '';
+  currentProductId = null;
+  document.getElementById('p-edit-badge').style.display = 'none';
+}
+const bodyEl = document.getElementById('body');
+const langEl = document.getElementById('lang');
+const authorEl = document.getElementById('author');
+// no published checkbox anymore; all saves are published immediately
+const images = document.getElementById('images');
+const thumbs = document.getElementById('thumbs');
+
+// Slug is auto-generated; no input shown
+
+// Live local previews for selected images (before upload)
+images.addEventListener('change', () => {
+  const files = Array.from(images.files || []);
+  const urls = files.map((f) => URL.createObjectURL(f));
+  const wrap = document.getElementById('thumbs');
+  wrap.innerHTML = urls.map((u) => `
+    <div class="thumb"><img src="${u}" alt=""></div>
+  `).join('');
+});
+
+// Manager: list, filter, edit, delete
+async function loadList() {
+  const listEl = document.getElementById('list');
+  listEl.innerHTML = '';
+  let base = query(collection(db, 'news'), orderBy('publishedAt', 'desc'));
+  const snap = await getDocs(base);
+  if (!snap.size) { listEl.innerHTML = '<p>No items.</p>'; return; }
+  listEl.innerHTML = snap.docs.map(d => {
+    const n = d.data();
+    const date = n.publishedAt?.toDate ? n.publishedAt.toDate() : (n.publishedAt ? new Date(n.publishedAt) : new Date());
+    const cover = n.coverUrl || (Array.isArray(n.imageUrls) && n.imageUrls[0]) || '';
+    const badge = n.published ? 'Published' : 'Draft';
+    return `
+    <article class="news-card">
+      ${cover ? `<img src="${cover}" alt="">` : ''}
+      <div class="pad">
+        <time datetime="${date.toISOString()}">${date.toLocaleDateString()}</time>
+        <h3>${n.title || ''}</h3>
+        <p style="margin-top:4px"><span class="hint">${badge} · ${n.lang || 'en'}</span></p>
+      </div>
+      <div class="row" style="padding:10px; gap:8px">
+        <button class="btn btn-accent" data-action="edit" data-slug="${n.slug}">Edit</button>
+        <button class="btn" data-action="delete" data-slug="${n.slug}" style="border-color:#ef4444;color:#ef4444;background:#fff">Delete</button>
+      </div>
+    </article>`;
+  }).join('');
+  listEl.querySelectorAll('button[data-action="edit"]').forEach(btn => btn.addEventListener('click', () => editItem(btn.getAttribute('data-slug')||'')));
+  listEl.querySelectorAll('button[data-action="delete"]').forEach(btn => btn.addEventListener('click', () => deleteItem(btn.getAttribute('data-slug')||'')));
+}
+
+// removed refresh/filter controls
+
+async function editItem(slug) {
+  const ref = doc(db, 'news', slug);
+  const snap = await getDoc(ref);
+  if (!snap.exists()) return alert('Not found');
+  
+  
+  const n = snap.data();
+  titleEl.value = n.title || '';
+  currentSlug = n.slug || null;
+  bodyEl.value = n.body || '';
+  langEl.value = n.lang || 'en';
+  authorEl.value = n.author || '';
+  // all items are published on save; no checkbox to toggle
+  imageUrls = Array.isArray(n.imageUrls) ? n.imageUrls.slice() : (n.coverUrl ? [n.coverUrl] : []);
+  renderThumbs();
+  document.getElementById('edit-badge').style.display = 'inline';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+async function deleteItem(slug) {
+  const ok = await showConfirm('Delete this article? This will remove the Firestore document. Images remain in Storage.', 'Delete');
+  if (!ok) return;
+  try {
+    await deleteDoc(doc(db, 'news', slug));
+    showToast('Deleted', 'success');
+    loadList();
+  } catch (e) {
+    showToast(e.message || 'Delete failed', 'error');
+  }
+}
+
+function showToast(message, type = 'success') {
+  const wrap = document.getElementById('toasts');
+  if (!wrap) return;
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.textContent = message;
+  wrap.appendChild(el);
+  setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity .3s'; }, 1800);
+  setTimeout(() => { el.remove(); }, 2200);
+}
+
+function showConfirm(message, okText = 'OK') {
+  return new Promise((resolve) => {
+    const modal = document.getElementById('confirm');
+    const msg = document.getElementById('confirm-message');
+    const ok = document.getElementById('confirm-ok');
+    const cancel = document.getElementById('confirm-cancel');
+    if (!modal || !ok || !cancel || !msg) { resolve(false); return; }
+    msg.textContent = message;
+    ok.textContent = okText;
+    modal.style.display = 'grid';
+    const cleanup = () => { modal.style.display = 'none'; ok.onclick = null; cancel.onclick = null; };
+    ok.onclick = () => { cleanup(); resolve(true); };
+    cancel.onclick = () => { cleanup(); resolve(false); };
+    modal.addEventListener('click', (e) => { if (e.target === modal) { cleanup(); resolve(false); } }, { once: true });
+  });
+}
+
+// Products admin
+const pName = document.getElementById('p_name');
+const pIntro = document.getElementById('p_intro');
+const pImage = document.getElementById('p_image');
+  // products are published immediately; no checkbox needed
+document.getElementById('p_save').addEventListener('click', async (e) => {
+  e.preventDefault();
+  const name = pName.value.trim();
+  const intro = pIntro.value.trim();
+  const published = true;
+  if (!name) return showToast('Product name required', 'error');
+  try {
+    const overlay = document.getElementById('saving');
+    if (overlay) overlay.style.display = 'grid';
+    let imageUrl = '';
+    const f = pImage.files?.[0];
+    if (f) {
+      const clean = f.name.replace(/[^a-zA-Z0-9_.-]/g, '_');
+      const r = ref(st, `products/${Date.now()}-${clean}`);
+      const task = uploadBytesResumable(r, f, { cacheControl: 'public,max-age=31536000,immutable', contentType: f.type || 'application/octet-stream' });
+      await new Promise((resolve, reject)=>{
+        task.on('state_changed', () => {}, reject, async ()=>{ imageUrl = await getDownloadURL(task.snapshot.ref); resolve(); });
+      });
+    }
+    const id = currentProductId || generateSlug();
+    await setDoc(doc(db,'products', id), { name, intro, imageUrl, published, createdAt: serverTimestamp() });
+    showToast('Product saved','success');
+    clearProductForm();
+    loadProducts();
+  } catch (err) {
+    showToast(err.message || 'Save failed', 'error');
+  } finally {
+    const overlay = document.getElementById('saving');
+    if (overlay) overlay.style.display = 'none';
+  }
+});
+
+async function loadProducts(){
+  const grid = document.getElementById('p_list');
+  const snap = await getDocs(query(collection(db,'products'), orderBy('createdAt','desc')));
+  grid.innerHTML = snap.docs.map(d=>{
+    const p = d.data();
+    return `
+    <article class="product-card">
+      ${p.imageUrl?`<img src="${p.imageUrl}" alt="">`:''}
+      <h4>${p.name||''}</h4>
+      <div class="row" style="gap:8px">
+        <button class="btn btn-accent" data-action="p-edit" data-id="${d.id}">Edit</button>
+        <button class="btn" data-action="p-del" data-id="${d.id}" style="border-color:#ef4444;color:#ef4444;background:#fff">Delete</button>
+      </div>
+    </article>`;
+  }).join('') || '<p>No products yet.</p>';
+  grid.querySelectorAll('button[data-action="p-edit"]').forEach(btn=>btn.addEventListener('click', async()=>{
+    const id = btn.getAttribute('data-id')||'';
+    const snap = await getDoc(doc(db,'products', id));
+    if (!snap.exists()) return alert('Not found');
+    const p = snap.data();
+    pName.value = p.name || '';
+    pIntro.value = p.intro || '';
+    currentProductId = id;
+    document.getElementById('p-edit-badge').style.display = 'inline';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }));
+  grid.querySelectorAll('button[data-action="p-del"]').forEach(btn=>btn.addEventListener('click', async()=>{
+    const id = btn.getAttribute('data-id')||'';
+    const ok = await showConfirm('Delete this product?','Delete');
+    if (!ok) return;
+    await deleteDoc(doc(db,'products', id));
+    showToast('Deleted','success');
+    loadProducts();
+  }));
+}
+
+function generateSlug() {
+  const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let out = '';
+  for (let i = 0; i < 12; i++) out += chars[Math.floor(Math.random() * chars.length)];
+  return out;
+}
+
+function initTabs(){
+  const tabs = document.getElementById('tabs');
+  const tabNews = document.getElementById('tab-news');
+  const tabProducts = document.getElementById('tab-products');
+  const editorForm = document.getElementById('editor');
+  const manager = document.getElementById('manager');
+  const productsPane = document.getElementById('products-pane');
+  const newsManagerPane = document.getElementById('news-manager-pane');
+  const tabNewsForm = document.getElementById('tab-news-form');
+  const tabProductsForm = document.getElementById('tab-products-form');
+  if (!tabs || !tabNews || !tabProducts) return;
+
+  function activateNews(){
+    editorForm.style.display = 'block';
+    newsManagerPane.style.display = 'block';
+    productsPane.style.display = 'none';
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    tabNews.classList.add('btn-accent');
+    tabProducts.classList.remove('btn-accent');
+  }
+  function activateProducts(){
+    editorForm.style.display = 'none';
+    newsManagerPane.style.display = 'none';
+    productsPane.style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    tabProducts.classList.add('btn-accent');
+    tabNews.classList.remove('btn-accent');
+  }
+  tabNews.addEventListener('click', activateNews);
+  tabProducts.addEventListener('click', activateProducts);
+
+  // Remove secondary form-level tabs if present
+  if (tabNewsForm) tabNewsForm.style.display = 'none';
+  if (tabProductsForm) tabProductsForm.style.display = 'none';
+
+  // default
+  activateNews();
+}
+
+// Badge click handlers to cancel edit mode
+document.getElementById('edit-badge').addEventListener('click', clearNewsForm);
+document.getElementById('p-edit-badge').addEventListener('click', clearProductForm);
+</script>
+</body></html>
+
+

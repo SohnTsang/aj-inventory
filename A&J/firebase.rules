@@ -1,0 +1,16 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{db}/documents {
+    function isAdmin() {
+      // Replace with your UID(s)
+      return request.auth != null
+        && (request.auth.uid == "YOUR_ADMIN_UID_1"
+            || request.auth.uid == "YOUR_ADMIN_UID_2");
+    }
+    match /news/{id} {
+      allow read: if true;            // public
+      allow create, update, delete: if isAdmin();
+    }
+  }
+}
+

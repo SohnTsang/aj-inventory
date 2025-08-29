@@ -1,0 +1,14 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{db}/documents {
+    match /news/{id} {
+      allow read: if true;            // public
+      allow create, update, delete: if request.auth != null; // any signed-in user
+    }
+    match /products/{id} {
+      allow read: if true;
+      allow create, update, delete: if request.auth != null;
+    }
+  }
+}
+
