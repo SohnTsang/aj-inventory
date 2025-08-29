@@ -19,12 +19,20 @@
       <nav class="primary-nav" aria-label="Primary">
         <button class="nav-toggle" aria-expanded="false" aria-controls="nav-list"><span class="bar"></span><span class="bar"></span><span class="bar"></span></button>
         <ul id="nav-list" class="nav-list">
-          <li><a href="/">Home</a></li>
-          <li><a href="/products">Our Products</a></li>
-          <li><a href="/news">News</a></li>
+          <li><a data-i18n="nav.home" href="/">Home</a></li>
+          <li><a data-i18n="nav.about" href="/#about">About Us</a></li>
+          <li><a data-i18n="nav.services" href="/#services">Our Services</a></li>
+          <li><a data-i18n="nav.products" href="/#products">Our Products</a></li>
+          <li><a data-i18n="nav.news" href="/news">News</a></li>
+          <li><a data-i18n="nav.contact" href="/#location">Contact</a></li>
         </ul>
         <button class="nav-close" aria-label="Close menu" aria-controls="nav-list" type="button">×</button>
       </nav>
+      <div class="lang-switch" aria-label="Language selector">
+        <button class="lang-btn" data-lang="jp" aria-pressed="false"><span class="flag-circle" aria-hidden="true"><img src="/images/jp.svg" width="20" height="15" alt="Japan" /></span><span class="label">JP</span></button>
+        <button class="lang-btn" data-lang="en" aria-pressed="true"><span class="flag-circle" aria-hidden="true"><img src="/images/gb.svg" width="20" height="15" alt="English" /></span><span class="label">EN</span></button>
+        <button class="lang-btn" data-lang="zh" aria-pressed="false"><span class="flag-circle" aria-hidden="true"><img src="/images/cn.svg" width="20" height="15" alt="中文" /></span><span class="label">中文</span></button>
+      </div>
     </div>
   </header>
   <main class="section" style="padding-top: calc(var(--header-h,72px) + 24px)">
@@ -34,6 +42,32 @@
       </div>
     </div>
   </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-left">
+        <div class="brand-row">
+          <span class="brand-text">A&J Logistics</span>
+          <div class="lang-switch small">
+            <button class="lang-btn" data-lang="jp" aria-pressed="false"><span class="flag-circle"><img src="/images/jp.svg" width="20" height="15" alt="Japan" /></span><span class="label">JP</span></button>
+            <button class="lang-btn" data-lang="en" aria-pressed="true"><span class="flag-circle"><img src="/images/gb.svg" width="20" height="15" alt="English" /></span><span class="label">EN</span></button>
+            <button class="lang-btn" data-lang="zh" aria-pressed="false"><span class="flag-circle"><img src="/images/cn.svg" width="20" height="15" alt="中文" /></span><span class="label">中文</span></button>
+          </div>
+        </div>
+        <p class="copy">© <span id="year"></span> A&J Logistics</p>
+      </div>
+      <div class="footer-right">
+        <div class="contacts">
+          <p><strong>MY</strong>: <a href="mailto:my@aj-logistics.com">my@aj-logistics.com</a>, <a href="tel:+6071234567">+60 7-123 4567</a></p>
+          <p><strong>SG</strong>: <a href="mailto:sg@aj-logistics.com">sg@aj-logistics.com</a>, <a href="tel:+6562656942">(+65) 6265 6942</a></p>
+        </div>
+        <div class="policies">
+          <a href="#" role="link">Terms</a>
+          <a href="#" role="link">Privacy</a>
+        </div>
+      </div>
+    </div>
+  </footer>
    
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";

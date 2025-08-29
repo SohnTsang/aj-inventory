@@ -8,6 +8,8 @@
     ],
     "rewrites": [
       { "source": "/admin", "destination": "/admin.html" },
+      { "source": "/company", "destination": "/company.html" },
+      { "source": "/services", "destination": "/services.html" },
       { "source": "/news", "destination": "/news.html" },
       { "source": "/news/**", "destination": "/news-detail.html" },
       { "source": "/products", "destination": "/products.html" },
