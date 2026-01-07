@@ -1,79 +1,1544 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Admin — News</title><link rel="stylesheet" href="./styles.css?v=2"></head>
-<body>
-<main class="section"><div class="container" style="max-width:980px">
-  <h1>Admin</h1>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin — A&J HAKKO</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    /* ═══════════════════════════════════════════════════════════════
+       A&J HAKKO ADMIN — ORIGINAL MODERN DESIGN
+       Design philosophy: Clean, warm, functional
+    ═══════════════════════════════════════════════════════════════ */
+    
+    :root {
+      /* Core palette - derived from brand */
+      --ink: #0a1628;
+      --ink-light: #1e2d42;
+      --ink-muted: #4a5a72;
+      --slate: #64748b;
+      --mist: #94a3b8;
+      --cloud: #e2e8f0;
+      --frost: #f1f5f9;
+      --snow: #f8fafc;
+      --white: #ffffff;
+      
+      /* Brand accents */
+      --ocean: #0f3c4c;
+      --ocean-light: #165a72;
+      --sea: #1a7a9e;
+      --aqua: #bee0ec;
+      --aqua-soft: #daf0f7;
+      
+      /* Semantic colors */
+      --success: #059669;
+      --success-soft: #d1fae5;
+      --warning: #d97706;
+      --warning-soft: #fef3c7;
+      --danger: #dc2626;
+      --danger-soft: #fee2e2;
+      
+      /* Spacing scale */
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --space-10: 40px;
+      --space-12: 48px;
+      
+      /* Typography */
+      --font-sans: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      
+      /* Effects */
+      --shadow-sm: 0 1px 2px rgba(10, 22, 40, 0.05);
+      --shadow-md: 0 4px 12px rgba(10, 22, 40, 0.08);
+      --shadow-lg: 0 8px 24px rgba(10, 22, 40, 0.12);
+      --shadow-xl: 0 16px 48px rgba(10, 22, 40, 0.16);
+      
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --radius-xl: 20px;
+      
+      --transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
 
-  <form id="login" novalidate>
-    <h3>Sign in</h3>
-    <div class="form-grid">
-      <div class="field"><label>Email</label><input id="email" class="input" type="email" placeholder="email"></div>
-      <div class="field"><label>Password</label><input id="pw" class="input" type="password" placeholder="password"></div>
-      <div class="full"><button class="btn btn-accent">Sign in</button></div>
+    /* ─── Reset & Base ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    html { 
+      scroll-behavior: smooth;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    
+    body {
+      font-family: var(--font-sans);
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--ink);
+      background: var(--frost);
+      min-height: 100vh;
+    }
+
+    /* ─── Layout Shell ─────────────────────────────────────────── */
+    .admin-shell {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      min-height: 100vh;
+    }
+    
+    @media (max-width: 900px) {
+      .admin-shell { grid-template-columns: 1fr; }
+      .admin-sidebar { display: none; }
+      .admin-sidebar.open { display: flex; position: fixed; z-index: 100; width: 280px; }
+    }
+
+    /* ─── Sidebar ──────────────────────────────────────────────── */
+    .admin-sidebar {
+      background: var(--ocean);
+      display: flex;
+      flex-direction: column;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+    
+    .sidebar-header {
+      padding: var(--space-6);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+    
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(135deg, var(--aqua) 0%, var(--sea) 100%);
+      border-radius: var(--radius-md);
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--ocean);
+      letter-spacing: -0.5px;
+    }
+    
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    
+    .brand-title {
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--white);
+      letter-spacing: 0.3px;
+    }
+    
+    .brand-subtitle {
+      font-size: 11px;
+      color: var(--aqua);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      opacity: 0.9;
+    }
+    
+    .sidebar-nav {
+      flex: 1;
+      padding: var(--space-4);
+    }
+    
+    .nav-section {
+      margin-bottom: var(--space-6);
+    }
+    
+    .nav-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--mist);
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      padding: var(--space-2) var(--space-3);
+      margin-bottom: var(--space-2);
+    }
+    
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-3) var(--space-4);
+      border-radius: var(--radius-md);
+      color: rgba(255,255,255,0.7);
+      font-weight: 500;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all var(--transition);
+      border: none;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+    }
+    
+    .nav-item:hover {
+      background: rgba(255,255,255,0.08);
+      color: var(--white);
+    }
+    
+    .nav-item.active {
+      background: rgba(190, 224, 236, 0.15);
+      color: var(--aqua);
+    }
+    
+    .nav-item.active::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      width: 3px;
+      height: 24px;
+      background: var(--aqua);
+      border-radius: 0 2px 2px 0;
+    }
+    
+    .nav-icon {
+      width: 20px;
+      height: 20px;
+      opacity: 0.85;
+    }
+    
+    .sidebar-footer {
+      padding: var(--space-4);
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-3);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: background var(--transition);
+    }
+    
+    .user-info:hover {
+      background: rgba(255,255,255,0.08);
+    }
+    
+    .user-chevron {
+      color: var(--mist);
+      transition: transform var(--transition);
+      margin-left: auto;
+    }
+    
+    .user-info.open .user-chevron {
+      transform: rotate(180deg);
+    }
+    
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--sea) 0%, var(--ocean-light) 100%);
+      display: grid;
+      place-items: center;
+      color: var(--white);
+      font-weight: 600;
+      font-size: 14px;
+    }
+    
+    .user-details {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+    }
+    
+    .user-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--white);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .user-role {
+      font-size: 11px;
+      color: var(--mist);
+    }
+    
+    .btn-logout {
+      width: 100%;
+      background: rgba(220, 38, 38, 0.15);
+      border: none;
+      border-radius: var(--radius-md);
+      color: #fca5a5;
+      padding: var(--space-3) var(--space-4);
+      margin-top: var(--space-2);
+      cursor: pointer;
+      transition: all var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    
+    .btn-logout:hover {
+      background: rgba(220, 38, 38, 0.25);
+      color: #fecaca;
+    }
+
+    /* ─── Main Content ─────────────────────────────────────────── */
+    .admin-main {
+      padding: var(--space-8);
+      max-width: 1100px;
+      width: 100%;
+      margin: 0 auto;
+    }
+    
+    @media (max-width: 640px) {
+      .admin-main { padding: var(--space-4); }
+    }
+
+    /* ─── Page Header ──────────────────────────────────────────── */
+    .page-header {
+      margin-bottom: var(--space-8);
+    }
+    
+    .page-title {
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--ink);
+      letter-spacing: -0.5px;
+      margin-bottom: var(--space-2);
+    }
+    
+    .page-subtitle {
+      font-size: 14px;
+      color: var(--slate);
+    }
+
+    /* ─── Card Component ───────────────────────────────────────── */
+    .card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--cloud);
+      overflow: hidden;
+    }
+    
+    .card-header {
+      padding: var(--space-5) var(--space-6);
+      border-bottom: 1px solid var(--frost);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-4);
+    }
+    
+    .card-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+    
+    .card-body {
+      padding: var(--space-6);
+    }
+    
+    .card + .card {
+      margin-top: var(--space-6);
+    }
+
+    /* ─── Form Elements ────────────────────────────────────────── */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-5);
+    }
+    
+    .form-grid .full { grid-column: 1 / -1; }
+    
+    @media (max-width: 640px) {
+      .form-grid { grid-template-columns: 1fr; }
+    }
+    
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+    
+    .field-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink-light);
+      letter-spacing: 0.1px;
+    }
+    
+    .field-hint {
+      font-size: 12px;
+      color: var(--slate);
+      margin-top: var(--space-1);
+    }
+    
+    .input,
+    .textarea,
+    .select {
+      width: 100%;
+      padding: var(--space-3) var(--space-4);
+      font-family: inherit;
+      font-size: 14px;
+      color: var(--ink);
+      background: var(--white);
+      border: 1.5px solid var(--cloud);
+      border-radius: var(--radius-md);
+      transition: all var(--transition);
+      outline: none;
+    }
+    
+    .input::placeholder,
+    .textarea::placeholder {
+      color: var(--mist);
+    }
+    
+    .input:hover,
+    .textarea:hover,
+    .select:hover {
+      border-color: var(--mist);
+    }
+    
+    .input:focus,
+    .textarea:focus,
+    .select:focus {
+      border-color: var(--ocean);
+      box-shadow: 0 0 0 3px rgba(15, 60, 76, 0.1);
+    }
+    
+    .textarea {
+      min-height: 160px;
+      resize: vertical;
+      line-height: 1.7;
+    }
+    
+    .select {
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 40px;
+      appearance: none;
+    }
+    
+    /* Date input wrapper */
+    .date-input-wrap {
+      position: relative;
+    }
+    
+    .date-input-wrap .input {
+      padding-right: 70px;
+    }
+    
+    .date-now-btn {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      padding: 6px 12px;
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--ocean);
+      background: var(--aqua-soft);
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all var(--transition);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .date-now-btn:hover {
+      background: var(--aqua);
+    }
+    
+    /* File input */
+    .file-input-wrap {
+      position: relative;
+    }
+    
+    .file-input {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+    
+    .file-input-display {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-3);
+      padding: var(--space-5) var(--space-6);
+      background: var(--frost);
+      border: 2px dashed var(--cloud);
+      border-radius: var(--radius-md);
+      color: var(--slate);
+      font-size: 14px;
+      transition: all var(--transition);
+      cursor: pointer;
+    }
+    
+    .file-input-wrap:hover .file-input-display {
+      border-color: var(--ocean);
+      background: var(--aqua-soft);
+      color: var(--ocean);
+    }
+
+    /* ─── Buttons ──────────────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      padding: var(--space-3) var(--space-5);
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all var(--transition);
+      border: 1.5px solid transparent;
+      text-decoration: none;
+    }
+    
+    .btn-primary {
+      background: var(--ocean);
+      color: var(--white);
+      border-color: var(--ocean);
+    }
+    
+    .btn-primary:hover {
+      background: var(--ocean-light);
+      border-color: var(--ocean-light);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+    
+    .btn-secondary {
+      background: var(--white);
+      color: var(--ink-light);
+      border-color: var(--cloud);
+    }
+    
+    .btn-secondary:hover {
+      background: var(--frost);
+      border-color: var(--mist);
+    }
+    
+    .btn-danger {
+      background: var(--white);
+      color: var(--danger);
+      border-color: var(--danger);
+    }
+    
+    .btn-danger:hover {
+      background: var(--danger);
+      color: var(--white);
+    }
+    
+    .btn-ghost {
+      background: transparent;
+      color: var(--slate);
+      border-color: transparent;
+      padding: var(--space-2) var(--space-3);
+    }
+    
+    .btn-ghost:hover {
+      background: var(--frost);
+      color: var(--ink);
+    }
+    
+    .btn-lg {
+      padding: var(--space-4) var(--space-6);
+      font-size: 15px;
+    }
+    
+    .btn-icon {
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      border-radius: var(--radius-md);
+    }
+
+    /* ─── Badge ────────────────────────────────────────────────── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      border-radius: 100px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    
+    .badge-editing {
+      background: var(--warning-soft);
+      color: var(--warning);
+      cursor: pointer;
+    }
+    
+    .badge-editing:hover {
+      background: var(--warning);
+      color: var(--white);
+    }
+    
+    .badge-published {
+      background: var(--success-soft);
+      color: var(--success);
+    }
+    
+    .badge-draft {
+      background: var(--frost);
+      color: var(--slate);
+    }
+
+    /* ─── Thumbnail Grid ───────────────────────────────────────── */
+    .thumb-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: var(--space-3);
+      margin-top: var(--space-3);
+    }
+    
+    .thumb {
+      position: relative;
+      aspect-ratio: 1;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: var(--frost);
+      border: 1px solid var(--cloud);
+    }
+    
+    .thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .thumb .remove {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.65);
+      color: var(--white);
+      border: none;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      font-size: 14px;
+      line-height: 1;
+      transition: all var(--transition);
+      opacity: 0;
+    }
+    
+    .thumb:hover .remove {
+      opacity: 1;
+    }
+    
+    .thumb .remove:hover {
+      background: var(--danger);
+    }
+
+    /* ─── News Grid ────────────────────────────────────────────── */
+    .news-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: var(--space-5);
+    }
+    
+    .news-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--cloud);
+      overflow: hidden;
+      transition: all var(--transition);
+    }
+    
+    .news-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+    
+    .news-card-image {
+      aspect-ratio: 16/10;
+      background: var(--frost);
+      overflow: hidden;
+    }
+    
+    .news-card-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 400ms ease;
+    }
+    
+    .news-card:hover .news-card-image img {
+      transform: scale(1.03);
+    }
+    
+    .news-card-body {
+      padding: var(--space-4) var(--space-5);
+    }
+    
+    .news-card-meta {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      margin-bottom: var(--space-2);
+    }
+    
+    .news-card-date {
+      font-size: 12px;
+      color: var(--slate);
+      font-family: var(--font-mono);
+    }
+    
+    .news-card-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.4;
+      margin-bottom: var(--space-4);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    
+    .news-card-actions {
+      display: flex;
+      gap: var(--space-2);
+      padding-top: var(--space-3);
+      border-top: 1px solid var(--frost);
+    }
+    
+    .news-card-actions .btn {
+      flex: 1;
+      padding: var(--space-2) var(--space-3);
+      font-size: 13px;
+    }
+
+    /* ─── Products Grid ────────────────────────────────────────── */
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: var(--space-5);
+    }
+    
+    .product-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--cloud);
+      overflow: hidden;
+      transition: all var(--transition);
+    }
+    
+    .product-card:hover {
+      box-shadow: var(--shadow-md);
+    }
+    
+    .product-card-image {
+      aspect-ratio: 1;
+      background: var(--frost);
+      overflow: hidden;
+    }
+    
+    .product-card-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .product-card-body {
+      padding: var(--space-4);
+    }
+    
+    .product-card-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: var(--space-3);
+    }
+    
+    .product-card-actions {
+      display: flex;
+      gap: var(--space-2);
+    }
+    
+    .product-card-actions .btn {
+      flex: 1;
+      padding: var(--space-2);
+      font-size: 12px;
+    }
+
+    /* ─── Login Card ───────────────────────────────────────────── */
+    .login-wrap {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: var(--space-6);
+      background: linear-gradient(145deg, var(--ocean) 0%, var(--ocean-light) 100%);
+    }
+    
+    .login-card {
+      width: 100%;
+      max-width: 400px;
+      background: var(--white);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-xl);
+      overflow: hidden;
+    }
+    
+    .login-header {
+      padding: var(--space-8) var(--space-8) var(--space-6);
+      text-align: center;
+    }
+    
+    .login-brand {
+      width: 56px;
+      height: 56px;
+      background: var(--ocean);
+      border-radius: var(--radius-lg);
+      display: grid;
+      place-items: center;
+      margin: 0 auto var(--space-5);
+    }
+    
+    .login-brand svg {
+      width: 28px;
+      height: 28px;
+      color: var(--aqua);
+    }
+    
+    .login-title {
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: var(--space-2);
+    }
+    
+    .login-subtitle {
+      font-size: 14px;
+      color: var(--slate);
+    }
+    
+    .login-body {
+      padding: 0 var(--space-8) var(--space-8);
+    }
+    
+    .login-body .field + .field {
+      margin-top: var(--space-4);
+    }
+    
+    .login-body .btn {
+      width: 100%;
+      margin-top: var(--space-6);
+      padding: var(--space-4);
+    }
+
+    /* ─── Overlay & Modal ──────────────────────────────────────── */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 22, 40, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      display: grid;
+      place-items: center;
+      padding: var(--space-6);
+    }
+    
+    .overlay[style*="display: none"] { display: none !important; }
+    
+    .modal {
+      background: var(--white);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-xl);
+      width: 100%;
+      max-width: 420px;
+      overflow: hidden;
+    }
+    
+    .modal-header {
+      padding: var(--space-5) var(--space-6);
+      border-bottom: 1px solid var(--frost);
+    }
+    
+    .modal-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+    
+    .modal-body {
+      padding: var(--space-5) var(--space-6);
+    }
+    
+    .modal-body p {
+      color: var(--slate);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    
+    .modal-footer {
+      padding: var(--space-4) var(--space-6);
+      background: var(--frost);
+      display: flex;
+      justify-content: flex-end;
+      gap: var(--space-3);
+    }
+
+    /* ─── Loading Overlay ──────────────────────────────────────── */
+    .loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 22, 40, 0.7);
+      backdrop-filter: blur(4px);
+      z-index: 2000;
+      display: grid;
+      place-items: center;
+    }
+    
+    .loading-content {
+      text-align: center;
+      color: var(--white);
+    }
+    
+    .spinner {
+      width: 44px;
+      height: 44px;
+      border: 3px solid rgba(255,255,255,0.2);
+      border-top-color: var(--aqua);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto var(--space-4);
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .loading-text {
+      font-size: 15px;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+    }
+
+    /* ─── Toast Notifications ──────────────────────────────────── */
+    .toast-wrap {
+      position: fixed;
+      bottom: var(--space-6);
+      right: var(--space-6);
+      z-index: 3000;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+    
+    .toast {
+      padding: var(--space-4) var(--space-5);
+      background: var(--ink);
+      color: var(--white);
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      font-weight: 500;
+      box-shadow: var(--shadow-lg);
+      animation: toastIn 300ms ease-out;
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+    
+    .toast.success {
+      background: var(--success);
+    }
+    
+    .toast.error {
+      background: var(--danger);
+    }
+    
+    @keyframes toastIn {
+      from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    /* ─── Empty State ──────────────────────────────────────────── */
+    .empty-state {
+      text-align: center;
+      padding: var(--space-12) var(--space-6);
+      color: var(--slate);
+    }
+    
+    .empty-state-icon {
+      width: 56px;
+      height: 56px;
+      margin: 0 auto var(--space-4);
+      opacity: 0.4;
+    }
+    
+    .empty-state p {
+      font-size: 15px;
+    }
+
+    /* ─── Row & Flex Utilities ─────────────────────────────────── */
+    .row {
+      display: flex;
+      gap: var(--space-3);
+      align-items: center;
+    }
+    
+    .row.between {
+      justify-content: space-between;
+    }
+
+    /* ─── Section Divider ──────────────────────────────────────── */
+    .section-divider {
+      margin: var(--space-8) 0;
+      border: none;
+      border-top: 1px solid var(--cloud);
+    }
+
+    /* ─── Responsive Helpers ───────────────────────────────────── */
+    .mobile-header {
+      display: none;
+      background: var(--ocean);
+      padding: var(--space-4);
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .mobile-header .brand-title {
+      color: var(--white);
+      font-weight: 600;
+    }
+    
+    .mobile-menu-btn {
+      background: transparent;
+      border: none;
+      color: var(--aqua);
+      cursor: pointer;
+      padding: var(--space-2);
+    }
+    
+    @media (max-width: 900px) {
+      .mobile-header { display: flex; }
+    }
+
+    /* ─── Transition Animations ────────────────────────────────── */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .animate-fade { animation: fadeIn 400ms ease-out; }
+    .animate-slide { animation: slideUp 400ms ease-out; }
+
+    /* ─── Banner Preview ──────────────────────────────────────── */
+    .banner-preview {
+      position: relative;
+    }
+    
+    .banner-preview-image {
+      width: 100%;
+      max-height: 300px;
+      object-fit: contain;
+      border-radius: var(--radius-md);
+      background: var(--frost);
+    }
+    
+    .banner-preview-info {
+      margin-top: var(--space-4);
+      padding: var(--space-4);
+      background: var(--frost);
+      border-radius: var(--radius-md);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+    }
+    
+    .banner-preview-link {
+      font-size: 14px;
+      color: var(--slate);
+      word-break: break-all;
+    }
+    
+    .banner-preview-link strong {
+      color: var(--ink);
+    }
+    
+    .banner-preview-actions {
+      display: flex;
+      gap: var(--space-3);
+    }
+  </style>
+</head>
+<body>
+
+<!-- Initial Loading Screen (shown while checking auth) -->
+<div id="auth-loading" class="loading-overlay" style="background: linear-gradient(145deg, var(--ocean) 0%, var(--ocean-light) 100%);">
+  <div class="loading-content">
+    <div class="spinner"></div>
+    <div class="loading-text">Loading...</div>
+  </div>
+</div>
+
+<!-- Login Screen (shown when not authenticated) -->
+<div id="login" class="login-wrap" style="display: none;">
+  <form class="login-card" novalidate>
+    <div class="login-header">
+      <div class="login-brand">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3"/>
+        </svg>
+      </div>
+      <h1 class="login-title">Welcome back</h1>
+      <p class="login-subtitle">Sign in to A&J HAKKO Admin</p>
+    </div>
+    <div class="login-body">
+      <div class="field">
+        <label class="field-label" for="email">Email address</label>
+        <input id="email" class="input" type="email" placeholder="you@company.com" autocomplete="email">
+      </div>
+      <div class="field">
+        <label class="field-label" for="pw">Password</label>
+        <input id="pw" class="input" type="password" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <button type="submit" class="btn btn-primary btn-lg">Sign in</button>
     </div>
   </form>
-  <div id="tabs" class="row" style="gap:8px; margin:10px 0; display:none">
-    <button id="tab-news" class="btn btn-accent" type="button">News</button>
-    <button id="tab-products" class="btn" type="button">Products</button>
+</div>
+
+<!-- Admin Shell (shown when authenticated) -->
+<div id="admin-shell" class="admin-shell" style="display: none;">
+  
+  <!-- Mobile Header -->
+  <div class="mobile-header">
+    <span class="brand-title">A&J HAKKO Admin</span>
+    <button class="mobile-menu-btn" id="mobile-menu-toggle" aria-label="Toggle menu">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="3" y1="12" x2="21" y2="12"></line>
+        <line x1="3" y1="6" x2="21" y2="6"></line>
+        <line x1="3" y1="18" x2="21" y2="18"></line>
+      </svg>
+    </button>
   </div>
 
-  <form id="editor" style="display:none" novalidate>
-    <div id="saving" style="display:none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 9999; place-items: center; color: #fff; font-weight: 700; font-size: 18px;">
-      <div style="display:grid;gap:8px;place-items:center">
-        <div class="spinner"></div>
-        <div>Saving…</div>
-      </div>
-    </div>
-    <div class="toast-wrap" id="toasts" aria-live="polite" aria-atomic="true"></div>
-    <div id="confirm" style="display:none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 10000; place-items: center;">
-      <div style="background:#fff; color:#111827; border-radius:12px; box-shadow: var(--shadow); width:min(92vw,420px); padding:16px; display:grid; gap:10px;">
-        <h3 style="margin:0; font-size:18px;">Confirm delete</h3>
-        <p id="confirm-message" style="margin:0 0 6px; color:#374151;">Are you sure?</p>
-        <div style="display:flex; justify-content:flex-end; gap:8px;">
-          <button id="confirm-cancel" class="btn" type="button" style="background:#fff; border-color:#e5e7eb; color:#111827;">Cancel</button>
-          <button id="confirm-ok" class="btn btn-accent" type="button">Delete</button>
+  <!-- Sidebar -->
+  <aside class="admin-sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-brand">
+        <div class="brand-mark">A&J</div>
+        <div class="brand-text">
+          <span class="brand-title">A&J HAKKO</span>
+          <span class="brand-subtitle">Admin Portal</span>
         </div>
       </div>
     </div>
-    <h3 id="form-title">Create / Update <span id="edit-badge" style="display:none; background:#f59e0b; color:#fff; padding:4px 8px; border-radius:6px; font-size:12px; margin-left:8px; cursor:pointer;">Editing ×</span></h3>
-    <div class="form-grid">
-      <div class="field full"><label>Title</label><input id="title" class="input" placeholder="Title"></div>
-      <div class="field"><label>Language</label><select id="lang" class="select"><option value="en">en</option><option value="jp">jp</option><option value="zh">zh</option></select></div>
-      <div class="field"><label>Author</label><input id="author" class="input" placeholder="Author (optional)"></div>
-      <div class="field full"><label>Body</label><textarea id="body" class="textarea" placeholder="Body (HTML or Markdown)"></textarea></div>
-      <div class="field full">
-        <label>Images</label>
-        <div class="row"><input type="file" id="images" accept="image/*" multiple></div>
-        <div id="thumbs" class="thumb-grid" aria-live="polite"></div>
-        <div class="hint">First image will be used as cover. Drag order not supported yet.</div>
+    
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+        <div class="nav-label">Content</div>
+        <button id="tab-news" class="nav-item active" type="button">
+          <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/>
+            <path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/>
+          </svg>
+          News Articles
+        </button>
+        <button id="tab-products" class="nav-item" type="button">
+          <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/>
+            <path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/>
+          </svg>
+          Products
+        </button>
+        <button id="tab-banner" class="nav-item" type="button">
+          <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+            <circle cx="9" cy="9" r="2"/>
+            <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+          </svg>
+          Brand Banner
+        </button>
       </div>
-      <div class="field full"><button id="save" class="btn btn-accent">Save</button></div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-info" id="user-info-toggle">
+        <div class="user-avatar" id="user-avatar">A</div>
+        <div class="user-details">
+          <div class="user-name" id="user-email">admin@company.com</div>
+          <div class="user-role">Administrator</div>
+        </div>
+        <svg class="user-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </div>
+      <button id="logout-btn" class="btn-logout" style="display: none;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+        Sign out
+      </button>
     </div>
-  </form>
+  </aside>
 
-  <section id="manager" style="display:none">
-    <section id="news-manager-pane">
-      <h3>Manage News</h3>
-      <div id="list" class="news-grid"></div>
-    </section>
-    <section id="products-pane" style="display:none;">
-      <h3>Create / Update <span id="p-edit-badge" style="display:none; background:#f59e0b; color:#fff; padding:4px 8px; border-radius:6px; font-size:12px; margin-left:8px; cursor:pointer;">Editing ×</span></h3>
-      <div class="form-grid" style="margin-bottom:12px">
-        <div class="field full"><label>Product Name</label><input id="p_name" class="input" placeholder="Name"></div>
-        <div class="field full"><label>Introduction</label><textarea id="p_intro" class="textarea" placeholder="Short introduction"></textarea></div>
-        <div class="field full"><label>Image</label><input type="file" id="p_image" accept="image/*"></div>
-        <div class="field full"><button id="p_save" class="btn btn-accent" type="button">Save Product</button></div>
+  <!-- Main Content -->
+  <main class="admin-main">
+    
+    <!-- News Section -->
+    <section id="news-section">
+      <div class="page-header">
+        <h1 class="page-title">News Articles</h1>
+        <p class="page-subtitle">Create and manage news content for your website</p>
       </div>
-      <h3>Manage Products</h3>
-      <div id="p_list" class="products-grid"></div>
+      
+      <!-- News Editor Card -->
+      <div class="card animate-slide" id="editor-card">
+        <div class="card-header">
+          <h2 class="card-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+              <path d="M18.375 2.625a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4Z"/>
+            </svg>
+            <span id="form-title-text">Create Article</span>
+          </h2>
+          <span id="edit-badge" class="badge badge-editing" style="display: none;">
+            Editing · Click to cancel
+          </span>
+        </div>
+        <div class="card-body">
+          <form id="editor" novalidate>
+            <div class="form-grid">
+              <div class="field full">
+                <label class="field-label" for="title">Article Title</label>
+                <input id="title" class="input" type="text" placeholder="Enter a descriptive title...">
+              </div>
+              
+              <div class="field">
+                <label class="field-label" for="lang">Language</label>
+                <select id="lang" class="select">
+                  <option value="en">English</option>
+                  <option value="jp">Japanese</option>
+                  <option value="zh">Chinese</option>
+                </select>
+              </div>
+              
+              <div class="field">
+                <label class="field-label" for="author">Author</label>
+                <input id="author" class="input" type="text" placeholder="Optional author name">
+              </div>
+              
+              <div class="field full">
+                <label class="field-label" for="publishDate">Publish Date</label>
+                <div class="date-input-wrap">
+                  <input type="datetime-local" id="publishDate" class="input">
+                  <button type="button" class="date-now-btn" id="setNowBtn">Now</button>
+                </div>
+                <span class="field-hint">Leave empty for current time, or set a custom date for backdating.</span>
+              </div>
+              
+              <div class="field full">
+                <label class="field-label" for="body">Content</label>
+                <textarea id="body" class="textarea" placeholder="Write your article content here... HTML and Markdown supported."></textarea>
+              </div>
+              
+              <div class="field full">
+                <label class="field-label">Images</label>
+                <div class="file-input-wrap">
+                  <input type="file" id="images" class="file-input" accept="image/*" multiple>
+                  <div class="file-input-display">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                      <polyline points="17 8 12 3 7 8"/>
+                      <line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                    <span>Drop images here or click to upload</span>
+                  </div>
+                </div>
+                <div id="thumbs" class="thumb-grid" aria-live="polite"></div>
+                <span class="field-hint">First image will be used as cover. Multiple images supported.</span>
+              </div>
+              
+              <div class="field full">
+                <button id="save" type="submit" class="btn btn-primary btn-lg">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                    <polyline points="17 21 17 13 7 13 7 21"/>
+                    <polyline points="7 3 7 8 15 8"/>
+                  </svg>
+                  Save Article
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+      
+      <!-- News List Card -->
+      <div class="card animate-slide" style="animation-delay: 100ms;">
+        <div class="card-header">
+          <h2 class="card-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+              <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+            </svg>
+            Published Articles
+          </h2>
+        </div>
+        <div class="card-body">
+          <div id="list" class="news-grid"></div>
+        </div>
+      </div>
     </section>
-  </section>
-</div></main>
+    
+    <!-- Products Section -->
+    <section id="products-section" style="display: none;">
+      <div class="page-header">
+        <h1 class="page-title">Products</h1>
+        <p class="page-subtitle">Manage your product catalog</p>
+      </div>
+      
+      <!-- Product Editor Card -->
+      <div class="card animate-slide">
+        <div class="card-header">
+          <h2 class="card-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+              <path d="M18.375 2.625a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4Z"/>
+            </svg>
+            <span id="p-form-title-text">Add Product</span>
+          </h2>
+          <span id="p-edit-badge" class="badge badge-editing" style="display: none;">
+            Editing · Click to cancel
+          </span>
+        </div>
+        <div class="card-body">
+          <div class="form-grid">
+            <div class="field full">
+              <label class="field-label" for="p_name">Product Name</label>
+              <input id="p_name" class="input" type="text" placeholder="Enter product name...">
+            </div>
+            
+            <div class="field full">
+              <label class="field-label" for="p_intro">Introduction</label>
+              <textarea id="p_intro" class="textarea" placeholder="Short description of the product..." style="min-height: 100px;"></textarea>
+            </div>
+            
+            <div class="field full">
+              <label class="field-label">Product Image</label>
+              <div class="file-input-wrap">
+                <input type="file" id="p_image" class="file-input" accept="image/*">
+                <div class="file-input-display">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="17 8 12 3 7 8"/>
+                    <line x1="12" y1="3" x2="12" y2="15"/>
+                  </svg>
+                  <span>Upload product image</span>
+                </div>
+              </div>
+              <div id="p_thumbs" class="thumb-grid"></div>
+            </div>
+            
+            <div class="field full">
+              <button id="p_save" type="button" class="btn btn-primary btn-lg">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                  <polyline points="17 21 17 13 7 13 7 21"/>
+                  <polyline points="7 3 7 8 15 8"/>
+                </svg>
+                Save Product
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Products List Card -->
+      <div class="card animate-slide" style="animation-delay: 100ms;">
+        <div class="card-header">
+          <h2 class="card-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+              <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+            </svg>
+            All Products
+          </h2>
+        </div>
+        <div class="card-body">
+          <div id="p_list" class="products-grid"></div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Brand Banner Section -->
+    <section id="banner-section" style="display: none;">
+      <div class="page-header">
+        <h1 class="page-title">Brand Banner</h1>
+        <p class="page-subtitle">Manage the banner displayed in the brand section</p>
+      </div>
+      
+      <!-- Banner Editor Card -->
+      <div class="card animate-slide">
+        <div class="card-header">
+          <h2 class="card-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+              <circle cx="9" cy="9" r="2"/>
+              <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+            </svg>
+            Upload Banner
+          </h2>
+        </div>
+        <div class="card-body">
+          <div class="form-grid">
+            <div class="field full">
+              <label class="field-label">Banner Image</label>
+              <div class="file-input-wrap">
+                <input type="file" id="banner_image" class="file-input" accept="image/*">
+                <div class="file-input-display">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="17 8 12 3 7 8"/>
+                    <line x1="12" y1="3" x2="12" y2="15"/>
+                  </svg>
+                  <span>Drop banner image here or click to upload</span>
+                </div>
+              </div>
+              <div id="banner_thumbs" class="thumb-grid"></div>
+              <span class="field-hint">Recommended size: 1200x400px or similar aspect ratio</span>
+            </div>
+            
+            <div class="field full">
+              <label class="field-label" for="banner_link">Link URL</label>
+              <input id="banner_link" class="input" type="text" placeholder="/brand.html or https://example.com">
+              <span class="field-hint">Enter the page URL to redirect when banner is clicked. Use relative paths (e.g., /brand.html) for internal pages or full URLs for external links.</span>
+            </div>
+            
+            <div class="field full">
+              <button id="banner_save" type="button" class="btn btn-primary btn-lg">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                  <polyline points="17 21 17 13 7 13 7 21"/>
+                  <polyline points="7 3 7 8 15 8"/>
+                </svg>
+                Save Banner
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Current Banner Preview Card -->
+      <div class="card animate-slide" style="animation-delay: 100ms;">
+        <div class="card-header">
+          <h2 class="card-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+            Current Banner
+          </h2>
+        </div>
+        <div class="card-body">
+          <div id="banner_preview" class="banner-preview">
+            <div class="empty-state">
+              <svg class="empty-state-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                <circle cx="9" cy="9" r="2"/>
+                <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+              </svg>
+              <p>No banner configured</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+  </main>
+</div>
+
+<!-- Loading Overlay -->
+<div id="saving" class="loading-overlay" style="display: none;">
+  <div class="loading-content">
+    <div class="spinner"></div>
+    <div class="loading-text">Saving...</div>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-wrap" id="toasts" aria-live="polite" aria-atomic="true"></div>
+
+<!-- Confirm Modal -->
+<div id="confirm" class="overlay" style="display: none;">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title">Confirm Delete</h3>
+    </div>
+    <div class="modal-body">
+      <p id="confirm-message">Are you sure you want to delete this item?</p>
+    </div>
+    <div class="modal-footer">
+      <button id="confirm-cancel" class="btn btn-secondary" type="button">Cancel</button>
+      <button id="confirm-ok" class="btn btn-danger" type="button">Delete</button>
+    </div>
+  </div>
+</div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, serverTimestamp, collection, query, where, orderBy, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc, serverTimestamp, Timestamp, collection, query, where, orderBy, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getStorage, ref, uploadBytesResumable, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 import { firebaseConfig } from "./firebase-config.js";
 
@@ -82,46 +1547,87 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const st = getStorage(app);
 
-const login = document.getElementById('login');
-const editor = document.getElementById('editor');
+const loginWrap = document.getElementById('login');
+const adminShell = document.getElementById('admin-shell');
+const loginForm = loginWrap.querySelector('form');
 
-login.addEventListener('submit', async (e) => {
+loginForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   const email = document.getElementById('email').value.trim();
   const pw = document.getElementById('pw').value.trim();
   try {
     await signInWithEmailAndPassword(auth, email, pw);
   } catch (err) {
-    alert(err.message || 'Sign-in failed');
+    showToast(err.message || 'Sign-in failed', 'error');
   }
 });
 
 onAuthStateChanged(auth, (user) => {
+  // Hide loading screen first
+  const authLoading = document.getElementById('auth-loading');
+  if (authLoading) authLoading.style.display = 'none';
+  
   const signedIn = !!user;
-  login.style.display = signedIn ? 'none' : 'block';
-  editor.style.display = signedIn ? 'block' : 'none';
-  document.getElementById('manager').style.display = signedIn ? 'block' : 'none';
-  document.getElementById('tabs').style.display = signedIn ? 'flex' : 'none';
-  if (signedIn) { loadList(); loadProducts(); initTabs(); }
+  loginWrap.style.display = signedIn ? 'none' : 'grid';
+  adminShell.style.display = signedIn ? 'grid' : 'none';
+  
+  if (signedIn) {
+    // Update user info in sidebar
+    const userEmail = document.getElementById('user-email');
+    const userAvatar = document.getElementById('user-avatar');
+    if (userEmail) userEmail.textContent = user.email || 'admin@company.com';
+    if (userAvatar) userAvatar.textContent = (user.email || 'A')[0].toUpperCase();
+    
+    loadList();
+    loadProducts();
+    initTabs();
+  }
 });
-// expose for console debugging with modular SDK
-// usage in DevTools: __auth.currentUser?.uid
 window.__auth = auth;
+
+// Mobile menu toggle
+document.getElementById('mobile-menu-toggle')?.addEventListener('click', () => {
+  document.getElementById('sidebar').classList.toggle('open');
+});
+
+// User info toggle for logout button
+document.getElementById('user-info-toggle')?.addEventListener('click', () => {
+  const userInfo = document.getElementById('user-info-toggle');
+  const logoutBtn = document.getElementById('logout-btn');
+  userInfo.classList.toggle('open');
+  logoutBtn.style.display = userInfo.classList.contains('open') ? 'flex' : 'none';
+});
+
+// Logout button
+document.getElementById('logout-btn')?.addEventListener('click', async () => {
+  try {
+    await signOut(auth);
+    showToast('Signed out successfully', 'success');
+  } catch (err) {
+    showToast(err.message || 'Sign out failed', 'error');
+  }
+});
 
 // Images state
 let imageUrls = [];
+let selectedFiles = [];
 
 function renderThumbs() {
-  const wrap = document.getElementById('thumbs');
-  wrap.innerHTML = imageUrls.map((u, i) => `
-    <div class="thumb"><img src="${u}" alt=""><button class="remove" data-i="${i}" title="Remove">×</button></div>
-  `).join('');
-  wrap.querySelectorAll('.remove').forEach(btn => btn.addEventListener('click', () => {
-    const i = parseInt(btn.getAttribute('data-i'));
-    imageUrls.splice(i, 1);
-    renderThumbs();
-  }));
+  // Now uses renderSelectedFiles for consistency
+  renderSelectedFiles();
 }
+
+// Date helper functions
+function toLocalDatetimeString(date) {
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+}
+
+function setDateToNow() {
+  publishDateEl.value = toLocalDatetimeString(new Date());
+}
+
+document.getElementById('setNowBtn').addEventListener('click', setDateToNow);
 
 document.getElementById('save').addEventListener('click', async (e) => {
   e.preventDefault();
@@ -130,23 +1636,32 @@ document.getElementById('save').addEventListener('click', async (e) => {
   const body = bodyEl.value;
   const lang = langEl.value.trim() || 'en';
   const author = authorEl.value.trim();
+  
+  let publishedAt;
+  if (publishDateEl.value) {
+    const localDate = new Date(publishDateEl.value);
+    publishedAt = Timestamp.fromDate(localDate);
+  } else {
+    publishedAt = serverTimestamp();
+  }
+  
   if (!title) return showToast('Title is required', 'error');
   if (!body) return showToast('Body is required', 'error');
   try {
     const overlay = document.getElementById('saving');
     if (overlay) overlay.style.display = 'grid';
-    // Upload chosen files now
-    const files = Array.from(images.files || []);
+    const files = selectedFiles.slice(); // Use our tracked array instead of images.files
     let nextImageUrls = imageUrls.slice();
     if (files.length) {
       console.log('[admin] Uploading', files.length, 'file(s). UID:', __auth.currentUser?.uid, 'origin:', location.origin);
       const uploaded = [];
       for (const f of files) {
-        const clean = f.name.replace(/[^a-zA-Z0-9_.-]/g, '_');
+        const compressedFile = await compressImage(f);
+        const clean = f.name.replace(/[^a-zA-Z0-9_.-]/g, '_').replace(/\.[^.]+$/, '.webp');
         const r = ref(st, `news/${slug}/${Date.now()}-${clean}`);
-        console.log('[admin] Start upload:', r.fullPath, f.type, f.size);
+        console.log('[admin] Start upload:', r.fullPath, 'image/webp', compressedFile.size);
         await new Promise((resolve, reject) => {
-          const task = uploadBytesResumable(r, f, { cacheControl: 'public,max-age=31536000,immutable', contentType: f.type || 'application/octet-stream' });
+          const task = uploadBytesResumable(r, compressedFile, { cacheControl: 'public,max-age=31536000,immutable', contentType: 'image/webp' });
           task.on('state_changed',
             (snap) => {
               const pct = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
@@ -160,13 +1675,15 @@ document.getElementById('save').addEventListener('click', async (e) => {
           );
         });
       }
-      nextImageUrls = uploaded;
+      // Combine existing image URLs with newly uploaded ones
+      nextImageUrls = [...imageUrls, ...uploaded];
     }
     await setDoc(doc(db, 'news', slug), {
-    title, slug, body, lang, author,
-    coverUrl: nextImageUrls[0] || null,
-    imageUrls: nextImageUrls,
-    published: true, publishedAt: serverTimestamp()
+      title, slug, body, lang, author,
+      coverUrl: nextImageUrls[0] || null,
+      imageUrls: nextImageUrls,
+      published: true, 
+      publishedAt: publishedAt
     }, { merge: true });
     showToast('Saved!', 'success');
     clearNewsForm();
@@ -182,6 +1699,7 @@ document.getElementById('save').addEventListener('click', async (e) => {
 });
 
 const titleEl = document.getElementById('title');
+const publishDateEl = document.getElementById('publishDate');
 let currentSlug = null;
 let currentProductId = null;
 
@@ -190,62 +1708,143 @@ function clearNewsForm() {
   bodyEl.value = '';
   langEl.value = 'en';
   authorEl.value = '';
+  publishDateEl.value = '';
   images.value = '';
   imageUrls = [];
-  renderThumbs();
+  selectedFiles = [];
+  renderSelectedFiles();
   currentSlug = null;
   document.getElementById('edit-badge').style.display = 'none';
+  document.getElementById('form-title-text').textContent = 'Create Article';
 }
 
 function clearProductForm() {
   pName.value = '';
   pIntro.value = '';
   pImage.value = '';
+  pSelectedFile = null;
+  pExistingImageUrl = '';
+  renderProductThumb();
   currentProductId = null;
   document.getElementById('p-edit-badge').style.display = 'none';
+  document.getElementById('p-form-title-text').textContent = 'Add Product';
 }
+
 const bodyEl = document.getElementById('body');
 const langEl = document.getElementById('lang');
 const authorEl = document.getElementById('author');
-// no published checkbox anymore; all saves are published immediately
 const images = document.getElementById('images');
 const thumbs = document.getElementById('thumbs');
 
-// Slug is auto-generated; no input shown
+function compressImage(file, maxWidth = 800, quality = 0.8) {
+  return new Promise((resolve) => {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+    
+    img.onload = () => {
+      const ratio = Math.min(maxWidth / img.width, maxWidth / img.height);
+      canvas.width = img.width * ratio;
+      canvas.height = img.height * ratio;
+      
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      canvas.toBlob(resolve, 'image/webp', quality);
+    };
+    
+    img.src = URL.createObjectURL(file);
+  });
+}
 
-// Live local previews for selected images (before upload)
 images.addEventListener('change', () => {
-  const files = Array.from(images.files || []);
-  const urls = files.map((f) => URL.createObjectURL(f));
-  const wrap = document.getElementById('thumbs');
-  wrap.innerHTML = urls.map((u) => `
-    <div class="thumb"><img src="${u}" alt=""></div>
-  `).join('');
+  selectedFiles = Array.from(images.files || []);
+  renderSelectedFiles();
 });
 
-// Manager: list, filter, edit, delete
+function renderSelectedFiles() {
+  const wrap = document.getElementById('thumbs');
+  if (selectedFiles.length === 0 && imageUrls.length === 0) {
+    wrap.innerHTML = '';
+    return;
+  }
+  
+  // Show existing uploaded images (from edit mode)
+  let html = imageUrls.map((u, i) => `
+    <div class="thumb">
+      <img src="${u}" alt="">
+      <button class="remove" data-type="existing" data-i="${i}" title="Remove">×</button>
+    </div>
+  `).join('');
+  
+  // Show newly selected files
+  html += selectedFiles.map((f, i) => `
+    <div class="thumb">
+      <img src="${URL.createObjectURL(f)}" alt="">
+      <button class="remove" data-type="new" data-i="${i}" title="Remove">×</button>
+    </div>
+  `).join('');
+  
+  wrap.innerHTML = html;
+  
+  // Handle remove for existing images
+  wrap.querySelectorAll('.remove[data-type="existing"]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const i = parseInt(btn.getAttribute('data-i'));
+      imageUrls.splice(i, 1);
+      renderSelectedFiles();
+    });
+  });
+  
+  // Handle remove for newly selected files
+  wrap.querySelectorAll('.remove[data-type="new"]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const i = parseInt(btn.getAttribute('data-i'));
+      selectedFiles.splice(i, 1);
+      // Update file input (can't modify files directly, so we clear it)
+      // The selectedFiles array now holds the truth
+      renderSelectedFiles();
+    });
+  });
+}
+
 async function loadList() {
   const listEl = document.getElementById('list');
   listEl.innerHTML = '';
   let base = query(collection(db, 'news'), orderBy('publishedAt', 'desc'));
   const snap = await getDocs(base);
-  if (!snap.size) { listEl.innerHTML = '<p>No items.</p>'; return; }
+  if (!snap.size) { 
+    listEl.innerHTML = `
+      <div class="empty-state" style="grid-column: 1/-1;">
+        <svg class="empty-state-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/>
+          <path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/>
+        </svg>
+        <p>No articles yet. Create your first article above.</p>
+      </div>
+    `; 
+    return; 
+  }
   listEl.innerHTML = snap.docs.map(d => {
     const n = d.data();
     const date = n.publishedAt?.toDate ? n.publishedAt.toDate() : (n.publishedAt ? new Date(n.publishedAt) : new Date());
     const cover = n.coverUrl || (Array.isArray(n.imageUrls) && n.imageUrls[0]) || '';
-    const badge = n.published ? 'Published' : 'Draft';
+    const badgeClass = n.published ? 'badge-published' : 'badge-draft';
+    const badgeText = n.published ? 'Published' : 'Draft';
     return `
     <article class="news-card">
-      ${cover ? `<img src="${cover}" alt="">` : ''}
-      <div class="pad">
-        <time datetime="${date.toISOString()}">${date.toLocaleDateString()}</time>
-        <h3>${n.title || ''}</h3>
-        <p style="margin-top:4px"><span class="hint">${badge} · ${n.lang || 'en'}</span></p>
+      <div class="news-card-image">
+        ${cover ? `<img src="${cover}" alt="">` : ''}
       </div>
-      <div class="row" style="padding:10px; gap:8px">
-        <button class="btn btn-accent" data-action="edit" data-slug="${n.slug}">Edit</button>
-        <button class="btn" data-action="delete" data-slug="${n.slug}" style="border-color:#ef4444;color:#ef4444;background:#fff">Delete</button>
+      <div class="news-card-body">
+        <div class="news-card-meta">
+          <time class="news-card-date" datetime="${date.toISOString()}">${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</time>
+          <span class="badge ${badgeClass}">${badgeText}</span>
+          <span class="badge badge-draft">${n.lang || 'en'}</span>
+        </div>
+        <h3 class="news-card-title">${n.title || ''}</h3>
+        <div class="news-card-actions">
+          <button class="btn btn-primary" data-action="edit" data-slug="${n.slug}">Edit</button>
+          <button class="btn btn-danger" data-action="delete" data-slug="${n.slug}">Delete</button>
+        </div>
       </div>
     </article>`;
   }).join('');
@@ -253,13 +1852,10 @@ async function loadList() {
   listEl.querySelectorAll('button[data-action="delete"]').forEach(btn => btn.addEventListener('click', () => deleteItem(btn.getAttribute('data-slug')||'')));
 }
 
-// removed refresh/filter controls
-
 async function editItem(slug) {
   const ref = doc(db, 'news', slug);
   const snap = await getDoc(ref);
-  if (!snap.exists()) return alert('Not found');
-  
+  if (!snap.exists()) return showToast('Article not found', 'error');
   
   const n = snap.data();
   titleEl.value = n.title || '';
@@ -267,10 +1863,20 @@ async function editItem(slug) {
   bodyEl.value = n.body || '';
   langEl.value = n.lang || 'en';
   authorEl.value = n.author || '';
-  // all items are published on save; no checkbox to toggle
+  
+  if (n.publishedAt) {
+    const date = n.publishedAt.toDate ? n.publishedAt.toDate() : new Date(n.publishedAt);
+    publishDateEl.value = toLocalDatetimeString(date);
+  } else {
+    publishDateEl.value = '';
+  }
+  
   imageUrls = Array.isArray(n.imageUrls) ? n.imageUrls.slice() : (n.coverUrl ? [n.coverUrl] : []);
+  selectedFiles = []; // Clear any previously selected files
+  images.value = ''; // Clear file input
   renderThumbs();
-  document.getElementById('edit-badge').style.display = 'inline';
+  document.getElementById('edit-badge').style.display = 'inline-flex';
+  document.getElementById('form-title-text').textContent = 'Edit Article';
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -291,10 +1897,15 @@ function showToast(message, type = 'success') {
   if (!wrap) return;
   const el = document.createElement('div');
   el.className = `toast ${type}`;
-  el.textContent = message;
+  
+  const icon = type === 'success' 
+    ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>'
+    : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
+  
+  el.innerHTML = icon + message;
   wrap.appendChild(el);
-  setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity .3s'; }, 1800);
-  setTimeout(() => { el.remove(); }, 2200);
+  setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity .3s'; }, 2500);
+  setTimeout(() => { el.remove(); }, 2800);
 }
 
 function showConfirm(message, okText = 'OK') {
@@ -307,6 +1918,7 @@ function showConfirm(message, okText = 'OK') {
     msg.textContent = message;
     ok.textContent = okText;
     modal.style.display = 'grid';
+    modal.style.zIndex = '10000';
     const cleanup = () => { modal.style.display = 'none'; ok.onclick = null; cancel.onclick = null; };
     ok.onclick = () => { cleanup(); resolve(true); };
     cancel.onclick = () => { cleanup(); resolve(false); };
@@ -318,22 +1930,52 @@ function showConfirm(message, okText = 'OK') {
 const pName = document.getElementById('p_name');
 const pIntro = document.getElementById('p_intro');
 const pImage = document.getElementById('p_image');
-  // products are published immediately; no checkbox needed
+let pSelectedFile = null;
+let pExistingImageUrl = '';
+
+// Product image preview on file select
+pImage.addEventListener('change', () => {
+  pSelectedFile = pImage.files?.[0] || null;
+  renderProductThumb();
+});
+
+function renderProductThumb() {
+  const wrap = document.getElementById('p_thumbs');
+  if (!pSelectedFile && !pExistingImageUrl) {
+    wrap.innerHTML = '';
+    return;
+  }
+  
+  let html = '';
+  if (pExistingImageUrl) {
+    html = `<div class="thumb"><img src="${pExistingImageUrl}" alt=""><button class="remove" data-type="existing" title="Remove">×</button></div>`;
+  } else if (pSelectedFile) {
+    html = `<div class="thumb"><img src="${URL.createObjectURL(pSelectedFile)}" alt=""><button class="remove" data-type="new" title="Remove">×</button></div>`;
+  }
+  wrap.innerHTML = html;
+  
+  wrap.querySelector('.remove')?.addEventListener('click', () => {
+    pSelectedFile = null;
+    pExistingImageUrl = '';
+    pImage.value = '';
+    renderProductThumb();
+  });
+}
+
 document.getElementById('p_save').addEventListener('click', async (e) => {
   e.preventDefault();
   const name = pName.value.trim();
   const intro = pIntro.value.trim();
   const published = true;
-  if (!name) return showToast('Product name required', 'error');
   try {
     const overlay = document.getElementById('saving');
     if (overlay) overlay.style.display = 'grid';
-    let imageUrl = '';
-    const f = pImage.files?.[0];
-    if (f) {
-      const clean = f.name.replace(/[^a-zA-Z0-9_.-]/g, '_');
+    let imageUrl = pExistingImageUrl || '';
+    if (pSelectedFile) {
+      const compressedFile = await compressImage(pSelectedFile);
+      const clean = pSelectedFile.name.replace(/[^a-zA-Z0-9_.-]/g, '_').replace(/\.[^.]+$/, '.webp');
       const r = ref(st, `products/${Date.now()}-${clean}`);
-      const task = uploadBytesResumable(r, f, { cacheControl: 'public,max-age=31536000,immutable', contentType: f.type || 'application/octet-stream' });
+      const task = uploadBytesResumable(r, compressedFile, { cacheControl: 'public,max-age=31536000,immutable', contentType: 'image/webp' });
       await new Promise((resolve, reject)=>{
         task.on('state_changed', () => {}, reject, async ()=>{ imageUrl = await getDownloadURL(task.snapshot.ref); resolve(); });
       });
@@ -354,27 +1996,47 @@ document.getElementById('p_save').addEventListener('click', async (e) => {
 async function loadProducts(){
   const grid = document.getElementById('p_list');
   const snap = await getDocs(query(collection(db,'products'), orderBy('createdAt','desc')));
+  if (!snap.size) {
+    grid.innerHTML = `
+      <div class="empty-state" style="grid-column: 1/-1;">
+        <svg class="empty-state-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/>
+          <path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/>
+        </svg>
+        <p>No products yet. Add your first product above.</p>
+      </div>
+    `;
+    return;
+  }
   grid.innerHTML = snap.docs.map(d=>{
     const p = d.data();
     return `
     <article class="product-card">
-      ${p.imageUrl?`<img src="${p.imageUrl}" alt="">`:''}
-      <h4>${p.name||''}</h4>
-      <div class="row" style="gap:8px">
-        <button class="btn btn-accent" data-action="p-edit" data-id="${d.id}">Edit</button>
-        <button class="btn" data-action="p-del" data-id="${d.id}" style="border-color:#ef4444;color:#ef4444;background:#fff">Delete</button>
+      <div class="product-card-image">
+        ${p.imageUrl ? `<img src="${p.imageUrl}" alt="">` : ''}
+      </div>
+      <div class="product-card-body">
+        <h4 class="product-card-title">${p.name||''}</h4>
+        <div class="product-card-actions">
+          <button class="btn btn-primary" data-action="p-edit" data-id="${d.id}">Edit</button>
+          <button class="btn btn-danger" data-action="p-del" data-id="${d.id}">Delete</button>
+        </div>
       </div>
     </article>`;
-  }).join('') || '<p>No products yet.</p>';
+  }).join('');
   grid.querySelectorAll('button[data-action="p-edit"]').forEach(btn=>btn.addEventListener('click', async()=>{
     const id = btn.getAttribute('data-id')||'';
     const snap = await getDoc(doc(db,'products', id));
-    if (!snap.exists()) return alert('Not found');
+    if (!snap.exists()) return showToast('Product not found', 'error');
     const p = snap.data();
     pName.value = p.name || '';
     pIntro.value = p.intro || '';
+    pSelectedFile = null;
+    pExistingImageUrl = p.imageUrl || '';
+    renderProductThumb();
     currentProductId = id;
-    document.getElementById('p-edit-badge').style.display = 'inline';
+    document.getElementById('p-edit-badge').style.display = 'inline-flex';
+    document.getElementById('p-form-title-text').textContent = 'Edit Product';
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }));
   grid.querySelectorAll('button[data-action="p-del"]').forEach(btn=>btn.addEventListener('click', async()=>{
@@ -395,48 +2057,170 @@ function generateSlug() {
 }
 
 function initTabs(){
-  const tabs = document.getElementById('tabs');
   const tabNews = document.getElementById('tab-news');
   const tabProducts = document.getElementById('tab-products');
-  const editorForm = document.getElementById('editor');
-  const manager = document.getElementById('manager');
-  const productsPane = document.getElementById('products-pane');
-  const newsManagerPane = document.getElementById('news-manager-pane');
-  const tabNewsForm = document.getElementById('tab-news-form');
-  const tabProductsForm = document.getElementById('tab-products-form');
-  if (!tabs || !tabNews || !tabProducts) return;
+  const tabBanner = document.getElementById('tab-banner');
+  const newsSection = document.getElementById('news-section');
+  const productsSection = document.getElementById('products-section');
+  const bannerSection = document.getElementById('banner-section');
+  if (!tabNews || !tabProducts || !tabBanner) return;
+
+  function hideAllSections() {
+    newsSection.style.display = 'none';
+    productsSection.style.display = 'none';
+    bannerSection.style.display = 'none';
+    tabNews.classList.remove('active');
+    tabProducts.classList.remove('active');
+    tabBanner.classList.remove('active');
+  }
 
   function activateNews(){
-    editorForm.style.display = 'block';
-    newsManagerPane.style.display = 'block';
-    productsPane.style.display = 'none';
+    hideAllSections();
+    newsSection.style.display = 'block';
+    tabNews.classList.add('active');
     window.scrollTo({ top: 0, behavior: 'instant' });
-    tabNews.classList.add('btn-accent');
-    tabProducts.classList.remove('btn-accent');
   }
   function activateProducts(){
-    editorForm.style.display = 'none';
-    newsManagerPane.style.display = 'none';
-    productsPane.style.display = 'block';
+    hideAllSections();
+    productsSection.style.display = 'block';
+    tabProducts.classList.add('active');
     window.scrollTo({ top: 0, behavior: 'instant' });
-    tabProducts.classList.add('btn-accent');
-    tabNews.classList.remove('btn-accent');
+  }
+  function activateBanner(){
+    hideAllSections();
+    bannerSection.style.display = 'block';
+    tabBanner.classList.add('active');
+    loadBannerPreview();
+    window.scrollTo({ top: 0, behavior: 'instant' });
   }
   tabNews.addEventListener('click', activateNews);
   tabProducts.addEventListener('click', activateProducts);
-
-  // Remove secondary form-level tabs if present
-  if (tabNewsForm) tabNewsForm.style.display = 'none';
-  if (tabProductsForm) tabProductsForm.style.display = 'none';
-
-  // default
+  tabBanner.addEventListener('click', activateBanner);
   activateNews();
 }
 
+// Banner admin
+const bannerImage = document.getElementById('banner_image');
+const bannerLink = document.getElementById('banner_link');
+let bannerSelectedFile = null;
+let bannerExistingImageUrl = '';
+
+// Banner image preview on file select
+bannerImage.addEventListener('change', () => {
+  bannerSelectedFile = bannerImage.files?.[0] || null;
+  renderBannerThumb();
+});
+
+function renderBannerThumb() {
+  const wrap = document.getElementById('banner_thumbs');
+  if (!bannerSelectedFile && !bannerExistingImageUrl) {
+    wrap.innerHTML = '';
+    return;
+  }
+  
+  let html = '';
+  if (bannerSelectedFile) {
+    html = `<div class="thumb"><img src="${URL.createObjectURL(bannerSelectedFile)}" alt=""><button class="remove" data-type="new" title="Remove">×</button></div>`;
+  } else if (bannerExistingImageUrl) {
+    html = `<div class="thumb"><img src="${bannerExistingImageUrl}" alt=""><button class="remove" data-type="existing" title="Remove">×</button></div>`;
+  }
+  wrap.innerHTML = html;
+  
+  wrap.querySelector('.remove')?.addEventListener('click', () => {
+    bannerSelectedFile = null;
+    bannerExistingImageUrl = '';
+    bannerImage.value = '';
+    renderBannerThumb();
+  });
+}
+
+document.getElementById('banner_save').addEventListener('click', async (e) => {
+  e.preventDefault();
+  const linkUrl = bannerLink.value.trim();
+  try {
+    const overlay = document.getElementById('saving');
+    if (overlay) overlay.style.display = 'grid';
+    let imageUrl = bannerExistingImageUrl || '';
+    if (bannerSelectedFile) {
+      const compressedFile = await compressImage(bannerSelectedFile);
+      const clean = bannerSelectedFile.name.replace(/[^a-zA-Z0-9_.-]/g, '_').replace(/\.[^.]+$/, '.webp');
+      const r = ref(st, `banners/${Date.now()}-${clean}`);
+      const task = uploadBytesResumable(r, compressedFile, { cacheControl: 'public,max-age=31536000,immutable', contentType: 'image/webp' });
+      await new Promise((resolve, reject)=>{
+        task.on('state_changed', () => {}, reject, async ()=>{ imageUrl = await getDownloadURL(task.snapshot.ref); resolve(); });
+      });
+    }
+    if (!imageUrl) {
+      showToast('Please select a banner image', 'error');
+      return;
+    }
+    await setDoc(doc(db, 'settings', 'brandBanner'), { imageUrl, linkUrl, updatedAt: serverTimestamp() });
+    showToast('Banner saved', 'success');
+    bannerImage.value = '';
+    bannerSelectedFile = null;
+    bannerExistingImageUrl = '';
+    renderBannerThumb();
+    loadBannerPreview();
+  } catch (err) {
+    showToast(err.message || 'Save failed', 'error');
+  } finally {
+    const overlay = document.getElementById('saving');
+    if (overlay) overlay.style.display = 'none';
+  }
+});
+
+async function loadBannerPreview() {
+  const previewEl = document.getElementById('banner_preview');
+  if (!previewEl) return;
+  try {
+    const bannerDoc = await getDoc(doc(db, 'settings', 'brandBanner'));
+    if (bannerDoc.exists() && bannerDoc.data().imageUrl) {
+      const data = bannerDoc.data();
+      previewEl.innerHTML = `
+        <img src="${data.imageUrl}" alt="Current Banner" class="banner-preview-image" />
+        <div class="banner-preview-info">
+          <div class="banner-preview-link"><strong>Link:</strong> ${data.linkUrl || '(No link set)'}</div>
+          <div class="banner-preview-actions">
+            <button class="btn btn-danger" id="banner_remove">Remove Banner</button>
+          </div>
+        </div>
+      `;
+      bannerLink.value = data.linkUrl || '';
+      document.getElementById('banner_remove').addEventListener('click', removeBanner);
+    } else {
+      previewEl.innerHTML = `
+        <div class="empty-state">
+          <svg class="empty-state-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+          <p>No banner configured</p>
+        </div>
+      `;
+      bannerLink.value = '';
+    }
+  } catch (err) {
+    console.error('Error loading banner preview:', err);
+  }
+}
+
+async function removeBanner() {
+  const ok = await showConfirm('Remove this banner?', 'Remove');
+  if (!ok) return;
+  try {
+    const overlay = document.getElementById('saving');
+    if (overlay) overlay.style.display = 'grid';
+    await deleteDoc(doc(db, 'settings', 'brandBanner'));
+    showToast('Banner removed', 'success');
+    loadBannerPreview();
+  } catch (err) {
+    showToast(err.message || 'Remove failed', 'error');
+  } finally {
+    const overlay = document.getElementById('saving');
+    if (overlay) overlay.style.display = 'none';
+  }
+}
+
 // Badge click handlers to cancel edit mode
-document.getElementById('edit-badge').addEventListener('click', clearNewsForm);
-document.getElementById('p-edit-badge').addEventListener('click', clearProductForm);
+document.getElementById('edit-badge')?.addEventListener('click', clearNewsForm);
+document.getElementById('p-edit-badge')?.addEventListener('click', clearProductForm);
 </script>
-</body></html>
-
-
+</body>
+</html>

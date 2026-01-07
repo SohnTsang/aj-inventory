@@ -1,27 +1,86 @@
 (function() {
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  // Bandwidth monitoring
+  let totalBandwidth = 0;
+  const startTime = performance.now();
+  
+  function formatBytes(bytes) {
+    if (bytes === 0) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  }
+  
+  function logBandwidth() {
+    if (!performance.getEntriesByType) return;
+    
+    const resources = performance.getEntriesByType('resource');
+    let pageTotal = 0;
+    
+    console.group('🌐 Bandwidth Usage - ' + window.location.pathname);
+    
+    resources.forEach(resource => {
+      if (resource.transferSize > 0) {
+        pageTotal += resource.transferSize;
+        if (resource.transferSize > 10000) { // Log files > 10KB
+          console.log(`📦 ${resource.name.split('/').pop()} - ${formatBytes(resource.transferSize)}`);
+        }
+      }
+    });
+    
+    totalBandwidth += pageTotal;
+    console.log(`📊 This page: ${formatBytes(pageTotal)}`);
+    console.log(`📈 Session total: ${formatBytes(totalBandwidth)}`);
+    console.log(`⏱️ Load time: ${((performance.now() - startTime) / 1000).toFixed(2)}s`);
+    console.groupEnd();
+  }
+  
+  // Log bandwidth on page load
+  window.addEventListener('load', () => setTimeout(logBandwidth, 1000));
+  
+  // Log bandwidth on navigation
+  let lastUrl = location.href;
+  new MutationObserver(() => {
+    const url = location.href;
+    if (url !== lastUrl) {
+      lastUrl = url;
+      setTimeout(logBandwidth, 1000);
+    }
+  }).observe(document, { subtree: true, childList: true });
+
   // Translations (moved to top to avoid TDZ when used below)
-  const translations = {
+  const translations = window.translations = {
     en: {
 	      'nav.home': 'Home', 'nav.about': 'About Us', 'nav.services': 'Our Services', 'nav.brand': 'Brand', 'nav.products': 'Our Products', 'nav.news': 'News', 'nav.achievements': 'Achievements', 'nav.contact': 'Contact',
-      'hero.title': 'Reliable Cross-Border Logistics',
-      'hero.lead': 'We move your goods between Malaysia, Singapore, and beyond with speed and care.',
+      'hero.title': 'A&J HAKKO SINGAPORE',
+      'hero.lead': 'Seamless cargo solutions across Asian waters, delivered with precision and trust since 1954.',
       'hero.ctaServices': 'Our Services', 'hero.ctaContact': 'Contact',
-      'services.title': 'Our Services', 'services.details': 'Details',
-      'services.logistics.title': 'Logistics Business', 'services.logistics.summary': 'One-stop food import/export, delivery and wholesale services from Japan to Singapore with cold chain logistics.', 'services.logistics.body': 'We provide comprehensive food import/export, delivery and wholesale services from Japan to Singapore. Our Japanese food products range from processed foods to rice and meat, maintaining quality regardless of temperature until delivery to stores. We currently have storage space for over 2000 pallets in our cold storage facilities, and by utilizing our own refrigerated trucks, we have established a cold chain that enables consistent low-temperature delivery from Japan to local destinations. In addition to regular shipping by container ships, we can also arrange transportation by air freight and other methods according to your needs.', 'services.logistics.features.title': 'Key Features', 'services.logistics.features.f1': '2000+ pallet cold storage capacity', 'services.logistics.features.f2': 'Own fleet of refrigerated trucks', 'services.logistics.features.f3': 'End-to-end cold chain logistics', 'services.logistics.features.f4': 'Sea and air freight options',
-      'services.events.title': 'Event Support Business', 'services.events.summary': 'Support for Japanese food event exhibitions at local department stores with end-to-end logistics.', 'services.events.body': 'In addition to our logistics business, we also support Japanese food event exhibitions at local department stores. We provide one-stop support from export operations including customs clearance from Japan to local destinations, delivery to stores while maintaining quality, and post-event support. Furthermore, by working closely with our subsidiary A&J Malaysia, which is based in Malaysia, we are expanding our services widely throughout Asia, not just Singapore.', 'services.events.features.title': 'Event Services', 'services.events.features.f1': 'Export operations and customs clearance', 'services.events.features.f2': 'Quality-maintained delivery to venues', 'services.events.features.f3': 'Post-event logistics support', 'services.events.features.f4': 'Pan-Asian expansion through A&J Malaysia',
-      'services.investment.title': 'Investment Business', 'services.investment.summary': 'Strategic investments in Asian food and beverage businesses to expand Japanese food accessibility.', 'services.investment.body': 'A&J HAKKO invests in Asian food and beverage businesses in Singapore, Thailand, and China to provide opportunities for people to enjoy Japanese food locally. We will continue to leverage our logistics expertise to support businesses in various ways so that people overseas can become familiar with Japanese food products.', 'services.investment.features.title': 'Investment Focus', 'services.investment.features.f1': 'Strategic investments in F&B businesses', 'services.investment.features.f2': 'Focus on Singapore, Thailand, and China', 'services.investment.features.f3': 'Leveraging logistics expertise', 'services.investment.features.f4': 'Expanding Japanese food accessibility',
-      'brand.title': 'Our Customers',
-      'about.subtitle': 'Bringing Asia Closer Together', 'about.body': 'A&J HAKKO delivers Japan’s finest foods across Asia, powered by Hakko Transport’s 70+ years of reliability. Our logistics protect freshness end-to-end and adapt to each market, so authentic Japanese flavors arrive exactly as intended.', 'about.learnMore': 'Learn More About Us',
-      'company.title': 'Company Information', 'company.intro': 'A&J HAKKO is dedicated to delivering the finest Japanese food products not only domestically but throughout Asia. Rooted in Hakko Transport Co., Ltd., a company with over 70 years of history since its founding, we have cultivated logistics expertise that preserves food quality while delivering products intact across Asia.', 'company.history.title': 'Our Heritage', 'company.history.body': 'Founded on the strong foundation of Hakko Transport Co., Ltd., which has been operating for over 70 years, A&J HAKKO brings decades of logistics expertise to the Asian market. We have developed specialized knowledge in food transportation, ensuring that products maintain their quality and freshness throughout the supply chain.', 'company.stat1': 'Years of Experience', 'company.stat2': 'Pallet Capacity', 'company.stat3': 'Countries', 'company.stat4': 'Cold Chain',
-      'location.title': 'Location', 'location.hours': 'Business hours', 'location.email': 'Email', 'location.phone': 'Phone',
+      'services.title': 'Our Services', 'services.subtitle': 'Comprehensive logistics solutions designed to connect Asia and deliver excellence across every touchpoint', 'services.details': 'Details',
+      'services.hero.tag': 'Our Services', 'services.hero.title': 'Our Services',
+      'services.logistics.nav': 'Logistics', 'services.retail.nav': 'Retail', 'services.events.nav': 'Events', 'services.investment.nav': 'Investment',
+      'services.logistics.title': 'Logistics Services', 'services.logistics.summary': 'We provide end-to-end logistics solutions for the import, export, and distribution of food products between Japan and Singapore.', 'services.logistics.description': 'We provide end-to-end logistics solutions for the import, export, and distribution of food products between Japan and Singapore. Our handling range covers everything from processed foods and rice to meat products, ensuring that all items are delivered under optimal temperature conditions — ambient, chilled, or frozen — without compromising quality. With a total warehouse capacity exceeding 60,000 pallets, and a fleet of company-owned refrigerated trucks, we have established a seamless cold chain from Japan to the final destination. In addition to regular sea freight, we also arrange air shipments and customized logistics solutions based on clients\' needs.',
+      'services.events.title': 'Event & Exhibition Support', 'services.events.summary': 'We provide comprehensive event support services for Japanese food fairs and pop-up promotions held at major department stores across Singapore.', 'services.events.description': 'We provide comprehensive event support services for Japanese food fairs and pop-up promotions held at major department stores across Singapore. From export documentation and customs clearance to temperature-controlled delivery and post-event handling, our services cover every step. Working closely with our Malaysian subsidiary, A&J Malaysia, we aim to expand these capabilities across Asia and deliver greater value to both Japanese suppliers and local partners.',
+      'services.investment.title': 'Investment & Partnership', 'services.investment.summary': 'To promote Japanese food culture across Asia, A&J HAKKO also invests in food-related ventures in Singapore, Thailand, and China.', 'services.investment.description': 'To promote Japanese food culture across Asia, A&J HAKKO also invests in food-related ventures in Singapore, Thailand, and China. By combining our logistics expertise with local market insights, we continue to create opportunities for people throughout Asia to experience and enjoy the rich flavors of Japan.',
+      'services.retail.title': 'Retail Support', 'services.retail.summary': 'Beyond logistics, we actively support sales and marketing of food products in Singapore.', 'services.retail.description': 'Beyond logistics, we actively support sales and marketing of food products in Singapore. By leveraging our strong local retail network — including department stores, supermarkets, and online platforms — we help Japanese brands effectively reach consumers. Our team also conducts in-store promotions, tasting events, and feedback sessions, allowing us to incorporate real consumer insights into our sales strategies and strengthen brand presence in the market.',
+      'brand.title': 'Our Brand',
+      'about.subtitle': 'BRINGING ASIA CLOSER TOGETHER', 'about.body': 'A&J HAKKO PTE LTD is dedicated to delivering the authentic taste and quality of Japanese food — not only within Japan but throughout Asia.<br> Rooted in the long-established Hakko Unyu Co., Ltd., a logistics company with over 70 years of history, we have developed the expertise to transport Japanese food products overseas while maintaining their freshness and quality.<br> By leveraging our logistics know-how and adapting to diverse local practices, we support the smooth and reliable distribution of Japanese food across Asia.', 'about.learnMore': 'Learn More',
+      'company.title': 'Company Information', 'company.intro': 'A&J HAKKO is dedicated to delivering the finest Japanese food products not only domestically but throughout Asia. Rooted in HAKKO UNYU CO., LTD., a company with over 70 years of history since its founding, we have cultivated logistics expertise that preserves food quality while delivering products intact across Asia.', 'company.stat1': 'Import Experience', 'company.stat2': 'Containers Handled', 'company.stat3': 'Monthly Boxes', 'company.stat4': 'Japanese Partners',
+      'company.overview.title': 'Company Overview',
+      'company.table.name': 'Company Name', 'company.table.registration': 'Registration Number', 'company.table.ceo': 'Representative', 'company.table.ceo.name': 'Mr. Shuhei Miwa, Managing Director', 'company.table.address': 'Address', 'company.table.phone': 'Phone', 'company.table.fax': 'FAX',
+      'company.licenses.title': 'Licenses & Permits', 'company.licenses.food': 'Food Import Registration', 'company.licenses.food.desc': 'Registration to Import Processed Food Products and Food Appliances', 'company.licenses.meat': 'Meat & Fish License', 'company.licenses.meat.desc': 'Licence for Import/Export/Transhipment of Meat and Fish Products', 'company.licenses.produce': 'Fresh Produce License', 'company.licenses.produce.desc': 'Licence for Import/Transhipment of Fresh Fruits and Vegetables', 'company.licenses.liquor': 'Liquor License', 'company.licenses.liquor.desc': 'Liquor Licence (Class 1A, 1B, 2A, 2B, 3A, 3B, 4)', 'company.licenses.rice': 'Rice License', 'company.licenses.rice.desc': 'Rice Import & Distribution License', 'company.licenses.factory': 'Factory Registration', 'company.licenses.factory.desc': 'Factory Notification and Registration',
+      'company.products.title': 'Products We Handle', 'company.products.food.title': 'Food Products', 'company.products.food.desc': 'Processed foods, seafood, seaweed, seasonings, ice cream, alcoholic beverages, rice, beef, mineral water, and fresh produce.', 'company.products.home.title': 'Home Goods', 'company.products.home.desc': 'Bedding and related items.', 'company.products.cosmetics.title': 'Cosmetics', 'company.products.cosmetics.desc': 'Beauty and personal care products.', 'company.products.general.title': 'General Merchandise', 'company.products.general.desc': 'Various other goods and products.',
+      'company.history.title': 'Company History', 'company.history.2011': 'Established A&J HAKKO PTE. LTD. in Singapore as a wholly owned subsidiary of HAKKO UNYU CO., LTD (Japan).', 'company.history.2012': 'Opened the "$2 Shop NANAIRO" (the store has since closed) in Tampines and launched food and household goods import business for the Singapore market.', 'company.history.2013a': 'Began logistics coordination services for Japanese department store fairs.', 'company.history.2013b': 'Started importing and distributing Hokkaido Crossbred Beef in Singapore.', 'company.history.2015': 'Started a logistics business focused on frozen goods, including storage and delivery.', 'company.history.2016': 'Relocated office and warehouse to support business growth.', 'company.history.2017a': 'Established a joint venture in Thailand — JST Foods Co., Ltd. — with local partners from Thailand and Singapore.', 'company.history.2017b': 'Opened a Châteraisé franchise store in Ekkamai, Bangkok.', 'company.history.2018': 'Opened a second Châteraisé franchise store in Bangsue, Bangkok.', 'company.history.2019a': 'Formed a joint venture in China — CJS Holdings Pte., Ltd. — with partners from China and Singapore.', 'company.history.2019b': 'Commenced import and export customs clearance operations.', 'company.history.2019c': 'Established A&J HAKKO (M) SDN. BHD. in Malaysia as a wholly owned subsidiary.', 'company.history.2022a': 'Expanded cold storage capacity to 3,000 pallets to accommodate growing volume of frozen cargo.', 'company.history.2022b': 'Launched online retail operations through Lazada Singapore.', 'company.history.2023': 'Started consignment sales at Isetan Singapore.', 'company.history.2025': 'Relocated to the current office and warehouse facility to further enhance logistics operations.',
+      'company.hero.tag': 'About Us', 'company.hero.title': 'Bringing Asia Closer Together',
+      'company.hero.badge': 'Since 1954', 'company.hero.title1': 'Bringing Asia', 'company.hero.title2': 'Closer Together', 'company.hero.description': 'With over 70 years of heritage from HAKKO UNYU CO., LTD., we\'ve mastered the art of preserving quality while delivering authentic Japanese products across Asia.', 'company.stats.import': 'Years Import Experience', 'company.stats.containers': 'Containers Handled', 'company.stats.monthly': 'Monthly Box Volume', 'company.stats.partners': 'Japanese Partners', 'company.overview.label': 'Company Information', 'company.overview.title': 'Corporate Overview', 'company.licenses.label': 'Compliance', 'company.licenses.title': 'Licenses & Certifications', 'company.history.label': 'Our Journey', 'company.history.title': 'Milestones of Growth', 'company.group.label': 'Network', 'company.group.title': 'Group Companies', 'company.group.subtitle': 'A powerful network of specialized companies delivering excellence across Asia', 'company.group.japan': 'Japan', 'company.group.malaysia': 'Malaysia', 'company.group.hakko.desc': 'Transportation, port handling, customs clearance', 'company.group.auto.desc': 'Automotive maintenance, private vehicle inspection', 'company.group.travel.desc': 'Travel agency services', 'company.group.bayfront.desc': 'Tugboat services, port services', 'company.group.vanliner.desc': 'Container transportation services', 'company.group.hutec.desc': 'Temporary staffing services', 'company.group.insurance.desc': 'Insurance services', 'company.group.shoji.desc': 'Export business', 'company.group.malaysia.desc': 'Import business',
+      'location.title': 'Location', 'location.subtitle': 'Strategically positioned across Asia-Pacific for seamless logistics coverage', 'location.hours': 'Business hours', 'location.email': 'Email', 'location.phone': 'Phone', 'location.directions': 'Get Directions',
       'location.my.title': 'Malaysia', 'location.my.addr': 'No. 33-5, 5th Floor, The Boulevard Office, Mid Valley City, Lingkaran Syed Putra, 59200, Kuala Lumpur, Malaysia',
       'location.sg.title': 'Singapore', 'location.sg.addr': '1 Buroh Lane, #2M-04, Singapore 618292',
       'location.jp.title': 'Japan', 'location.jp.addr': '〒8830-0062 Miyazaki Prefecture, Hyuga City, Oaza Nichiya 16392',
-      'achievements.title': 'Achievements', 'achievements.onTime': 'On‑time delivery rate', 'achievements.lanes': 'Lanes/countries covered', 'achievements.clearance': 'Average clearance time', 'achievements.skus': 'Monthly handled SKUs/TEUs',
-      'products.title': 'Our Products', 'products.p1': 'Premium Supplements', 'products.p2': 'Skincare Essentials', 'products.p3': 'Cosmetics', 'products.p4': 'Snacks & Beverages', 'products.shop': 'Shop on Lazada', 'products.shopNow': 'Shop Now', 'products.viewAll': 'View all',
-	      'news.title': 'Latest News', 'news.viewAll': 'View all news'
+      'achievements.title': 'Achievements', 'achievements.subtitle': 'Delivering excellence across Asia-Pacific with proven results', 'achievements.import': 'Years of import experience', 'achievements.containers': 'Containers handled', 'achievements.monthly': 'Boxes handled monthly', 'achievements.partners': 'Japanese business partners',
+      'products.title': 'Our Products', 'products.subtitle': 'Premium Japanese products delivered fresh to your doorstep', 'products.hero.tag': 'Our Products', 'products.hero.title': 'Our Products', 'products.p1': 'Premium Supplements', 'products.p2': 'Skincare Essentials', 'products.p3': 'Cosmetics', 'products.p4': 'Snacks & Beverages', 'products.shop': 'Visit Lazada', 'products.shopNow': 'Visit Our Lazada', 'products.viewAll': 'View all',
+	      'news.title': 'Latest News', 'news.hero.tag': 'News & Updates', 'news.hero.title': 'Latest News & Updates', 'news.viewAll': 'View all news', 'news.noNews': 'No news yet.', 'news.noNewsAvailable': 'No news available', 'news.checkBack': 'Check back later for the latest updates.'
     },
     enTitle: {
       'achievements.onTimeTip': 'On-time deliveries divided by total deliveries completed in the last quarter.',
@@ -30,23 +89,34 @@
       'achievements.skusTip': 'Total SKUs handled or TEUs processed per month.'
     },
 	    jp: {
-	      'nav.home': 'ホーム', 'nav.about': '会社情報', 'nav.services': 'サービス', 'nav.brand': 'ブランド', 'nav.products': '製品', 'nav.news': 'ニュース', 'nav.achievements': '実績', 'nav.contact': '連絡先',
+	    'nav.home': 'ホーム', 'nav.about': '会社情報', 'nav.services': '事業内容', 'nav.brand': 'ブランド', 'nav.products': '製品', 'nav.news': 'ニュース', 'nav.achievements': '実績', 'nav.contact': '問い合わせ先',
       'hero.title': '信頼できる越境物流',
       'hero.lead': 'マレーシアとシンガポールを中心に、迅速かつ丁寧に輸送します。',
-      'hero.ctaServices': 'サービス', 'hero.ctaContact': '連絡先',
-      'services.title': 'サービス一覧', 'services.details': '詳細',
-      'services.logistics.title': '物流事業', 'services.logistics.summary': '日本からシンガポールへの食品輸出入、配送および卸売販売をコールドチェーンでワンストップ提供。', 'services.logistics.body': '日本からシンガポールへの食品輸出入、配送および卸売販売をワンストップで行っています。扱う日本食品は加工品や米、肉など多岐に渡り、温度に関わらず品質を保ったまま店舗までお届けします。現在、冷凍倉庫には2000パレットを超える保管スペースを確保しており、自社冷凍トラックを活用することで、日本から現地目的地までの配送を低温で一貫して行えるコールドチェーンを確立しています。', 'services.logistics.features.title': '主な特徴', 'services.logistics.features.f1': '2000パレット以上の冷蔵倉庫容量', 'services.logistics.features.f2': '自社冷凍トラック保有', 'services.logistics.features.f3': 'エンドツーエンドコールドチェーン物流', 'services.logistics.features.f4': '海上・航空輸送オプション',
-      'services.events.title': '催事支援事業', 'services.events.summary': '現地百貨店での日本食品催事出展をエンドツーエンドでサポート。', 'services.events.body': '物流事業に加え、現地の百貨店における日本食品の催事出展もサポートしています。日本から現地への通関を含む輸出業務、品質を保ったままで店舗へ配送、さらにイベント後のサポートまでワンストップで対応しています。', 'services.events.features.title': 'イベントサービス', 'services.events.features.f1': '輸出業務・通関手続き', 'services.events.features.f2': '品質保持した会場への配送', 'services.events.features.f3': 'イベント後の物流サポート', 'services.events.features.f4': 'A&J Malaysiaとの連携によるアジア展開',
-      'services.investment.title': '出資事業', 'services.investment.summary': '日本食のアクセシビリティ拡大のためのアジア飲食事業への戦略的投資。', 'services.investment.body': 'A&J HAKKOは、現地で日本食を楽しめる機会を提供するため、シンガポールやタイ、中国でのアジア飲食関連事業への出資を行っています。今後も当社の物流ノウハウを活かし、海外でも日本の食品に親しんでいただけるよう、多角的に事業を支援していきます。', 'services.investment.features.title': '投資フォーカス', 'services.investment.features.f1': '飲食事業への戦略的投資', 'services.investment.features.f2': 'シンガポール、タイ、中国に焦点', 'services.investment.features.f3': '物流専門知識の活用', 'services.investment.features.f4': '日本食アクセシビリティの拡大',
-      'brand.title': 'お客様',
-      'about.subtitle': 'アジアを身近に', 'about.body': 'A&J HAKKOは、創業70年以上の八興運輸を基盤に、日本の上質な食品をアジア各地へ届けます。各国の物流慣習に柔軟に対応し、鮮度と品質を守って、本来の味わいのままお届けします。', 'about.learnMore': '会社情報を見る',
-      'location.title': '所在地', 'location.hours': '営業時間', 'location.email': 'メール', 'location.phone': '電話',
+      'hero.ctaServices': '事業内容', 'hero.ctaContact': '問い合わせ先',
+      'services.title': '事業内容一覧', 'services.subtitle': 'アジアを結び、あらゆる接点で卓越性を提供する包括的な物流ソリューション', 'services.details': '詳細',
+      'services.hero.tag': '事業内容', 'services.hero.title': '事業内容',
+      'services.logistics.nav': '物流', 'services.retail.nav': '小売', 'services.events.nav': 'イベント', 'services.investment.nav': '出資',
+      'services.logistics.title': '物流事業', 'services.logistics.summary': '日本からシンガポールへの食品輸出入、配送および卸売販売をワンストップで行っています。扱う日本食品は加工品や米、肉など多岐に渡り、温度に関わらず品質を保ったまま店舗までお届けします。', 'services.logistics.description': '日本からシンガポールへの食品輸出入、配送および卸売販売をワンストップで行っています。扱う日本食品は加工品や米、肉など多岐に渡り、温度に関わらず品質を保ったまま店舗までお届けします。現在、常温・冷蔵・冷凍の倉庫には合計60,000パレットを超える保管スペースを確保しており、自社冷凍トラックを活用することで、日本から現地目的地までの配送を低温で一貫して行えるコールドチェーンを確立しています。また、コンテナ船での定期輸送のほか、航空便など、用途に合わせた輸送のアレンジが可能です。',
+      'services.events.title': '催事支援事業', 'services.events.summary': '物流・小売事業に加え、現地の百貨店における日本食品の催事出展もサポートしています。日本から現地への通関を含む輸出業務をはじめ、品質を保ったままで店舗へ配送、さらにイベント後のサポートまでワンストップで対応しています。', 'services.events.description': '物流・小売事業に加え、現地の百貨店における日本食品の催事出展もサポートしています。日本から現地への通関を含む輸出業務をはじめ、品質を保ったままで店舗へ配送、さらにイベント後のサポートまでワンストップで対応しています。またさらに、マレーシアに拠点を置く子会社、A&J Malaysiaと密に連携することで、シンガポールだけでなくアジアに広くサービスを拡張していきます。',
+      'services.investment.title': '出資事業', 'services.investment.summary': '現地で日本食を楽しめる機会を提供するため、シンガポールやタイ、中国でのアジア飲食関連事業への出資を行っています。今後も当社の物流ノウハウを活かし、海外でも日本の食品に親しんでいただけるよう、多角的に事業を支援していきます。', 'services.investment.description': '現地で日本食を楽しめる機会を提供するため、シンガポールやタイ、中国でのアジア飲食関連事業への出資を行っています。今後も当社の物流ノウハウを活かし、海外でも日本の食品に親しんでいただけるよう、多角的に事業を支援していきます。',
+      'services.retail.title': '小売事業', 'services.retail.summary': 'A＆J HAKKO PTE LTDでは、モノを運ぶだけでなく、現地とのコミュニケーションを通じて商品の良さを最大限お伝えしたいと考えているため、シンガポールの店舗における日本食品の販売支援も行なっています。', 'services.retail.description': 'A＆J HAKKO PTE LTDでは、モノを運ぶだけでなく、現地とのコミュニケーションを通じて商品の良さを最大限お伝えしたいと考えているため、シンガポールの店舗における日本食品の販売支援も行なっています。百貨店、食料品店、オンラインサイトを含む当社の幅広い販路を活かしながら、店舗担当者へのヒアリングや売場づくり、試食会などのイベントアレンジも実施することで、現地の生の声を掬い上げ、販売戦略に反映することが可能です。',
+      'brand.title': 'ブランド',
+      'about.subtitle': 'アジアを身近に', 'about.body': 'A&J HAKKO PTE LTDは、日本の食品のおいしさを国内だけでなく、広くアジアに届けることをミッションとしています。創業から70年以上の歴史を持つ八興運輸株式会社をルーツとし、食品の品質を落とすことなく、そのままアジアに届ける物流のノウハウを培ってきました。海外での多様な物流習慣に対応し、日本の味を世界へ伝えるサポートを行っています。', 'about.learnMore': '会社情報を見る',
+      'location.title': '所在地', 'location.subtitle': 'シームレスな物流カバレッジのためにアジア太平洋地域に戦略的に配置', 'location.hours': '営業時間', 'location.email': 'メール', 'location.phone': '電話', 'location.directions': '場所を確認',
       'location.my.title': 'マレーシア', 'location.my.addr': 'No. 33-5, 5th Floor, The Boulevard Office, Mid Valley City, Lingkaran Syed Putra, 59200, Kuala Lumpur, Malaysia',
       'location.sg.title': 'シンガポール', 'location.sg.addr': '1 Buroh Lane, #2M-04, Singapore 618292',
       'location.jp.title': '日本', 'location.jp.addr': '〒8830-0062宮崎県日向市大字日知屋16392番地',
-      'achievements.title': '実績', 'achievements.onTime': '定時納品率', 'achievements.lanes': '対応レーン/国数', 'achievements.clearance': '平均通関時間', 'achievements.skus': '月間取扱SKU/TEU',
-      'products.title': '製品', 'products.p1': 'プレミアムサプリ', 'products.p2': 'スキンケア', 'products.p3': 'コスメ', 'products.p4': 'スナック・飲料', 'products.shop': 'Lazadaで購入', 'products.shopNow': '今すぐ購入', 'products.viewAll': 'すべて見る',
-	      'news.title': '最新ニュース', 'news.viewAll': 'ニュース一覧へ'
+      'company.intro': 'A&J HAKKO PTE LTDは、日本の食品のおいしさを国内だけでなく、広くアジアに届けることをミッションとしています。創業から70年以上の歴史を持つ八興運輸株式会社をルーツとし、食品の品質を落とすことなく、そのままアジアに届ける物流のノウハウを培ってきました。海外での多様な物流習慣に対応し、日本の味を世界へ伝えるサポートを行っています。', 'company.stat1': '輸入実績', 'company.stat2': 'コンテナ取扱い', 'company.stat3': '月間取扱い箱数', 'company.stat4': '日本企業取引先',
+      'company.overview.title': '会社概要',
+      'company.table.name': '社名', 'company.table.registration': '法人番号', 'company.table.ceo': '代表者', 'company.table.ceo.name': '代表取締役社長　三輪修平', 'company.table.address': '所在地', 'company.table.phone': '電話番号', 'company.table.fax': 'FAX',
+      'company.licenses.title': '許認可', 'company.licenses.food': '食品輸入登録', 'company.licenses.food.desc': '加工食品・食品器具輸入登録', 'company.licenses.meat': '肉類・魚類ライセンス', 'company.licenses.meat.desc': '肉類・魚類製品の輸入/輸出/積替ライセンス', 'company.licenses.produce': '青果物ライセンス', 'company.licenses.produce.desc': '生鮮果物・野菜の輸入/積替ライセンス', 'company.licenses.liquor': '酒類ライセンス', 'company.licenses.liquor.desc': '酒類ライセンス（クラス1A、1B、2A、2B、3A、3B、4）', 'company.licenses.rice': '米ライセンス', 'company.licenses.rice.desc': '米輸入・販売ライセンス', 'company.licenses.factory': '工場登録', 'company.licenses.factory.desc': '工場届出・登録',
+      'company.products.title': '取扱い貨物', 'company.products.food.title': '食品全般', 'company.products.food.desc': '加工食品、魚介類、海藻類、調味料、アイスクリーム、酒類、米、牛肉、ミネラルウォーター、青果物等', 'company.products.home.title': '寝具', 'company.products.home.desc': '寝具および関連商品', 'company.products.cosmetics.title': '化粧品', 'company.products.cosmetics.desc': '美容・パーソナルケア製品', 'company.products.general.title': '雑品等', 'company.products.general.desc': 'その他各種商品',
+      'company.history.title': '沿革', 'company.history.2011': '八興運輸㈱100%子会社としてA&J HAKKO PTE LTD設立', 'company.history.2012': '$2ショップ NANAIROをTampinesにオープン（現在閉店）。同時にシンガポール向け食品雑貨輸入事業開始', 'company.history.2013a': '日系デパート物産展　物流取りまとめ事業開始', 'company.history.2013b': '北海道産　交雑牛（牛肉）輸入販売開始', 'company.history.2015': '冷凍を主とした物流事業開始（保管・配送）', 'company.history.2016': 'ビジネス拡大に伴い、事務所兼倉庫移転', 'company.history.2017a': 'タイ・シンガポール拠点の会社と共にタイに合弁会社 JST Foods Co., Ltd設立', 'company.history.2017b': 'タイのEkkamaiにてシャトレーゼ社フランチャイズ店舗をオープン', 'company.history.2018': 'タイのBANGSUEにてシャトレーゼ社フランチャイズ店舗をオープン', 'company.history.2019a': '中国・シンガポール拠点の会社と共に中国に合弁会社 CJS Holdings Pte.,Ltd設立', 'company.history.2019b': '輸出入通関事業を開始', 'company.history.2019c': 'A&J HAKKOの100%子会社としてA&J HAKKO (M) SDN.BHD.をマレーシアに設立', 'company.history.2022a': '取扱貨物増加に伴い冷凍倉庫格納数を3000パレットに拡充', 'company.history.2022b': 'LAZADA オンライン販売開始', 'company.history.2023': '伊勢丹シンガポール委託販売開始', 'company.history.2025': '事務所兼倉庫を現在の場所に移転',
+      'company.hero.tag': '会社情報', 'company.hero.title': 'アジアを身近に',
+      'company.hero.badge': '1954年創業', 'company.hero.title1': 'アジアを', 'company.hero.title2': '身近に', 'company.hero.description': '八興運輸株式会社から70年以上の歴史を持つ当社は、品質を保持しながら本格的な日本製品をアジア全域にお届けする技術を習得してきました。', 'company.stats.import': '輸入実績', 'company.stats.containers': 'コンテナ取扱い実績', 'company.stats.monthly': '月間取扱い箱数', 'company.stats.partners': '日本企業取引先', 'company.overview.label': '企業情報', 'company.overview.title': '会社概要', 'company.licenses.label': 'コンプライアンス', 'company.licenses.title': '許認可', 'company.history.label': '当社の歴史', 'company.history.title': '沿革', 'company.history.2025': '事務所兼倉庫を現在の場所に移転', 'company.history.2023': '伊勢丹シンガポール委託販売開始', 'company.history.2022b': 'LAZADA オンライン販売開始', 'company.history.2022a': '取扱貨物増加に伴い冷凍倉庫格納数を3000パレットに拡充', 'company.history.2019c': 'A&J HAKKOの100%子会社としてA&J HAKKO (M) SDN.BHD.をマレーシアに設立', 'company.history.2019b': '輸出入通関事業を開始', 'company.history.2019a': '中国・シンガポール拠点の会社と共に中国に合弁会社 CJS Holdings Pte.,Ltd設立', 'company.history.2018': 'タイのBANGSUEにてシャトレーゼ社フランチャイズ店舗をオープン', 'company.history.2017b': 'タイのEkkamaiにてシャトレーゼ社フランチャイズ店舗をオープン', 'company.history.2017a': 'タイ・シンガポール拠点の会社と共にタイに合弁会社 JST Foods Co., Ltd設立', 'company.history.2016': 'ビジネス拡大に伴い、事務所兼倉庫移転', 'company.history.2015': '冷凍を主とした物流事業開始（保管・配送）', 'company.history.2013b': '北海道産　交雑牛（牛肉）輸入販売開始', 'company.history.2013a': '日系デパート物産展　物流取りまとめ事業開始', 'company.history.2012': '$2ショップ NANAIROをTampinesにオープン（現在閉店）。同時にシンガポール向け食品雑貨輸入事業開始', 'company.history.2011': '八興運輸㈱100%子会社としてA&J HAKKO PTE LTD設立', 'company.group.label': 'ネットワーク', 'company.group.title': 'グループ企業', 'company.group.subtitle': 'アジア全域で卓越性を提供する専門企業の強力なネットワーク', 'company.group.japan': '日本', 'company.group.malaysia': 'マレーシア', 'company.group.hakko.desc': '運送業・港湾荷役業・通関業', 'company.group.auto.desc': '自動車整備事業・民間車検工場', 'company.group.travel.desc': '旅行業', 'company.group.bayfront.desc': '曳船業・ポートサービス業', 'company.group.vanliner.desc': 'コンテナ輸送事業', 'company.group.hutec.desc': '労働者派遣業', 'company.group.insurance.desc': '保険業', 'company.group.shoji.desc': '輸出業', 'company.group.malaysia.desc': '輸入業',
+      'achievements.title': '実績', 'achievements.subtitle': '実証された成果でアジア太平洋地域に卓越性を提供', 'achievements.import': '輸入実績', 'achievements.containers': 'コンテナ取扱い実績', 'achievements.monthly': '月間ハンドリング数量', 'achievements.partners': '日本企業取引先',
+      'products.title': '製品', 'products.subtitle': '新鮮な状態でお客様のもとへお届けする高品質な日本製品', 'products.hero.tag': '製品', 'products.hero.title': 'プレミアム日本製品', 'products.p1': 'プレミアムサプリ', 'products.p2': 'スキンケア', 'products.p3': 'コスメ', 'products.p4': 'スナック・飲料', 'products.shop': 'Lazadaで購入', 'products.shopNow': 'Lazadaで購入', 'products.viewAll': 'すべて見る',
+	      'news.title': '最新ニュース', 'news.hero.tag': 'ニュース', 'news.hero.title': '最新ニュース', 'news.viewAll': 'ニュース一覧へ', 'news.noNews': 'まだニュースはありません。', 'news.noNewsAvailable': 'ニュースはありません', 'news.checkBack': '最新情報は後ほどご確認ください。'
     },
     jpTitle: {
       'achievements.onTimeTip': '直近四半期の納品完了件数に対する定時納品件数の割合。',
@@ -183,83 +253,7 @@
     }
   }, { passive: true });
 
-  // Services carousel
-  const track = document.querySelector('.carousel-track');
-  const prevBtn = document.querySelector('.slider-btn.prev');
-  const nextBtn = document.querySelector('.slider-btn.next');
-  const progressBar = document.querySelector('.slider-progress .bar');
-  let index = 0;
-
-  function updateCarousel() {
-    if (!track) return;
-    const slides = Array.from(track.children);
-    const maxIndex = Math.max(0, slides.length - 1);
-    index = Math.max(0, Math.min(index, maxIndex));
-    if (progressBar) progressBar.style.width = `${((index) / (maxIndex || 1)) * 100}%`;
-    
-    // On mobile, show one card at a time
-    if (window.innerWidth <= 1024) {
-      slides.forEach((slide, i) => {
-        if (i === index) {
-          slide.style.display = 'grid';
-          slide.style.opacity = '0';
-          slide.style.transform = 'translateY(20px)';
-          setTimeout(() => {
-            slide.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-            slide.style.opacity = '1';
-            slide.style.transform = 'translateY(0)';
-          }, 50);
-        } else {
-          slide.style.display = 'none';
-          slide.style.transition = 'none';
-        }
-      });
-    } else {
-      // On desktop, show all cards
-      slides.forEach((slide) => {
-        slide.style.display = 'grid';
-        slide.style.opacity = '1';
-        slide.style.transform = 'translateY(0)';
-      });
-    }
-  }
-
-  function move(delta) {
-    if (!track || window.innerWidth > 1024) return;
-    const slides = Array.from(track.children);
-    const maxIndex = Math.max(0, slides.length - 1);
-    index += delta;
-    if (index > maxIndex) index = 0;
-    if (index < 0) index = maxIndex;
-    updateCarousel();
-  }
-
-  if (prevBtn) prevBtn.addEventListener('click', () => move(-1));
-  if (nextBtn) nextBtn.addEventListener('click', () => move(1));
-  
-  let servicesTimer = null;
-  function startServicesAuto() {
-    if (window.innerWidth > 1024) return;
-    stopServicesAuto();
-    servicesTimer = setInterval(() => move(1), 4000);
-  }
-  function stopServicesAuto() { if (servicesTimer) { clearInterval(servicesTimer); servicesTimer = null; } }
-  
-  if (track) {
-    track.addEventListener('mouseenter', stopServicesAuto);
-    track.addEventListener('mouseleave', startServicesAuto);
-    updateCarousel();
-    startServicesAuto();
-  }
-  
-  window.addEventListener('resize', () => {
-    updateCarousel();
-    if (window.innerWidth <= 1024) {
-      startServicesAuto();
-    } else {
-      stopServicesAuto();
-    }
-  });
+  // Services section - static grid (no carousel functionality)
 
   // Count-up metrics (quick stop)
   const counters = Array.from(document.querySelectorAll('.countup'));
@@ -297,104 +291,198 @@
     if (key) btn.setAttribute('title', translations.enTitle[key] || '');
   });
 
-  // Products slider: show/hide controls based on content
-  (function initProductsSlider(){
-    const viewport = document.querySelector('.products-viewport');
-    const rows = Array.from(document.querySelectorAll('.products-row .products-track'));
-    const prevBtn = document.querySelector('.products-btn.prev');
-    const nextBtn = document.querySelector('.products-btn.next');
-    if (!rows.length || !viewport) return;
+  // Products continuous scrolling marquee (same as brand section)
+  (function initProductsMarquee() {
+    const track = document.getElementById('products-grid');
+    const prevBtn = document.querySelector('.products-nav.prev');
+    const nextBtn = document.querySelector('.products-nav.next');
+    if (!track) return;
     
-    let currentSlide = 0;
-    let totalSlides = 0;
-    let animating = false;
-
-    function updateSlider() {
-      const totalProducts = rows.reduce((sum, row) => sum + row.children.length, 0);
-      totalSlides = Math.ceil(totalProducts / 8); // 8 products per slide (4x2)
+    let position = 0;
+    let isPaused = false;
+    let trackWidth = 0;
+    
+    function setupAnimation(cardsHtml = []) {
+      let products = cardsHtml;
       
-      // Show/hide controls based on whether sliding is needed
-      const needsSliding = totalSlides > 1;
-      if (prevBtn) prevBtn.style.display = needsSliding ? 'grid' : 'none';
-      if (nextBtn) nextBtn.style.display = needsSliding ? 'grid' : 'none';
-    }
-
-    function step(dir) {
-      if (animating || totalSlides <= 1) return;
-      animating = true;
+      if (!products.length && location.protocol === 'file:') {
+        products = [
+          '<article class="product-card"><img src="./images/test.png" alt="Premium Supplement"><h4>Premium Supplement</h4></article>',
+          '<article class="product-card"><img src="./images/test.png" alt="Skincare Essential"><h4>Skincare Essential</h4></article>',
+          '<article class="product-card"><img src="./images/test.png" alt="Japanese Snacks"><h4>Japanese Snacks</h4></article>',
+          '<article class="product-card"><img src="./images/test.png" alt="Beauty Products"><h4>Beauty Products</h4></article>',
+          '<article class="product-card"><img src="./images/test.png" alt="Health Drinks"><h4>Health Drinks</h4></article>',
+          '<article class="product-card"><img src="./images/test.png" alt="Organic Foods"><h4>Organic Foods</h4></article>',
+          '<article class="product-card"><img src="./images/test.png" alt="Traditional Tea"><h4>Traditional Tea</h4></article>',
+          '<article class="product-card"><img src="./images/test.png" alt="Wellness Kit"><h4>Wellness Kit</h4></article>'
+        ];
+      }
       
-      currentSlide += dir;
-      if (currentSlide >= totalSlides) currentSlide = 0;
-      if (currentSlide < 0) currentSlide = totalSlides - 1;
+      if (!products.length) return;
       
-      rows.forEach((row) => {
-        const slideWidth = row.getBoundingClientRect().width;
-        row.style.transition = 'transform 320ms ease-out';
-        row.style.transform = `translateX(-${currentSlide * slideWidth}px)`;
+      track.innerHTML = products.join('');
+      const originalProducts = Array.from(track.children);
+      
+      // Duplicate for seamless scrolling
+      originalProducts.forEach(product => {
+        track.appendChild(product.cloneNode(true));
       });
       
-      setTimeout(() => { animating = false; }, 340);
-    }
-
-    if (prevBtn) prevBtn.addEventListener('click', () => step(-1));
-    if (nextBtn) nextBtn.addEventListener('click', () => step(1));
-    
-    // Auto-slide if multiple slides
-    let timer = null;
-    function startAuto() {
-      if (totalSlides > 1) {
-        timer = setInterval(() => step(1), 3500);
+      console.log('PRODUCTS MARQUEE: Found', originalProducts.length, 'products');
+      
+      // Calculate track width
+      trackWidth = 0;
+      originalProducts.forEach((product, index) => {
+        trackWidth += product.offsetWidth;
+        if (index < originalProducts.length - 1) {
+          trackWidth += 24;
+        }
+      });
+      
+      console.log('📐 Products track width:', trackWidth + 'px');
+      
+      function animate() {
+        if (!isPaused) {
+          position -= 1;
+          if (Math.abs(position) >= trackWidth) {
+            position = 0;
+          }
+          track.style.transform = `translateX(${position}px)`;
+        }
+        requestAnimationFrame(animate);
       }
+      
+      track.addEventListener('mouseenter', () => { isPaused = true; });
+      track.addEventListener('mouseleave', () => { isPaused = false; });
+      
+      // Navigation buttons
+      if (prevBtn) {
+        prevBtn.addEventListener('click', () => {
+          position += 300;
+          if (position > 0) position = -trackWidth + 300;
+        });
+      }
+      if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+          position -= 300;
+          if (Math.abs(position) >= trackWidth) position = 0;
+        });
+      }
+      
+      window.addEventListener('resize', () => {
+        trackWidth = 0;
+        originalProducts.forEach((product, index) => {
+          trackWidth += product.offsetWidth;
+          if (index < originalProducts.length - 1) {
+            trackWidth += 24;
+          }
+        });
+      });
+      
+      animate();
     }
-    function stopAuto() { if (timer) { clearInterval(timer); timer = null; } }
     
-    if (viewport) {
-      viewport.addEventListener('mouseenter', stopAuto);
-      viewport.addEventListener('mouseleave', startAuto);
+    window.initProductsSlider = function(cardsHtml = [], opts = {}) {
+      if (Array.isArray(cardsHtml) && cardsHtml.length || opts.immediate) {
+        setTimeout(() => setupAnimation(cardsHtml), 100);
+      } else {
+        setTimeout(() => setupAnimation([]), 1000);
+      }
+    };
+    
+    // Auto-init for local
+    if (location.protocol === 'file:') {
+      setTimeout(() => setupAnimation([]), 1000);
     }
-    
-    updateSlider();
-    startAuto();
-    window.addEventListener('resize', updateSlider);
   })();
 
-  // Brand marquee infinite scroll
+  // Simple loop: scroll original Firebase logos, reset when last logo appears on right
   (function initBrandMarquee(){
     const track = document.querySelector('.brand-track');
-    const viewport = document.querySelector('.brand-viewport');
-    if (!track || !viewport) return;
-    let offset = 0; let raf;
-    const speed = 0.5;
-
-    function duplicateContent() {
-      const original = Array.from(track.children);
-      if (original.length === 0) return;
-      // Clone all items to create seamless loop
-      original.forEach(item => {
-        track.appendChild(item.cloneNode(true));
-      });
-    }
-
-    function step(){
-      offset -= speed;
-      track.style.transform = `translateX(${offset}px)`;
+    if (!track) return;
+    
+    let position = 0;
+    let isPaused = false;
+    const speed = 1; // Pixels per frame
+    let frameCount = 0;
+    let trackWidth = 0;
+    let viewportWidth = 0;
+    
+    function setupAnimation() {
+      const originalLogos = Array.from(track.children);
+      if (originalLogos.length === 0) return;
       
-      // Reset when we've scrolled past half the content
-      const totalWidth = track.scrollWidth / 2; // Half because we duplicated
-      if (-offset >= totalWidth) {
-        offset = 0;
+      // Duplicate logos for seamless scrolling
+      originalLogos.forEach(logo => {
+        const clone = logo.cloneNode(true);
+        track.appendChild(clone);
+      });
+      
+      console.log('� SIMPLE LOOP SETUP: Found', originalLogos.length, 'Firebase logos');
+      
+      // Calculate track width properly
+      trackWidth = 0;
+      originalLogos.forEach((logo, index) => {
+        trackWidth += logo.offsetWidth;
+        if (index < originalLogos.length - 1) {
+          trackWidth += 48; // gap between logos
+        }
+      });
+      
+      // Get viewport width
+      const viewport = document.querySelector('.brand-viewport');
+      viewportWidth = viewport ? viewport.offsetWidth : window.innerWidth;
+      
+      console.log('📐 Track width:', trackWidth + 'px');
+      console.log('📐 Viewport width:', viewportWidth + 'px');
+      console.log('🎯 Will reset when position reaches:', -(trackWidth - viewportWidth) + 'px');
+      
+      function animate() {
+        if (!isPaused) {
+          position -= 1;
+          
+          // Reset when first half completely scrolled
+          if (Math.abs(position) >= trackWidth) {
+            position = 0;
+          }
+          
+          track.style.transform = `translateX(${position}px)`;
+        }
+        requestAnimationFrame(animate);
       }
-      raf = requestAnimationFrame(step);
+      
+      track.addEventListener('mouseenter', () => { isPaused = true; });
+      track.addEventListener('mouseleave', () => { isPaused = false; });
+      
+      // Recalculate on resize
+      window.addEventListener('resize', () => {
+        trackWidth = 0;
+        originalLogos.forEach((logo, index) => {
+          trackWidth += logo.offsetWidth;
+          if (index < originalLogos.length - 1) {
+            trackWidth += 48;
+          }
+        });
+      });
+      
+      animate();
     }
     
-    const start = () => { if (!prefersReduced) raf = requestAnimationFrame(step); };
-    const stop = () => { if (raf) cancelAnimationFrame(raf); };
-
-    duplicateContent();
-    start();
-    window.addEventListener('resize', () => { stop(); offset = 0; track.style.transform = 'translateX(0)'; start(); });
-    track.addEventListener('mouseenter', stop);
-    track.addEventListener('mouseleave', start);
+    let lastCount = 0;
+    let stableCount = 0;
+    const checkInterval = setInterval(() => {
+      const currentCount = track.children.length;
+      if (currentCount === lastCount) {
+        stableCount++;
+        if (stableCount >= 3 && currentCount > 0) {
+          clearInterval(checkInterval);
+          setTimeout(setupAnimation, 1500);
+        }
+      } else {
+        stableCount = 0;
+        lastCount = currentCount;
+      }
+    }, 500);
   })();
 
   // Language memory + i18n (minimal demo content)
@@ -406,12 +494,27 @@
   } else {
     setLang(storedLang);
   }
-  langButtons.forEach((b) => b.addEventListener('click', () => setLang(b.getAttribute('data-lang') || 'en')));
+  langButtons.forEach((b) => b.addEventListener('click', (e) => {
+    e.preventDefault();
+    const newLang = b.getAttribute('data-lang') || 'en';
+    setLang(newLang);
+  }));
 
   function setLang(lang) {
-    document.querySelectorAll('.lang-btn').forEach((btn) => btn.setAttribute('aria-pressed', String((btn.getAttribute('data-lang')||'') === lang)));
+    // Update all language buttons across the page
+    document.querySelectorAll('.lang-btn').forEach((btn) => {
+      btn.setAttribute('aria-pressed', String((btn.getAttribute('data-lang')||'') === lang));
+      if ((btn.getAttribute('data-lang')||'') === lang) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+    
     localStorage.setItem('lang', lang);
     const dict = translations[lang] || translations.en;
+    
+    // Update all elements with data-i18n attributes
     document.querySelectorAll('[data-i18n]').forEach((el) => {
       const key = el.getAttribute('data-i18n');
       if (!key) return;
@@ -427,18 +530,46 @@
         }
       }
     });
-    // titles for tooltips
+    
+    // Update tooltips
     document.querySelectorAll('[data-i18n-title]').forEach((el) => {
       const key = el.getAttribute('data-i18n-title');
       if (!key) return;
       const val = (translations[`${lang}Title`]||{})[key];
       if (val) el.setAttribute('title', val);
     });
-    // html lang attr
+    
+    // Update HTML lang attribute
     document.documentElement.setAttribute('lang', lang === 'jp' ? 'ja' : (lang === 'zh' ? 'zh' : 'en'));
+    
+    // Handle address and company name language switching
+    document.querySelectorAll('.addr-jp, .addr-en').forEach((el) => {
+      if (lang === 'jp') {
+        el.style.display = el.classList.contains('addr-jp') ? 'block' : 'none';
+      } else {
+        el.style.display = el.classList.contains('addr-en') ? 'block' : 'none';
+      }
+    });
+    
+    document.querySelectorAll('.company-jp, .company-en').forEach((el) => {
+      if (lang === 'jp') {
+        el.style.display = el.classList.contains('company-jp') ? 'inline' : 'none';
+      } else {
+        el.style.display = el.classList.contains('company-en') ? 'inline' : 'none';
+      }
+    });
+    
+    document.querySelectorAll('.map-jp, .map-en').forEach((el) => {
+      if (lang === 'jp') {
+        el.style.display = el.classList.contains('map-jp') ? 'block' : 'none';
+      } else {
+        el.style.display = el.classList.contains('map-en') ? 'block' : 'none';
+      }
+    });
+    
+    // Trigger a custom event to notify other parts of the application
+    window.dispatchEvent(new CustomEvent('languageChanged', { detail: { language: lang } }));
   }
 
   // translations defined at top of file
 })();
-
-

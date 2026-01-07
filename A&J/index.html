@@ -1,24 +1,46 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <!-- Google tag (gtag.js) --> <script async src="https://www.googletagmanager.com/gtag/js?id=G-1G8W933880"></script> <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-1G8W933880'); </script>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>A&J Logistics — Reliable Cross-Border Logistics</title>
+    <title>A&J HAKKO PTE LTD (SINGAPORE)</title>
     <meta name="description" content="A&J provides reliable cross-border logistics between Malaysia, Singapore and beyond. Sea & air freight, customs, warehousing, and last-mile." />
 
     <link rel="preconnect" href="https://images.unsplash.com" crossorigin />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./styles.css?v=2" />
+    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./styles.css?v=4" />
+    <style>
+      .service-title {
+            font-size: clamp(18px, 2vw, 18px);
+            font-weight: 600;
+            color: #0f3c4c;
+            margin: 0 0 6px 0;
+            line-height: 1.3;
+        }
+
+        .service-description {
+            color: #4a5568;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            flex: 1;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    </style>
   </head>
   <body>
-    <a class="skip-link" href="#home">Skip to content</a>
 
     <header class="site-header" role="banner">
       <div class="container header-inner">
         <a href="/" class="brand" aria-label="A and J Logistics home">
-          <img class="brand-logo" src="./images/A&J Logo (PNG).png" alt="A&J Logistics" />
+          <img class="brand-logo" src="./images/A&J Logo (PNG)-min.png" alt="A&J Logistics" />
         </a>
 
         <nav class="primary-nav" aria-label="Primary">
@@ -27,13 +49,12 @@
           </button>
           <ul id="nav-list" class="nav-list">
             <li><a data-i18n="nav.home" href="/">Home</a></li>
-            <li><a data-i18n="nav.about" href="/#about">About Us</a></li>
+            <li><a data-i18n="nav.about" href="/company">About Us</a></li>
             <li><a data-i18n="nav.services" href="/#services">Our Services</a></li>
             <li><a data-i18n="nav.products" href="/#products">Our Products</a></li>
             <li><a data-i18n="nav.news" href="/news">News</a></li>
             <li><a data-i18n="nav.contact" href="/#location">Contact</a></li>
           </ul>
-          <button class="nav-close" aria-label="Close menu" aria-controls="nav-list" type="button">×</button>
         </nav>
 
         <div class="lang-switch" aria-label="Language selector">
@@ -42,12 +63,8 @@
             <span class="label">JP</span>
           </button>
           <button class="lang-btn" data-lang="en" aria-pressed="true">
-            <span class="flag-circle" aria-hidden="true"><img src="./images/gb.svg" width="20" height="15" alt="English" /></span>
-            <span class="label">EN</span>
-          </button>
-          <button class="lang-btn" data-lang="zh" aria-pressed="false">
-            <span class="flag-circle" aria-hidden="true"><img src="./images/cn.svg" width="20" height="15" alt="中文" /></span>
-            <span class="label">中文</span>
+            <span class="flag-circle" aria-hidden="true"><img src="./images/sg.svg" width="20" height="15" alt="Singapore" /></span>
+            <span class="label">SG</span>
           </button>
         </div>
       </div>
@@ -55,162 +72,290 @@
 
     <main id="home" class="main" tabindex="-1">
       <!-- Hero -->
-      <section class="section hero" aria-labelledby="hero-title">
-        <div class="hero-bg" role="img" aria-label="Container port and warehouse operations"></div>
-        <div class="hero-overlay"></div>
-        <div class="container hero-center">
-          <div class="hero-copy reveal">
-            <h1 id="hero-title" data-i18n="hero.title">Reliable Cross-Border Logistics</h1>
-            <p class="lead" data-i18n="hero.lead">
-              We move your goods between Malaysia, Singapore, and beyond with speed and care.
-            </p>
-            <div class="cta-row">
-              <a class="btn btn-primary" data-i18n="hero.ctaServices" href="#services">Our Services</a>
-              <a class="btn btn-secondary" data-i18n="hero.ctaContact" href="#location">Contact</a>
-            </div>
+      <!-- Hero Section -->
+      <section class="hero" aria-labelledby="hero-title">
+          <!-- Background Image -->
+          <div class="hero-background">
+              <img src="./images/5-3.jpeg" alt="RoRo vessel crossing ocean">
           </div>
-          <a class="scroll-down" href="#about" aria-label="Scroll to about us">
-            <span class="chevron"></span>
-          </a>
-        </div>
+
+          <!-- Overlays for depth -->
+          <div class="hero-overlay"></div>
+          <div class="hero-vignette"></div>
+
+          <!-- Centered Content -->
+          <div class="hero-content">
+              <!-- Decorative Line -->
+              
+              <!-- Main Headlines -->
+              <h1 id="hero-title">
+                  A&J HAKKO
+                  <span class="headline-accent">SINGAPORE</span>
+              </h1>
+              
+              <!-- CTA Button -->
+              <div class="hero-cta">
+                  <a href="#services" class="btn-hero" data-i18n="hero.ctaServices">Begin Journey</a>
+              </div>
+          </div>
+
       </section>
 
       <!-- About Us -->
-      <section id="about" class="section section-divider" aria-labelledby="about-title">
-        <div class="container about-grid">
-          <div class="about-left reveal">
-            <h2 id="about-title" class="section-title" data-i18n="about.subtitle">Bringing Asia Closer Together</h2>
-            <p class="about-text" data-i18n="about.body">
-              A&J HAKKO is dedicated to delivering the finest Japanese food products not only domestically but throughout Asia. Rooted in Hakko Transport Co., Ltd., a company with over 70 years of history since its founding, we have cultivated logistics expertise that preserves food quality while delivering products intact across Asia. We adapt to diverse international logistics practices and support bringing authentic Japanese flavors to the world.
-            </p>
-            <a href="/company" class="btn btn-primary" data-i18n="about.learnMore">Learn More About Us</a>
-          </div>
-          <div class="about-right reveal" aria-hidden="true">
-            <img src="./images/aj02.jpg" alt="About A&J logistics team" loading="lazy" />
+      <section id="about" class="section" aria-labelledby="about-title">
+        <div class="container">
+          <div class="about-wrapper">
+            <div class="about-content">
+              <div class="about-header">
+                <span class="about-label">About Us</span>
+                <h2 id="about-title" class="about-title" data-i18n="about.subtitle">Bringing Asia Closer Together</h2>
+                <div class="about-divider"></div>
+              </div>
+              
+              <p class="about-text" data-i18n="about.body">
+                A&J HAKKO PTE LTD is dedicated to delivering the authentic taste and quality of Japanese food — not only within Japan but throughout Asia.<br> Rooted in the long-established Hakko Unyu Co., Ltd., a logistics company with over 70 years of history, we have developed the expertise to transport Japanese food products overseas while maintaining their freshness and quality.<br> By leveraging our logistics know-how and adapting to diverse local practices, we support the smooth and reliable distribution of Japanese food across Asia.
+              </p>
+              
+              <a href="/company" class="about-cta" data-i18n="about.learnMore">
+                Learn Our Story
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </a>
+            </div>
+            
+            <div class="about-visual reveal">
+              <div class="about-badge">
+                <div class="badge-inner">
+                  <span class="badge-text">Trusted Since</span>
+                  <span class="badge-year">2011</span>
+                </div>
+              </div>
+              <div class="about-image-container">
+                <img src="./images/about us 1-min.JPG" alt="A&J Logistics operations" class="about-image" loading="lazy" />
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       <!-- Services Overview -->
-      <section id="services" class="section section-divider" aria-labelledby="services-title">
+      <section id="services" class="section" aria-labelledby="services-title">
         <div class="container">
-          <div class="section-head">
-            <h2 id="services-title" class="section-title" data-i18n="services.title">Our Services</h2>
-            <div class="slider-controls">
-              <button class="slider-btn prev" aria-label="Previous">
-                <span aria-hidden="true">◀</span>
-              </button>
-              <div class="slider-progress" aria-hidden="true"><div class="bar"></div></div>
-              <button class="slider-btn next" aria-label="Next">
-                <span aria-hidden="true">▶</span>
-              </button>
-            </div>
+          <div class="services-header">
+            <h2 id="services-title" class="services-title" data-i18n="services.title">Our Services</h2>
           </div>
-          <div class="carousel">
-            <div class="carousel-track">
-              <div class="card reveal">
-                <img src="./images/HP5.png" alt="Logistics operations" loading="lazy" />
-                <h3 data-i18n="services.logistics.title">Logistics Business</h3>
-                <p class="value" data-i18n="services.logistics.summary">One-stop food import/export, delivery and wholesale services from Japan to Singapore with cold chain logistics.</p>
-                <a href="/services#logistics" class="details" data-i18n="services.details">Details</a>
+          
+          <div class="services-grid">
+            <!-- Logistics Business (Position 1 - Upper) -->
+            <article class="service-card service-card-featured reveal" onclick="window.location.href='/services#logistics'" style="cursor: pointer;">
+              <div class="service-image-container">
+                <img src="./images/logistic 3-min.JPG" alt="Logistics operations" class="service-image" loading="lazy" />
+                
               </div>
+              <div class="service-content">
+                <h3 class="service-title" data-i18n="services.logistics.title">Logistics Business</h3>
+                <p class="service-description" data-i18n="services.logistics.summary">One-stop food import/export, delivery and wholesale services from Japan to Singapore with cold chain logistics.</p>
+              </div>
+            </article>
 
-              <div class="card reveal">
-                <img src="./images/ISETAN FAIR.jpg" alt="Event support operations" loading="lazy" />
-                <h3 data-i18n="services.events.title">Event Support Business</h3>
-                <p class="value" data-i18n="services.events.summary">Support for Japanese food event exhibitions at local department stores with end-to-end logistics.</p>
-                <a href="/services#events" class="details" data-i18n="services.details">Details</a>
+            <!-- Retail Business (Position 2 - Lower) -->
+            <article class="service-card service-card-featured reveal" onclick="window.location.href='/services#retail'" style="cursor: pointer;">
+              <div class="service-image-container">
+                <img src="./images/storage 2-min.JPG" alt="Retail business" class="service-image" loading="lazy" />
+                <div class="service-overlay"></div>
               </div>
+              <div class="service-content">
+                <h3 class="service-title" data-i18n="services.retail.title">Retail Business</h3>
+                <p class="service-description" data-i18n="services.retail.summary">Japanese food sales support in Singapore stores through department stores, grocery stores, and online platforms.</p>
+              </div>
+            </article>
 
-              <div class="card reveal">
-                <img src="./images/slide02.jpg" alt="Investment business" loading="lazy" />
-                <h3 data-i18n="services.investment.title">Investment Business</h3>
-                <p class="value" data-i18n="services.investment.summary">Strategic investments in Asian food and beverage businesses to expand Japanese food accessibility.</p>
-                <a href="/services#investment" class="details" data-i18n="services.details">Details</a>
+            <!-- Event Support Business (Position 3 - Upper) -->
+            <article class="service-card service-card-featured reveal" onclick="window.location.href='/services#events'" style="cursor: pointer;">
+              <div class="service-image-container">
+                <img src="./images/ISETAN FAIR-min.jpg" alt="Event support operations" class="service-image" loading="lazy" />
+                <div class="service-overlay"></div>
               </div>
-            </div>
+              <div class="service-content">
+                <h3 class="service-title" data-i18n="services.events.title">Event Support Business</h3>
+                <p class="service-description" data-i18n="services.events.summary">Support for Japanese food event exhibitions at local department stores with end-to-end logistics.</p>
+              </div>
+            </article>
+
+            <!-- Investment Business (Position 4 - Lower) -->
+            <article class="service-card service-card-featured reveal" onclick="window.location.href='/services#investment'" style="cursor: pointer;">
+              <div class="service-image-container">
+                <img src="./images/invest-min.jpg" alt="Investment business" class="service-image" loading="lazy" />
+                <div class="service-overlay"></div>
+              </div>
+              <div class="service-content">
+                <h3 class="service-title" data-i18n="services.investment.title">Investment Business</h3>
+                <p class="service-description" data-i18n="services.investment.summary">Strategic investments in Asian food and beverage businesses to expand Japanese food accessibility.</p>
+              </div>
+            </article>
           </div>
         </div>
       </section>
 
       <!-- Brand (full-width marquee) -->
-      <section id="brand" class="section section-divider" aria-labelledby="brand-title">
-        <div class="container">
-          <h2 id="brand-title" class="section-title" data-i18n="brand.title" style="text-align: center;">Our Customers</h2>
+      <section id="brand" class="section" aria-labelledby="brand-title">
+        <div class="container" style="text-align: center;">
+          <h2 id="brand-title" class="section-title" data-i18n="brand.title">Our Customers</h2>
         </div>
         <div class="brand-viewport" aria-label="Customer logos">
           <div class="brand-track">
-            <img src="./images/customers/Acrro.jpg" alt="Acrro" loading="lazy" />
-            <img src="./images/customers/cainiyap.png" alt="Cainiyap" loading="lazy" />
-            <img src="./images/customers/CFC-Logo.jpg" alt="CFC" loading="lazy" />
-            <img src="./images/customers/chateraise.jpg" alt="Chateraise" loading="lazy" />
-            <img src="./images/customers/FOOD BASE LOGO.jpg" alt="Food Base" loading="lazy" />
-            <img src="./images/customers/ISetan Singapore Ltd.png" alt="Isetan Singapore" loading="lazy" />
-            <img src="./images/customers/KANENA MISO LOGO.jpg" alt="Kanena Miso" loading="lazy" />
-            <img src="./images/customers/NISHIKIYA KITCHEN LOGO.jpg" alt="Nishikiya Kitchen" loading="lazy" />
-            <img src="./images/customers/PIONEER LOGO.jpg" alt="Pioneer" loading="lazy" />
-            <img src="./images/customers/Rubicon.jpg" alt="Rubicon" loading="lazy" />
-            <img src="./images/customers/URESHINO LABO LOGO.jpg" alt="Ureshino Labo" loading="lazy" />
-            <img src="./images/customers/ZENNOH.png" alt="Zennoh" loading="lazy" />
+            <!-- Customer logos loaded from Firebase Storage -->
           </div>
+        </div>
+        
+        <!-- Brand Banner -->
+        <div class="brand-banner-container" id="brand-banner-container" style="display: none;">
+          <a id="brand-banner-link" href="#" class="brand-banner-link">
+            <img id="brand-banner-image" src="" alt="Brand Banner" class="brand-banner-image" loading="lazy" />
+          </a>
         </div>
       </section>
 
       <!-- Products Auto Carousel (2 rows, 4 each) -->
-      <section id="products" class="section section-divider" aria-labelledby="products-title">
+      <section id="products" class="section" aria-labelledby="products-title">
         <div class="container">
-          <h2 id="products-title" class="section-title" data-i18n="products.title">Our Products</h2>
-          <div class="products-viewport">
-            <button class="products-btn prev" aria-label="Previous products">◀</button>
-            <div class="products-row" data-row="1"><div class="products-track" id="home-products-track-1"></div></div>
-            <div class="products-row" data-row="2"><div class="products-track" id="home-products-track-2"></div></div>
-            <button class="products-btn next" aria-label="Next products">▶</button>
+          <div class="products-header">
+            <h2 id="products-title" class="products-title" data-i18n="products.title">Our Products</h2>
           </div>
-          <div class="products-cta">
-            <a class="btn" href="/products" data-i18n="products.viewAll" style="border:1px solid #e5e7eb;background:#fff;">View all</a>
-            <a class="btn btn-accent" href="https://s.lazada.sg/s.XP6SY" target="_blank" rel="noopener" data-i18n="products.shopNow">Shop Now</a>
+          
+          <div class="products-container">
+            <button class="products-nav prev" aria-label="Previous products">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            
+            <div class="products-viewport">
+              <div class="products-grid" id="products-grid">
+                <!-- Products will be loaded here -->
+              </div>
+            </div>
+            
+            <button class="products-nav next" aria-label="Next products">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+          
+          
+          <div class="products-actions">
+            <a class="products-btn secondary" href="/products" data-i18n="products.viewAll">View all products</a>
+            <a class="products-btn primary" href="https://s.lazada.sg/s.XP6SY" target="_blank" rel="noopener" data-i18n="products.shopNow">
+              Visit Our Lazada 
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </a>
           </div>
         </div>
       </section>
 
       <!-- News preview -->
-      <section id="news" class="section section-divider" aria-labelledby="news-title">
+      <section id="news" class="section" aria-labelledby="news-title">
         <div class="container">
-          <div class="section-head" style="align-items: end; justify-content: space-between; gap: 12px;">
-            <h2 id="news-title" class="section-title" data-i18n="news.title">Latest News</h2>
-            <a class="btn btn-accent" href="/news" data-i18n="news.viewAll">View all news</a>
+          <div class="news-header">
+            <h2 id="news-title" class="news-title" data-i18n="news.title">Latest News</h2>
+            <a href="/news" class="view-all-btn" data-i18n="news.viewAll">
+              View all news
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M7 7l10 5-10 5V7z" fill="currentColor"/>
+              </svg>
+            </a>
           </div>
-          <div id="news-cards" class="news-grid" aria-live="polite" aria-busy="true"></div>
+          
+          <div class="news-grid" id="news-list" aria-live="polite" aria-busy="true">
+            <!-- Loading state - will be replaced by sample data -->
+            <div class="news-loading">
+              <span>Loading news</span>
+              <div class="loading-dots">
+                <div class="loading-dot"></div>
+                <div class="loading-dot"></div>
+                <div class="loading-dot"></div>
+              </div>
+            </div>
+          </div>
+          <a href="/news" class="view-all-btn mobile-only" data-i18n="news.viewAll">View all news</a>
+
+
         </div>
       </section>
 
       <!-- Achievements -->
-      <section id="achievements" class="section section-divider" aria-labelledby="achievements-title">
+      <section id="achievements" class="section" aria-labelledby="achievements-title">
         <div class="container">
-          <h2 id="achievements-title" class="section-title" data-i18n="achievements.title" style="text-align: center;">Achievements</h2>
-          <div class="metrics">
-            <div class="metric reveal">
-              <div class="num"><span class="countup" data-target="98.6">0</span><span>%</span></div>
-              <div class="label">
-                <span data-i18n="achievements.onTime">On‑time delivery rate</span>
+          <div class="achievements-header">
+            <h2 id="achievements-title" class="achievements-title" data-i18n="achievements.title">Achievements</h2>
+          </div>
+          
+          <div class="metrics-grid">
+            <div class="metric-card reveal">
+              <div class="metric-icon-wrapper">
+                <img src="./images/on-time.webp" alt="Import experience" class="metric-icon" />
+              </div>
+              <div class="metric-content">
+                <div class="metric-number">
+                  <span class="countup" data-target="10">0</span>
+                </div>
+                <div class="metric-unit">
+                  <span lang="en">Years+</span>
+                  <span lang="ja">年+</span>
+                </div>
+                <h3 class="metric-label" data-i18n="achievements.import">Years of import experience</h3>
               </div>
             </div>
-            <div class="metric reveal">
-              <div class="num"><span class="countup" data-target="42">0</span></div>
-              <div class="label">
-                <span data-i18n="achievements.lanes">Lanes/countries covered</span>
+
+            <div class="metric-card reveal">
+              <div class="metric-icon-wrapper">
+                <img src="./images/STK.webp" alt="Container handling" class="metric-icon" />
+              </div>
+              <div class="metric-content">
+                <div class="metric-number">
+                  <span class="countup" data-target="7000">0</span>
+                </div>
+                <div class="metric-unit">
+                  <span lang="en">Containers+</span>
+                  <span lang="ja">本+</span>
+                </div>
+                <h3 class="metric-label" data-i18n="achievements.containers">Containers handled</h3>
               </div>
             </div>
-            <div class="metric reveal">
-              <div class="num"><span class="countup" data-target="3.2">0</span><span>h</span></div>
-              <div class="label">
-                <span data-i18n="achievements.clearance">Average clearance time</span>
+
+            <div class="metric-card reveal">
+              <div class="metric-icon-wrapper">
+                <img src="./images/boxes.svg" alt="Monthly handling" class="metric-icon" />
+              </div>
+              <div class="metric-content">
+                <div class="metric-number">
+                  <span class="countup" data-target="80000">0</span>
+                </div>
+                <div class="metric-unit">
+                  <span lang="en">Boxes+</span>
+                  <span lang="ja">箱+</span>
+                </div>
+                <h3 class="metric-label" data-i18n="achievements.monthly">Boxes handled monthly</h3>
               </div>
             </div>
-            <div class="metric reveal">
-              <div class="num"><span class="countup" data-target="1200">0</span><span>+</span></div>
-              <div class="label">
-                <span data-i18n="achievements.skus">Monthly handled SKUs/TEUs</span>
+
+            <div class="metric-card reveal">
+              <div class="metric-icon-wrapper">
+                <img src="./images/globe.webp" alt="Japanese partners" class="metric-icon" />
+              </div>
+              <div class="metric-content">
+                <div class="metric-number">
+                  <span class="countup" data-target="100">0</span>
+                </div>
+                <div class="metric-unit">
+                  <span lang="en">Companies+</span>
+                  <span lang="ja">社+</span>
+                </div>
+                <h3 class="metric-label" data-i18n="achievements.partners">Japanese business partners</h3>
               </div>
             </div>
           </div>
@@ -218,50 +363,216 @@
       </section>
 
       <!-- Location / Contact Target -->
-      <section id="location" class="section section-divider" aria-labelledby="location-title">
+      <section id="location" class="section" aria-labelledby="location-title">
         <div class="container">
-          <h2 id="location-title" class="section-title" data-i18n="location.title">Location</h2>
-          <div class="locations">
-            <div class="locations-featured">
-              <article class="location-featured reveal" aria-labelledby="loc-sg">
-                <div class="map-wrap">
-                  <iframe class="map" title="Singapore map" src="https://www.openstreetmap.org/export/embed.html?bbox=103.699939%2C1.291912%2C103.739939%2C1.331912&layer=mapnik&marker=1.311912%2C103.719939" loading="lazy"></iframe>
-                  <div class="map-badge"><span data-i18n="location.sg.title">Singapore</span></div>
+          <div class="location-header">
+            <h2 id="location-title" class="location-title" data-i18n="location.title">Location</h2>
+          </div>
+          
+          <div class="locations-wrapper">
+            <!-- Featured Singapore Location -->
+            <div class="location-featured">
+              <div class="location-featured-content">
+                <div class="location-card-header">
+                <div class="location-country">
+                  <img src="./images/sg.svg" alt="Singapore" class="country-flag">
+                  <span>Singapore</span>
                 </div>
-                <div class="loc-meta">
-                  <h3 id="loc-sg" data-i18n="location.sg.title">Singapore</h3>
-                  <p class="addr" data-i18n="location.sg.addr">88 Logistics Ave, Jurong</p>
-                  <p class="hours"><span data-i18n="location.hours">Business hours</span>: 09:00–18:00</p>
-                  <p class="contact-line"><span data-i18n="location.email">Email</span>: <a href="mailto:sg@aj-logistics.com">sg@aj-logistics.com</a></p>
-                  <p class="contact-line"><span data-i18n="location.phone">Phone</span>: <a href="tel:+6562656942">(+65) 6265 6942</a></p>
-                  <a class="open-maps" href="https://maps.google.com/?q=Jurong+Logistics+Hub" target="_blank" rel="noopener" data-i18n="location.openMaps">Open in Maps</a>
                 </div>
-              </article>
+                <h3 class="location-name">A&J HAKKO PTE LTD</h3>
+                <address class="location-address">
+                  8 JALAN BESUT #1M-04<br>
+                  619562 SINGAPORE
+                </address>
+                <div class="location-contacts">
+                  <div class="contact-row">
+                    <a href="tel:+6562656942" class="contact-item">
+                      <svg viewBox="0 0 20 20" fill="currentColor" class="contact-icon">
+                        <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/>
+                      </svg>
+                      <span>+65 6265-6942</span>
+                    </a>
+                    <div class="contact-item">
+                      <svg viewBox="0 0 20 20" fill="currentColor" class="contact-icon">
+                        <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V4z"/>
+                        <path d="M5 6h10M5 8h6M5 10h8M5 12h4" stroke="white" stroke-width="1" fill="none"/>
+                        <path d="M13 8h2v4h-2z" fill="white"/>
+                      </svg>
+                      <span>FAX: +65 6265-6479</span>
+                    </div>
+                  </div>
+                  <a href="mailto:info@aj-hakko.com" class="contact-item">
+                    <svg viewBox="0 0 20 20" fill="currentColor" class="contact-icon">
+                      <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
+                      <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
+                    </svg>
+                    <span>info@aj-hakko.com</span>
+                  </a>
+                </div>
+                <a href="https://maps.google.com/?q=A%26J%20Hakko%20Pte%20Ltd" target="_blank" rel="noopener" class="location-directions" data-i18n="location.directions">
+                  Get Directions
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  </svg>
+                </a>
+              </div>
+              <div class="location-featured-map">
+                <iframe 
+                  class="map map-en" 
+                  title="Singapore headquarters map" 
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.7!2d103.7211508!3d1.3176007!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31da059141bd92dd%3A0xb27490555fb978ba!2sA%26J%20Hakko%20Pte%20Ltd!5e0!3m2!1sen!2ssg!4v1234567890123!5m2!1sen!2ssg" 
+                  loading="lazy" 
+                  allowfullscreen="" 
+                  referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+                <iframe 
+                  class="map map-jp" 
+                  title="Singapore headquarters map" 
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.7!2d103.7211508!3d1.3176007!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31da059141bd92dd%3A0xb27490555fb978ba!2sA%26J%20Hakko%20Pte%20Ltd!5e0!3m2!1sja!2sjp!4v1234567890123!5m2!1sja!2sjp" 
+                  loading="lazy" 
+                  allowfullscreen="" 
+                  referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+                <div class="map-overlay">
+                  <div class="map-pin">
+                    <div class="pin-pulse"></div>
+                    <div class="pin-dot"></div>
+                  </div>
+                </div>
+              </div>
             </div>
+
+            <!-- Regional Locations Grid -->
             <div class="locations-grid">
-              <article class="location-card reveal" aria-labelledby="loc-my">
-                <div class="map-wrap">
-                  <iframe class="map" title="Malaysia map" src="https://www.openstreetmap.org/export/embed.html?bbox=103.711356%2C1.462659%2C103.771356%2C1.522659&layer=mapnik&marker=1.492659%2C103.741356" loading="lazy"></iframe>
-                  <div class="map-badge"><span data-i18n="location.my.title">Malaysia</span></div>
+              <!-- Japan Location 1 -->
+              <article class="location-card reveal">
+                <div class="location-card-header">
+                  <div class="location-country">
+                    <img src="./images/jp.svg" alt="Japan" class="country-flag">
+                    <span>Japan</span>
+                  </div>
                 </div>
-                <h3 id="loc-my" data-i18n="location.my.title"><a href="https://www.aj-hakko.com.my/">Malaysia</a></h3>
-                <p class="addr" data-i18n="location.my.addr">No. 33-5, 5th Floor, The Boulevard Office, Mid Valley City, Lingkaran Syed Putra, 59200, Kuala Lumpur, Malaysia</p>
-                <p class="hours"><span data-i18n="location.hours">Business hours</span>: 09:00–18:00</p>
-                <p class="contact-line"><span data-i18n="location.email">Email</span>: <a href="mailto:info@aj-hakko.com.my">info@aj-hakko.com.my</a></p>
-                <p class="contact-line"><span data-i18n="location.phone">Phone</span>: <a href="tel:+60327046275">+60 03-2704-6275</a></p>
-                <a class="open-maps" href="https://maps.google.com/?q=Johor+Bahru+Industrial+Park" target="_blank" rel="noopener" data-i18n="location.openMaps">Open in Maps</a>
+                <h3 class="location-card-title">
+                  <a href="https://hakko-unyu.jp/" target="_blank" rel="noopener">
+                    <span class="company-jp">八興運輸株式会社</span>
+                    <span class="company-en">HAKKO UNYU CO., LTD.</span>
+                  </a>
+                </h3>
+                <address class="location-card-address">
+                  <p class="addr-jp">〒883-0065 宮崎県日向市船場町1番1</p>
+                  <p class="addr-en">1-1, FUNABA TOWN, HYUGA CITY, MIYAZAKI PROVINCE, JAPAN 883-0065</p>
+                </address>
+                <div class="location-card-contacts">
+                  <div class="location-card-contact-row">
+                    <a href="tel:+81982522185" class="contact-item">
+                      <svg viewBox="0 0 20 20" fill="currentColor" class="contact-icon">
+                        <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/>
+                      </svg>
+                      <span>+81 0982-52-2185</span>
+                    </a>
+                    <div class="contact-item">
+                      <svg viewBox="0 0 20 20" fill="currentColor" class="contact-icon">
+                        <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V4z"/>
+                        <path d="M5 6h10M5 8h6M5 10h8M5 12h4" stroke="white" stroke-width="1" fill="none"/>
+                        <path d="M13 8h2v4h-2z" fill="white"/>
+                      </svg>
+                      <span>FAX: +81 0982-52-2186</span>
+                    </div>
+                  </div>
+                </div>
+                <a href="https://maps.app.goo.gl/SpoDMXPRVuCB6m8GA" target="_blank" rel="noopener" class="location-map-btn" aria-label="View on map">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" stroke="currentColor" stroke-width="2"/>
+                    <circle cx="12" cy="10" r="3" stroke="currentColor" stroke-width="2"/>
+                  </svg>
+                </a>
               </article>
 
-              <article class="location-card reveal" aria-labelledby="loc-jp">
-                <div class="map-wrap">
-                  <iframe class="map" title="Japan map" src="https://www.openstreetmap.org/export/embed.html?bbox=139.6417%2C35.6395%2C139.7417%2C35.7395&layer=mapnik&marker=35.6895%2C139.6917" loading="lazy"></iframe>
-                  <div class="map-badge"><span data-i18n="location.jp.title">Japan</span></div>
+              <!-- Japan Location 2 -->
+              <article class="location-card reveal">
+                <div class="location-card-header">
+                  <div class="location-country">
+                    <img src="./images/jp.svg" alt="Japan" class="country-flag">
+                    <span>Japan</span>
+                  </div>
                 </div>
-                <h3 id="loc-jp" data-i18n="location.jp.title"><a href="http://hakkoshoji.com/">Japan</a></h3>
-                <p class="addr" data-i18n="location.jp.addr">〒8830-0062宮崎県日向市大字日知屋16392番地</p>
-                <p class="hours"><span data-i18n="location.hours">Business hours</span>: 09:00–18:00</p>
-                <p class="contact-line"><span data-i18n="location.phone">Phone</span>: <a href="tel:+8109825736600">+81 0982-57-3660</a></p>
-                <a class="open-maps" href="https://maps.google.com/?q=Chiyoda+City+Tokyo" target="_blank" rel="noopener" data-i18n="location.openMaps">Open in Maps</a>
+                <h3 class="location-card-title">
+                  <a href="https://hakkoshoji.com/" target="_blank" rel="noopener">
+                    <span class="company-jp">株式会社八興商事</span>
+                    <span class="company-en">HAKKO SHOJI CO., LTD.</span>
+                  </a>
+                </h3>
+                <address class="location-card-address">
+                  <p class="addr-jp">〒883-0062 宮崎県日向市大字日知屋16392番地</p>
+                  <p class="addr-en">16392 HICHIYA, HYUGA CITY, MIYAZAKI PROVINCE, JAPAN 883-0062</p>
+                </address>
+                <div class="location-card-contacts">
+                  <div class="location-card-contact-row">
+                    <a href="tel:+81982573660" class="contact-item">
+                      <svg viewBox="0 0 20 20" fill="currentColor" class="contact-icon">
+                        <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/>
+                      </svg>
+                      <span>+81 0982-57-3660</span>
+                    </a>
+                    <div class="contact-item">
+                      <svg viewBox="0 0 20 20" fill="currentColor" class="contact-icon">
+                        <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V4z"/>
+                        <path d="M5 6h10M5 8h6M5 10h8M5 12h4" stroke="white" stroke-width="1" fill="none"/>
+                        <path d="M13 8h2v4h-2z" fill="white"/>
+                      </svg>
+                      <span>FAX: +81 0982-57-3661</span>
+                    </div>
+                    
+                  </div>
+                </div>
+                <a href="https://maps.app.goo.gl/YfiXRHFH1xnUbdAF9" target="_blank" rel="noopener" class="location-map-btn" aria-label="View on map">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" stroke="currentColor" stroke-width="2"/>
+                    <circle cx="12" cy="10" r="3" stroke="currentColor" stroke-width="2"/>
+                  </svg>
+                </a>
+              </article>
+
+              <!-- Malaysia Location -->
+              <article class="location-card reveal">
+                <div class="location-card-header">
+                  <div class="location-country">
+                    <img src="./images/my.svg" alt="Malaysia" class="country-flag">
+                    <span>Malaysia</span>
+                  </div>
+                </div>
+                <h3 class="location-card-title">
+                  <a href="https://www.aj-hakko.com.my/" target="_blank" rel="noopener">
+                    <span class="company-jp">A&J HAKKO (MALAYSIA) SDN. BHD.</span>
+                    <span class="company-en">A&J HAKKO (MALAYSIA) SDN. BHD.</span>
+                  </a>
+                </h3>
+                <address class="location-card-address">
+                  No. 33-5, 5th Floor, The Boulevard Office, Mid Valley City, Lingkaran Syed Putra, 59200, Kuala Lumpur
+                </address>
+                <div class="location-card-contacts">
+                  <div class="location-card-contact-row">
+                    <a href="tel:+60327046275" class="contact-item">
+                      <svg viewBox="0 0 20 20" fill="currentColor" class="contact-icon">
+                        <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/>
+                      </svg>
+                      <span>+60 03-2704-6275</span>
+                    </a>
+                    <a href="mailto:info@aj-hakko.com" class="contact-item">
+                      <svg viewBox="0 0 20 20" fill="currentColor" class="contact-icon">
+                        <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
+                        <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
+                      </svg>
+                      <span>info@aj-hakko.com</span>
+                    </a>
+                  </div>
+                </div>
+                <a href="https://maps.google.com/?q=A%26J+HAKKO+Malaysia+Mid+Valley+Kuala+Lumpur" target="_blank" rel="noopener" class="location-map-btn" aria-label="View on map">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" stroke="currentColor" stroke-width="2"/>
+                    <circle cx="12" cy="10" r="3" stroke="currentColor" stroke-width="2"/>
+                  </svg>
+                </a>
               </article>
             </div>
           </div>
@@ -270,116 +581,229 @@
     </main>
 
     <footer class="site-footer">
-      <div class="container footer-grid">
-        <div class="footer-left">
-          <div class="brand-row">
-            <span class="brand-text">A&J Logistics</span>
-            <div class="lang-switch small">
-              <button class="lang-btn" data-lang="jp" aria-pressed="false"><span class="flag-circle"><img src="./images/jp.svg" width="20" height="15" alt="Japan" /></span><span class="label">JP</span></button>
-              <button class="lang-btn" data-lang="en" aria-pressed="true"><span class="flag-circle"><img src="./images/gb.svg" width="20" height="15" alt="English" /></span><span class="label">EN</span></button>
-              <button class="lang-btn" data-lang="zh" aria-pressed="false"><span class="flag-circle"><img src="./images/cn.svg" width="20" height="15" alt="中文" /></span><span class="label">中文</span></button>
-            </div>
+      <div class="container" style="text-align: center; padding: 20px 0;">
+        <div style="margin-bottom: 16px;">
+          <div class="lang-switch small" style="justify-content: center;">
+            <button class="lang-btn" data-lang="jp" aria-pressed="false"><span class="flag-circle"><img src="./images/jp.svg" width="20" height="15" alt="Japan" /></span><span class="label">JP</span></button>
+            <button class="lang-btn" data-lang="en" aria-pressed="true"><span class="flag-circle"><img src="./images/sg.svg" width="20" height="15" alt="Singapore" /></span><span class="label">SG</span></button>
           </div>
-          <p class="copy">© <span id="year"></span> A&J Logistics</p>
         </div>
-        <div class="footer-right">
-          <div class="contacts">
-            <p><strong>MY</strong>: <a href="mailto:info@aj-hakko.com.my">info@aj-hakko.com.my</a>, <a href="tel:+60327046275">+60 03-2704-6275</a></p>
-            <p><strong>SG</strong>: <a href="mailto:sg@aj-logistics.com">sg@aj-logistics.com</a>, <a href="tel:+6562656942">(+65) 6265 6942</a></p>
-          </div>
-          <div class="policies">
-            <a href="#" role="link">Terms</a>
-            <a href="#" role="link">Privacy</a>
-          </div>
+        <div>
+          <span>© 2025 A&J HAKKO PTE LTD | 201120019N</span>
         </div>
       </div>
     </footer>
 
     <script src="./script.js" defer></script>
-    <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-      import { getFirestore, collection, query, where, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-      import { firebaseConfig } from "./firebase-config.js";
-
-      const app = initializeApp(firebaseConfig);
-      const db = getFirestore(app);
-
-      const grid = document.getElementById('news-cards');
-      if (grid) {
-        const lang = localStorage.getItem('lang') || 'en';
-        const listRef = collection(db, 'news');
-        const q = query(
-          listRef,
-          where('published', '==', true),
-          where('lang', '==', lang),
-          orderBy('publishedAt', 'desc'),
-          limit(3)
-        );
-        try {
-          const snap = await getDocs(q);
-          grid.setAttribute('aria-busy', 'false');
-          grid.innerHTML = snap.docs.map(d => {
-            const n = d.data();
-            const date = n.publishedAt?.toDate ? n.publishedAt.toDate() : (n.publishedAt ? new Date(n.publishedAt) : new Date());
-            const cover = n.coverUrl || (Array.isArray(n.imageUrls) && n.imageUrls.length ? n.imageUrls[0] : null);
-            return `
-            <article class="news-card">
-              ${cover ? `<img src="${cover}" alt="">` : ''}
-              <div class="pad">
-                <time datetime="${date.toISOString()}">${date.toLocaleDateString()}</time>
-                <h3>${n.title || ''}</h3>
-                <p>${(n.body || '').replace(/<[^>]*>/g,'').slice(0,120)}</p>
+    <script>
+      // Render helper
+      function renderNewsList(items) {
+        const list = document.getElementById('news-list');
+        if (!list) return;
+        list.setAttribute('aria-busy', 'false');
+        list.innerHTML = items.slice(0, 3).map((item, index) => `
+          <article class="news-item" onclick="window.location.href='/news/${encodeURIComponent(item.slug)}'">
+            <div class="news-content">
+              <div class="news-meta">
+                <span class="news-date">${new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                ${item.category ? `<span class="news-category">${item.category}</span>` : ''}
               </div>
-              <a class="btn btn-accent" href="/news/${encodeURIComponent(n.slug)}" aria-label="Read: ${n.title || ''}">Read</a>
-            </article>`;
-          }).join('') || '<p>No news yet.</p>';
-        } catch(err) {
-          grid.innerHTML = '<p style="color:#ef4444">Failed to load news.</p>';
+              <h3 class="news-item-title">${item.title || ''}</h3>
+              ${index < 2 && item.excerpt ? `<p class="news-excerpt">${item.excerpt}</p>` : ''}
+            </div>
+            <div class="news-arrow">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M9 5l7 7-7 7" fill="currentColor"/>
+              </svg>
+            </div>
+          </article>
+        `).join('');
+      }
+
+      // Local-only sample data (for file://)
+      function loadLocalNewsFallback() {
+        const sampleNews = [
+          { title:'A&J HAKKO Expands Cold Chain Network Across Southeast Asia', date:'2025-01-15', category:'Expansion', excerpt:'Strategic partnership with regional logistics providers strengthens our temperature-controlled delivery capabilities across five new markets.', slug:'cold-chain-expansion-2025' },
+          { title:'New Automated Warehouse Opens in Singapore', date:'2025-01-10', category:'Operations', excerpt:'State-of-the-art facility increases storage capacity by 40% with advanced robotics.', slug:'singapore-warehouse-2025' },
+          { title:'Japanese Food Festival Partnership Announcement', date:'2025-01-08', category:'Events', excerpt:'Exclusive logistics partner for upcoming Japanese food exhibitions in major department stores.', slug:'food-festival-partnership' },
+          { title:'Sustainability Initiative: Carbon Neutral Deliveries by 2026', date:'2025-01-05', category:'Sustainability', excerpt:'Commitment to environmental responsibility through electric vehicle fleet expansion.', slug:'carbon-neutral-initiative' }
+        ];
+        renderNewsList(sampleNews);
+      }
+
+      // Only auto-run the sample list on local files
+      if (location.protocol === 'file:') {
+        document.addEventListener('DOMContentLoaded', loadLocalNewsFallback);
+      }
+      // Expose fallback for production error path
+      window.loadLocalNewsFallback = loadLocalNewsFallback;
+    </script>
+
+    <script>
+      // Fallback function to load local customer logos
+      function loadLocalCustomerLogos() {
+        const track = document.querySelector('.brand-track');
+        if (track) {
+          const localLogos = [
+            'CFC-Logo.webp',
+            'FOOD BASE LOGO.webp', 
+            'inic_coffee.webp',
+            'KANENA MISO LOGO.webp',
+            'Kinokuniya.webp',
+            'NISHIKIYA KITCHEN LOGO.webp',
+            'PIONEER LOGO.webp',
+            'Sankyo FOods.webp',
+            'URESHINO LABO LOGO.webp'
+          ];
+          
+          track.innerHTML = localLogos.map(logo => {
+            const name = logo.replace(/\.[^/.]+$/, '').replace(/[_-]/g, ' ');
+            return `<img src="./images/customers/${logo}" alt="${name}" loading="lazy" />`;
+          }).join('');
+          
+          console.log('Loaded', localLogos.length, 'customer logos from local images folder');
         }
       }
-      // Load products (published) into the two home tracks
-      try {
-        const ps = await getDocs(query(collection(db,'products'), where('published','==', true), limit(8))); 
-        const cards = ps.docs.map(d => {
-          const p = d.data();
-          return `<article class="product-card">${p.imageUrl?`<img src="${p.imageUrl}" alt="">`:''}<h4>${p.name||''}</h4></article>`;
-        });
-        const half = Math.ceil(cards.length/2);
-        const t1 = document.getElementById('home-products-track-1');
-        const t2 = document.getElementById('home-products-track-2');
-        if (t1) t1.innerHTML = cards.slice(0, half).join('');
-        if (t2) t2.innerHTML = cards.slice(half).join('');
-      } catch (e) { console.error('Products error:', e); }
       
-      // Load customer logos dynamically from Firebase Storage
-      try {
-        const { getStorage, ref, listAll, getDownloadURL } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js");
-        const storage = getStorage(app);
-        const customersRef = ref(storage, 'customers');
-        const customersList = await listAll(customersRef);
-        
-        if (customersList.items.length > 0) {
-          const track = document.querySelector('.brand-track');
-          if (track) {
-            // Clear existing logos
-            track.innerHTML = '';
-            
-            // Add logos from Firebase Storage
-            for (const item of customersList.items) {
-              const url = await getDownloadURL(item);
-              const name = item.name.replace(/\.[^/.]+$/, '').replace(/[_-]/g, ' ');
-              track.insertAdjacentHTML('beforeend', `<img src="${url}" alt="${name}" loading="lazy" />`);
-            }
-            console.log('Loaded', customersList.items.length, 'customer logos from Firebase Storage');
+      // Load local logos immediately for file:// protocol
+      if (location.protocol === 'file:') {
+        document.addEventListener('DOMContentLoaded', loadLocalCustomerLogos);
+      }
+    </script>
+    <script type="module">
+      // Only try Firebase when served from HTTP/HTTPS
+      if (location.protocol !== 'file:') {
+        try {
+          const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js");
+          const { getFirestore, collection, query, where, orderBy, getDocs, limit, doc, getDoc } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js");
+          const { firebaseConfig } = await import("./firebase-config.js");
+
+          const app = initializeApp(firebaseConfig);
+          const db = getFirestore(app);
+
+          // Load products
+          const ps = await getDocs(
+            query(
+              collection(db, 'products'),
+              where('published', '==', true),
+              orderBy('createdAt', 'desc'),
+            )
+          );
+
+          const cards = ps.docs.map(d => {
+            const p = d.data();
+            // Use thumbnail for better performance (thumbUrl falls back to imageUrl)
+            const imgSrc = p.thumbUrl || p.imageUrl;
+            return `
+              <article class="product-card">
+                ${imgSrc ? `<img src="${imgSrc}" alt="${p.name||''}" loading="lazy" decoding="async">` : ''}
+                <h4>${p.name || ''}</h4>
+              </article>
+            `;
+          });
+          if (window.initProductsSlider) {
+              window.initProductsSlider(cards, { immediate: true });
           }
-        } else {
-          console.log('No customer logos found in Firebase Storage, using static images');
+          // Load customer logos from Firebase Storage
+          const { getStorage, ref, listAll, getDownloadURL } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js");
+          const storage = getStorage(app);
+          const customersRef = ref(storage, 'customers');
+          const customersList = await listAll(customersRef);
+
+          if (customersList.items.length > 0) {
+            const track = document.querySelector('.brand-track');
+            if (track) {
+              track.innerHTML = '';
+              for (const item of customersList.items) {
+                const url = await getDownloadURL(item);
+                const name = item.name.replace(/\.[^/.]+$/, '').replace(/[_-]/g, ' ');
+                track.insertAdjacentHTML('beforeend', `<img src="${url}" alt="${name}" loading="lazy" />`);
+              }
+              console.log('Loaded', customersList.items.length, 'customer logos from Firebase Storage');
+            }
+          } else {
+            loadLocalCustomerLogos();
+          }
+
+          // Load brand banner from Firestore
+          try {
+            const bannerDoc = await getDoc(doc(db, 'settings', 'brandBanner'));
+            if (bannerDoc.exists()) {
+              const bannerData = bannerDoc.data();
+              if (bannerData.imageUrl) {
+                const bannerContainer = document.getElementById('brand-banner-container');
+                const bannerImage = document.getElementById('brand-banner-image');
+                const bannerLink = document.getElementById('brand-banner-link');
+                
+                if (bannerContainer && bannerImage && bannerLink) {
+                  bannerImage.src = bannerData.imageUrl;
+                  bannerLink.href = bannerData.linkUrl || '#';
+                  if (bannerData.linkUrl) {
+                    bannerLink.target = bannerData.linkUrl.startsWith('http') ? '_blank' : '_self';
+                  }
+                  bannerContainer.style.display = 'block';
+                  console.log('Brand banner loaded successfully');
+                }
+              }
+            }
+          } catch (bannerErr) {
+            console.log('No brand banner configured or error loading:', bannerErr);
+          }
+
+        // Load latest news (limit 3)
+        const lang = localStorage.getItem('lang') || 'en';
+        const ns = await getDocs(
+          query(
+            collection(db, 'news'),
+            where('published', '==', true),
+            where('lang', '==', lang),
+            orderBy('publishedAt', 'desc'),
+            limit(3)
+          )
+        );
+
+        const newsList = document.getElementById('news-list');
+        if (newsList) {
+          if (!ns.empty) {
+            const items = ns.docs.map(d => {
+              const n = d.data();
+              const dt = n.publishedAt?.toDate ? n.publishedAt.toDate()
+                      : n.publishedAt ? new Date(n.publishedAt)
+                      : new Date();
+              const rawBody = String(n.body || '').replace(/<[^>]*>/g, '');
+              const excerpt = n.excerpt 
+                || (rawBody.length > 160 ? rawBody.slice(0, 160) + '...' : rawBody);
+              return {
+                title: n.title || '',
+                date: dt.toISOString(),
+                category: n.category || '',
+                excerpt,
+                slug: n.slug || d.id
+              };
+            });
+
+            // Render and mark as loaded
+            renderNewsList(items);
+          } else {
+            // No news in Firestore – clear placeholder
+            newsList.setAttribute('aria-busy', 'false');
+            newsList.innerHTML = '<p style="color:#6b7280;" data-i18n="news.noNews">No news yet.</p>';
+            // Re-trigger translation for dynamically added element
+            const currentLang = localStorage.getItem('lang') || 'en';
+            const noNewsEl = newsList.querySelector('[data-i18n="news.noNews"]');
+            if (noNewsEl && window.translations) {
+              const dict = window.translations[currentLang] || window.translations.en;
+              if (dict['news.noNews']) {
+                noNewsEl.textContent = dict['news.noNews'];
+              }
+            }
+          }
         }
-      } catch (e) { 
-        console.log('Using static customer logos:', e.message); 
+        } catch (err) {
+          console.error('Firebase error:', err);
+          loadLocalNewsFallback();
+        }
       }
     </script>
   </body>
-  </html>
-
-
+</html>
