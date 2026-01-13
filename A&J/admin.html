@@ -1214,7 +1214,7 @@
       <div class="user-info" id="user-info-toggle">
         <div class="user-avatar" id="user-avatar">A</div>
         <div class="user-details">
-          <div class="user-name" id="user-email">admin@company.com</div>
+          <div class="user-name" id="user-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="2f4e4b4246416f4c40425f4e4156014c4042">[email&#160;protected]</a></div>
           <div class="user-role">Administrator</div>
         </div>
         <svg class="user-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1535,7 +1535,7 @@
   </div>
 </div>
 
-<script type="module">
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDoc, serverTimestamp, Timestamp, collection, query, where, orderBy, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -2142,7 +2142,7 @@ document.getElementById('banner_save').addEventListener('click', async (e) => {
     if (overlay) overlay.style.display = 'grid';
     let imageUrl = bannerExistingImageUrl || '';
     if (bannerSelectedFile) {
-      const compressedFile = await compressImage(bannerSelectedFile);
+      const compressedFile = await compressImage(bannerSelectedFile, 1920, 1);
       const clean = bannerSelectedFile.name.replace(/[^a-zA-Z0-9_.-]/g, '_').replace(/\.[^.]+$/, '.webp');
       const r = ref(st, `banners/${Date.now()}-${clean}`);
       const task = uploadBytesResumable(r, compressedFile, { cacheControl: 'public,max-age=31536000,immutable', contentType: 'image/webp' });
@@ -2179,13 +2179,21 @@ async function loadBannerPreview() {
       previewEl.innerHTML = `
         <img src="${data.imageUrl}" alt="Current Banner" class="banner-preview-image" />
         <div class="banner-preview-info">
-          <div class="banner-preview-link"><strong>Link:</strong> ${data.linkUrl || '(No link set)'}</div>
+          <div class="banner-preview-link"><strong>Link:</strong> <span id="banner_link_display">${data.linkUrl || '(No link set)'}</span></div>
           <div class="banner-preview-actions">
+            <button class="btn btn-secondary" id="banner_edit_link">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.375 2.625a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4Z"/>
+              </svg>
+              Edit Link
+            </button>
             <button class="btn btn-danger" id="banner_remove">Remove Banner</button>
           </div>
         </div>
       `;
       bannerLink.value = data.linkUrl || '';
+      document.getElementById('banner_edit_link').addEventListener('click', openEditLinkModal);
       document.getElementById('banner_remove').addEventListener('click', removeBanner);
     } else {
       previewEl.innerHTML = `
@@ -2199,6 +2207,79 @@ async function loadBannerPreview() {
   } catch (err) {
     console.error('Error loading banner preview:', err);
   }
+}
+
+async function openEditLinkModal() {
+  const bannerDoc = await getDoc(doc(db, 'settings', 'brandBanner'));
+  if (!bannerDoc.exists()) return showToast('Banner not found', 'error');
+  
+  const currentLink = bannerDoc.data().linkUrl || '';
+  
+  // Create and show edit link modal
+  const modalHtml = `
+    <div id="edit-link-modal" class="overlay" style="display: grid;">
+      <div class="modal">
+        <div class="modal-header">
+          <h3 class="modal-title">Edit Banner Link</h3>
+        </div>
+        <div class="modal-body">
+          <div class="field">
+            <label class="field-label" for="edit_banner_link">Link URL</label>
+            <input id="edit_banner_link" class="input" type="text" value="${currentLink}" placeholder="/brand.html or https://example.com">
+            <span class="field-hint">Enter the page URL to redirect when banner is clicked.</span>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="edit-link-cancel" class="btn btn-secondary" type="button">Cancel</button>
+          <button id="edit-link-save" class="btn btn-primary" type="button">Save Link</button>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
+  
+  const modal = document.getElementById('edit-link-modal');
+  const cancelBtn = document.getElementById('edit-link-cancel');
+  const saveBtn = document.getElementById('edit-link-save');
+  const linkInput = document.getElementById('edit_banner_link');
+  
+  // Focus the input
+  linkInput.focus();
+  linkInput.select();
+  
+  cancelBtn.addEventListener('click', () => modal.remove());
+  
+  saveBtn.addEventListener('click', async () => {
+    const newLink = linkInput.value.trim();
+    try {
+      const overlay = document.getElementById('saving');
+      if (overlay) overlay.style.display = 'grid';
+      
+      // Get current banner data and update only the link
+      const currentData = bannerDoc.data();
+      await setDoc(doc(db, 'settings', 'brandBanner'), {
+        imageUrl: currentData.imageUrl,
+        linkUrl: newLink,
+        updatedAt: serverTimestamp()
+      });
+      
+      showToast('Link updated', 'success');
+      modal.remove();
+      loadBannerPreview();
+    } catch (err) {
+      showToast(err.message || 'Update failed', 'error');
+    } finally {
+      const overlay = document.getElementById('saving');
+      if (overlay) overlay.style.display = 'none';
+    }
+  });
+  
+  // Close on escape key
+  modal.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') modal.remove();
+    if (e.key === 'Enter') saveBtn.click();
+  });
 }
 
 async function removeBanner() {

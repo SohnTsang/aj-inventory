@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jungnammi | 정남미 - Korean Rice Bread Since 1986</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --golden: #FFCD00;
+            --warm-orange: #E85D3B;
+            --cream: #FFF8E7;
+            --deep-brown: #2D1B0E;
+            --soft-green: #7CB342;
+            --coral: #FF6B5B;
+            --light-orange: #FFF4D6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--cream);
+            color: var(--deep-brown);
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 1rem 4%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 248, 231, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .logo img {
+            height: 45px;
+            border-radius: 8px;
+        }
+
+        .logo-text {
+            font-family: 'Fraunces', serif;
+            font-weight: 800;
+            font-size: 1.4rem;
+            color: var(--deep-brown);
+        }
+
+        .logo-text span {
+            font-size: 0.65rem;
+            font-weight: 400;
+            color: var(--warm-orange);
+            display: block;
+            letter-spacing: 2px;
+        }
+
+        nav {
+            display: flex;
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--deep-brown);
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--warm-orange);
+        }
+
+        .nav-cta {
+            background: var(--deep-brown);
+            color: white !important;
+            padding: 0.7rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+        }
+
+        .nav-cta:hover {
+            background: var(--warm-orange);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding-top: 80px;
+        }
+
+        .hero-image-container {
+            width: 100%;
+            height: 70vh;
+            min-height: 500px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: scale-down;
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 4%;
+            text-align: center;
+        }
+
+        .hero-content h1 {
+            font-family: 'Fraunces', serif;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-content h1 .korean {
+            font-size: 0.5em;
+            color: var(--warm-orange);
+            display: block;
+            margin-top: 0.5rem;
+        }
+
+        .hero-content p {
+            font-size: 1.15rem;
+            line-height: 1.8;
+            color: #5a4a3a;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Products Section */
+        .products {
+            padding: 80px 4%;
+            background: var(--light-orange);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .section-header h2 {
+            font-family: 'Fraunces', serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .section-header h2 .korean-small {
+            font-size: 0.6em;
+            color: var(--warm-orange);
+        }
+
+        .section-header p {
+            font-size: 1.1rem;
+            color: #5a4a3a;
+        }
+
+        .products-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 30px;
+        }
+
+        .product-card {
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: scale(1.05);
+        }
+
+        .product-image-wrapper {
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        /* Cute shape masks for products */
+        .product-card:nth-child(1) .product-image-wrapper {
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+        }
+
+        .product-card:nth-child(2) .product-image-wrapper {
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+        }
+
+        .product-card:nth-child(3) .product-image-wrapper {
+            clip-path: ellipse(50% 45% at 50% 50%);
+        }
+
+        .product-card:nth-child(4) .product-image-wrapper {
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+        }
+
+        .product-card:nth-child(5) .product-image-wrapper {
+            clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+        }
+
+        .product-card:nth-child(6) .product-image-wrapper {
+            border-radius: 60% 40% 50% 50% / 50% 50% 40% 60%;
+        }
+
+        .product-card:nth-child(7) .product-image-wrapper {
+            clip-path: polygon(50% 5%, 90% 25%, 100% 60%, 75% 100%, 25% 100%, 0% 60%, 10% 25%);
+        }
+
+        .product-card:nth-child(8) .product-image-wrapper {
+            border-radius: 40% 60% 60% 40% / 60% 40% 60% 40%;
+        }
+
+        .product-card:nth-child(9) .product-image-wrapper {
+            clip-path: circle(48% at 50% 50%);
+        }
+
+        .product-card:nth-child(10) .product-image-wrapper {
+            border-radius: 50% 50% 40% 40% / 40% 40% 60% 60%;
+        }
+
+        .product-image-wrapper img {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+            background: white;
+        }
+
+        .product-card h3 {
+            font-family: 'Fraunces', serif;
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--deep-brown);
+            margin-bottom: 3px;
+        }
+
+        .product-card .korean-name {
+            font-size: 0.8rem;
+            color: var(--warm-orange);
+        }
+
+        /* Shop Now Button in Products Section */
+        .products-cta {
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        .shop-now-btn {
+            background: var(--warm-orange);
+            color: white;
+            padding: 1.2rem 3.5rem;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .shop-now-btn:hover {
+            background: var(--deep-brown);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(45, 27, 14, 0.2);
+        }
+
+        /* Coming Soon Section - Cute Jungnammi Style */
+        .coming-soon-section {
+            padding: 80px 4%;
+            background: var(--golden);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .coming-soon-container {
+            max-width: 700px;
+            margin: 0 auto;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Mascot image */
+        .coming-soon-mascot-img {
+            display: block;
+            width: 150px;
+            height: auto;
+            margin: 0 auto 30px;
+            border-radius: 20px;
+        }
+
+        .coming-soon-badge {
+            display: inline-block;
+            background: var(--deep-brown);
+            color: white;
+            padding: 10px 25px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .coming-soon-title {
+            font-family: 'Fraunces', serif;
+            font-size: clamp(2.2rem, 5vw, 3.5rem);
+            font-weight: 800;
+            color: var(--deep-brown);
+            margin-bottom: 15px;
+            line-height: 1.2;
+        }
+
+        .coming-soon-title span {
+            color: var(--warm-orange);
+        }
+
+        .coming-soon-text {
+            font-size: 1.15rem;
+            color: var(--deep-brown);
+            opacity: 0.85;
+            margin-bottom: 35px;
+            line-height: 1.7;
+        }
+
+        .coming-soon-follow {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: white;
+            padding: 14px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            color: var(--deep-brown);
+            text-decoration: none;
+            transition: all 0.3s;
+            box-shadow: 0 8px 25px rgba(45, 27, 14, 0.12);
+        }
+
+        .coming-soon-follow:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(45, 27, 14, 0.18);
+        }
+
+        .coming-soon-follow svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        /* Decorative floating bread images */
+        .deco-bread {
+            position: absolute;
+            pointer-events: none;
+            object-fit: contain;
+        }
+
+        .deco-bread-1 {
+            top: 8%;
+            left: 3%;
+            width: 120px;
+            height: 120px;
+            transform: rotate(-15deg);
+        }
+
+        .deco-bread-2 {
+            bottom: 8%;
+            right: 5%;
+            width: 110px;
+            height: 110px;
+            transform: rotate(20deg);
+        }
+
+        .deco-bread-3 {
+            top: 55%;
+            left: 4%;
+            width: 100px;
+            height: 100px;
+            transform: rotate(-10deg);
+        }
+
+        .deco-bread-4 {
+            top: 8%;
+            right: 4%;
+            width: 115px;
+            height: 115px;
+            transform: rotate(15deg);
+        }
+
+        .deco-bread-5 {
+            bottom: 15%;
+            left: 8%;
+            width: 90px;
+            height: 90px;
+            transform: rotate(-25deg);
+        }
+
+        .deco-bread-6 {
+            top: 30%;
+            right: 20%;
+            width: 95px;
+            height: 95px;
+            transform: rotate(30deg);
+        }
+
+        .deco-bread-7 {
+            top: 25%;
+            left: 20%;
+            width: 100px;
+            height: 100px;
+            transform: rotate(12deg);
+        }
+
+        .deco-bread-8 {
+            bottom: 35%;
+            right: 3%;
+            width: 105px;
+            height: 105px;
+            transform: rotate(-18deg);
+        }
+
+        .deco-bread-9 {
+            top: 70%;
+            right: 15%;
+            width: 80px;
+            height: 80px;
+            transform: rotate(25deg);
+        }
+
+        .deco-bread-10 {
+            bottom: 5%;
+            left: 20%;
+            width: 95px;
+            height: 95px;
+            transform: rotate(-8deg);
+        }
+
+        /* Instagram Section */
+        .instagram {
+            padding: 80px 4%;
+            background: var(--cream);
+        }
+
+        .instagram-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .instagram-header h2 {
+            font-family: 'Fraunces', serif;
+            font-size: clamp(1.8rem, 3vw, 2.5rem);
+            font-weight: 800;
+            margin-bottom: 0.3rem;
+        }
+
+        .instagram-header a {
+            color: var(--warm-orange);
+            font-size: 1rem;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .instagram-header a:hover {
+            text-decoration: underline;
+        }
+
+        .instagram-grid {
+            max-width: 900px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 200px);
+            gap: 12px;
+        }
+
+        .instagram-grid .insta-item {
+            display: block;
+            overflow: hidden;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: opacity 0.3s;
+            background: #e0d6c8;
+        }
+
+        .instagram-grid .insta-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .instagram-grid .insta-item:hover {
+            opacity: 0.85;
+        }
+
+        /* Masonry layout: 4 posts forming rectangle */
+        .instagram-grid .insta-item:nth-child(1) {
+            grid-column: 1;
+            grid-row: 1 / 3;
+        }
+
+        .instagram-grid .insta-item:nth-child(2) {
+            grid-column: 2 / 4;
+            grid-row: 1;
+        }
+
+        .instagram-grid .insta-item:nth-child(3) {
+            grid-column: 2;
+            grid-row: 2;
+        }
+
+        .instagram-grid .insta-item:nth-child(4) {
+            grid-column: 3;
+            grid-row: 2;
+        }
+
+        .instagram-loading {
+            grid-column: 1 / -1;
+            grid-row: 1 / -1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #888;
+            font-size: 0.95rem;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--deep-brown);
+            color: white;
+            padding: 50px 4% 30px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-brand h3 {
+            font-family: 'Fraunces', serif;
+            font-size: 1.5rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-brand p {
+            color: #a89888;
+            line-height: 1.7;
+            font-size: 0.9rem;
+            max-width: 350px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 60px;
+        }
+
+        .footer-column h4 {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--golden);
+            font-size: 0.9rem;
+        }
+
+        .footer-column a {
+            display: block;
+            color: #a89888;
+            text-decoration: none;
+            margin-bottom: 0.6rem;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .footer-column a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            color: #6a5a4a;
+            font-size: 0.85rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .footer-aj-link {
+            display: inline-block;
+            transition: opacity 0.3s;
+        }
+
+        .footer-aj-link:hover {
+            opacity: 0.8;
+        }
+
+        .footer-aj-logo {
+            height: 40px;
+            width: auto;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(45, 27, 14, 0.8);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 30px;
+            max-width: 500px;
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: var(--deep-brown);
+            z-index: 10;
+            line-height: 1;
+        }
+
+        .modal-close:hover {
+            color: var(--warm-orange);
+        }
+
+        .modal-image {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+        }
+
+        .modal-content {
+            padding: 30px;
+        }
+
+        .modal-content h3 {
+            font-family: 'Fraunces', serif;
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+
+        .modal-content .korean-name {
+            color: var(--warm-orange);
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .modal-content p {
+            color: #5a4a3a;
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+
+        .modal-features {
+            display: flex;
+            gap: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #f0e6d9;
+        }
+
+        .modal-feature {
+            text-align: center;
+            flex: 1;
+        }
+
+        .modal-feature strong {
+            font-family: 'Fraunces', serif;
+            font-size: 1.3rem;
+            color: var(--warm-orange);
+            display: block;
+        }
+
+        .modal-feature span {
+            font-size: 0.75rem;
+            color: #888;
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 1024px) {
+            .products-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .popup-schedule {
+                padding: 30px 35px;
+            }
+
+            .instagram-grid {
+                grid-template-columns: repeat(3, 1fr);
+                grid-template-rows: repeat(2, 160px);
+                gap: 10px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                display: none;
+            }
+
+            .products-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+
+            .popup-schedule {
+                padding: 25px 20px;
+            }
+
+            .popup-schedule-label {
+                font-size: 1.3rem;
+            }
+
+            .popup-date-item {
+                padding: 14px 18px;
+            }
+
+            .footer-content {
+                flex-direction: column;
+            }
+
+            .footer-links {
+                gap: 40px;
+            }
+
+            .instagram-grid {
+                grid-template-columns: repeat(2, 1fr);
+                grid-template-rows: repeat(2, 150px);
+                gap: 8px;
+            }
+
+            .instagram-grid .insta-item:nth-child(1) {
+                grid-column: 1;
+                grid-row: 1;
+            }
+
+            .instagram-grid .insta-item:nth-child(2) {
+                grid-column: 2;
+                grid-row: 1;
+            }
+
+            .instagram-grid .insta-item:nth-child(3) {
+                grid-column: 1;
+                grid-row: 2;
+            }
+
+            .instagram-grid .insta-item:nth-child(4) {
+                grid-column: 2;
+                grid-row: 2;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <img src="../images/jungnammi/Jungnammi Logo.jpg" alt="Jungnammi Logo">
+            <div class="logo-text">
+                JUNGNAMMI
+                <span>정남미 · SINCE 1986</span>
+            </div>
+        </div>
+        <nav>
+            <a href="#products">Products</a>
+            <a href="#popup">Pop-Up</a>
+            <a href="#instagram">Follow Us</a>
+            <a href="#contact" class="nav-cta">Contact</a>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-image-container">
+            <img src="../images/jungnammi/hero.jpg" alt="Jungnammi Veggie Rice Bread Collection">
+        </div>
+        <div class="hero-content">
+            <h1>
+                Veggie Rice Bread
+                <span class="korean">구황작물빵</span>
+            </h1>
+            <p>Since 1986, we've carried on the tradition of Master Tteok artisan Jung Nam-mi, sharing the culture of K-desserts with the world. Discover our unique desserts made with Korean rice and local agricultural products — naturally delicious harmony of veggie and rice.</p>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section class="products" id="products">
+        <div class="section-header">
+            <h2>Our Products <span class="korean-small">구황작물빵</span></h2>
+            <p>Each bread is shaped like a vegetable or fruit, filled with cream made from the same produce.</p>
+        </div>
+
+        <div class="products-grid">
+            <div class="product-card" data-product="potato">
+                <div class="product-image-wrapper">
+                    <img src="../images/jungnammi/Potato.jpg" alt="Potato Bread">
+                </div>
+                <h3>Potato</h3>
+                <span class="korean-name">감자빵</span>
+            </div>
+            <div class="product-card" data-product="sweetpotato">
+                <div class="product-image-wrapper">
+                    <img src="../images/jungnammi/Sweet Potato.jpg" alt="Sweet Potato Bread">
+                </div>
+                <h3>Sweet Potato</h3>
+                <span class="korean-name">고구마빵</span>
+            </div>
+            <div class="product-card" data-product="pumpkin">
+                <div class="product-image-wrapper">
+                    <img src="../images/jungnammi/Pumpkin.jpg" alt="Pumpkin Bread">
+                </div>
+                <h3>Pumpkin</h3>
+                <span class="korean-name">호박빵</span>
+            </div>
+            <div class="product-card" data-product="corn">
+                <div class="product-image-wrapper">
+                    <img src="../images/jungnammi/Corn.jpg" alt="Corn Bread">
+                </div>
+                <h3>Corn</h3>
+                <span class="korean-name">옥수수빵</span>
+            </div>
+            <div class="product-card" data-product="chestnut">
+                <div class="product-image-wrapper">
+                    <img src="../images/jungnammi/Chestnuts.jpg" alt="Chestnut Bread">
+                </div>
+                <h3>Chestnut</h3>
+                <span class="korean-name">밤빵</span>
+            </div>
+            <div class="product-card" data-product="greenonion">
+                <div class="product-image-wrapper">
+                    <img src="../images/jungnammi/Green Onion.jpg" alt="Green Onion Bread">
+                </div>
+                <h3>Green Onion</h3>
+                <span class="korean-name">파빵</span>
+            </div>
+            <div class="product-card" data-product="onion">
+                <div class="product-image-wrapper">
+                    <img src="../images/jungnammi/Onion.jpg" alt="Onion Bread">
+                </div>
+                <h3>Onion</h3>
+                <span class="korean-name">양파빵</span>
+            </div>
+            <div class="product-card" data-product="persimmon">
+                <div class="product-image-wrapper">
+                    <img src="../images/jungnammi/Persimmon.jpg" alt="Persimmon Bread">
+                </div>
+                <h3>Persimmon</h3>
+                <span class="korean-name">감빵</span>
+            </div>
+            <div class="product-card" data-product="garlic">
+                <div class="product-image-wrapper">
+                    <img src="../images/jungnammi/Garlic.jpg" alt="Garlic Bread">
+                </div>
+                <h3>Garlic</h3>
+                <span class="korean-name">마늘빵</span>
+            </div>
+            <div class="product-card" data-product="chilli">
+                <div class="product-image-wrapper">
+                    <img src="../images/jungnammi/Chilli.jpg" alt="Chilli Bread">
+                </div>
+                <h3>Chilli</h3>
+                <span class="korean-name">고추빵</span>
+            </div>
+        </div>
+
+        <!-- Shop Now Button -->
+        <div class="products-cta">
+            <a href="#" class="shop-now-btn">Shop Now</a>
+        </div>
+    </section>
+
+    <!-- Coming Soon Section -->
+    <section class="coming-soon-section" id="popup">
+        <!-- Decorative bread images -->
+        <img src="../images/jungnammi/Sweet Potato.jpg" alt="" class="deco-bread deco-bread-1">
+        <img src="../images/jungnammi/Pumpkin.jpg" alt="" class="deco-bread deco-bread-2">
+        <img src="../images/jungnammi/Corn.jpg" alt="" class="deco-bread deco-bread-3">
+        <img src="../images/jungnammi/Potato.jpg" alt="" class="deco-bread deco-bread-4">
+        <img src="../images/jungnammi/Chestnuts.jpg" alt="" class="deco-bread deco-bread-5">
+        <img src="../images/jungnammi/Persimmon.jpg" alt="" class="deco-bread deco-bread-6">
+        <img src="../images/jungnammi/Green Onion.jpg" alt="" class="deco-bread deco-bread-7">
+        <img src="../images/jungnammi/Onion.jpg" alt="" class="deco-bread deco-bread-8">
+        <img src="../images/jungnammi/Garlic.jpg" alt="" class="deco-bread deco-bread-9">
+        <img src="../images/jungnammi/Chilli.jpg" alt="" class="deco-bread deco-bread-10">
+
+        <div class="coming-soon-container">
+            <!-- Cute mascot -->
+                        <img src="../images/jungnammi/mascot.png" alt="Jungnammi Mascot" class="coming-soon-mascot-img">
+
+            <span class="coming-soon-badge">Pop-Up Event</span>
+            <h2 class="coming-soon-title">Coming <span>Soon</span> Again!</h2>
+            <p class="coming-soon-text">
+                We're preparing something special for you! Follow us on Instagram to be the first to know about our upcoming pop-up locations and dates.
+            </p>
+            <a href="https://instagram.com/jungnammi_sg" target="_blank" class="coming-soon-follow">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                </svg>
+                Follow @jungnammi_sg
+            </a>
+        </div>
+    </section>
+
+    <!-- Instagram Section -->
+    <section class="instagram" id="instagram">
+        <div class="instagram-header">
+            <h2>Follow Our Journey</h2>
+            <a href="https://instagram.com/jungnammi_sg" target="_blank" id="instagramLink">@jungnammi_sg</a>
+        </div>
+        <div class="instagram-grid" id="instagramGrid">
+            <div class="instagram-loading">Loading Instagram posts...</div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact">
+        <div class="footer-bottom">
+            <a href="https://aj-hakko.com/" target="_blank" class="footer-aj-link">
+                <img src="../images/A&J Logo white-min.png" alt="A&J HAKKO" class="footer-aj-logo">
+            </a>
+            <p>© 2025 A&J HAKKO PTE LTD | 201120019N</p>
+        </div>
+    </footer>
+
+    <!-- Product Modal -->
+    <div class="modal-overlay" id="productModal">
+        <div class="modal">
+            <button class="modal-close" id="modalClose">×</button>
+            <img class="modal-image" id="modalImage" src="" alt="">
+            <div class="modal-content">
+                <h3 id="modalTitle"></h3>
+                <span class="korean-name" id="modalKorean"></span>
+                <p id="modalDescription"></p>
+                <div class="modal-features">
+                    <div class="modal-feature">
+                        <strong>100%</strong>
+                        <span>Korean Rice</span>
+                    </div>
+                    <div class="modal-feature">
+                        <strong>Natural</strong>
+                        <span>Ingredients</span>
+                    </div>
+                    <div class="modal-feature">
+                        <strong>Handmade</strong>
+                        <span>Artisan</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // INSTAGRAM FEED - USING BEHOLD (behold.so)
+        // ============================================
+        // Setup Instructions:
+        // 1. Go to https://behold.so and create free account
+        // 2. Connect your Instagram Business/Creator account
+        // 3. Create a JSON feed (not Widget)
+        // 4. Copy your Feed URL and paste below
+        
+        const BEHOLD_CONFIG = {
+            feedUrl: 'https://feeds.behold.so/gVBvyJLFhh7S28fR8r4D', // Paste your Behold JSON feed URL here (e.g., 'https://feeds.behold.so/xxxxxxxx')
+            postsToShow: 4 // Show 4 posts in rectangle grid
+        };
+
+        // Fallback images if Behold is not configured
+        const fallbackImages = [
+            { url: 'images/JUNGNAMMI_1.jpg', permalink: 'https://instagram.com/jungnammi_sg' },
+            { url: 'images/JUNGNAMMI_2.jpg', permalink: 'https://instagram.com/jungnammi_sg' },
+            { url: 'images/JUNGNAMMI_3.jpg', permalink: 'https://instagram.com/jungnammi_sg' },
+            { url: 'images/JUNGNAMMI_4.jpg', permalink: 'https://instagram.com/jungnammi_sg' }
+        ];
+
+        // Fetch Instagram posts from Behold
+        async function fetchInstagramPosts() {
+            const grid = document.getElementById('instagramGrid');
+            
+            // If no Behold feed URL, use fallback images
+            if (!BEHOLD_CONFIG.feedUrl) {
+                console.log('Behold feed URL not configured. Using fallback images.');
+                renderInstagramPosts(fallbackImages);
+                return;
+            }
+
+            try {
+                const response = await fetch(BEHOLD_CONFIG.feedUrl);
+                
+                if (!response.ok) {
+                    throw new Error('Behold API request failed');
+                }
+
+                const data = await response.json();
+                
+                // Behold returns array directly or in data property
+                const postsArray = Array.isArray(data) ? data : (data.posts || data);
+                
+                const posts = postsArray
+                    .slice(0, BEHOLD_CONFIG.postsToShow)
+                    .map(post => ({
+                        url: post.sizes?.medium?.mediaUrl || post.mediaUrl || post.thumbnailUrl,
+                        permalink: post.permalink
+                    }));
+
+                if (posts.length > 0) {
+                    renderInstagramPosts(posts);
+                } else {
+                    renderInstagramPosts(fallbackImages);
+                }
+            } catch (error) {
+                console.error('Error fetching Instagram posts:', error);
+                renderInstagramPosts(fallbackImages);
+            }
+        }
+
+        // Render Instagram posts to grid
+        function renderInstagramPosts(posts) {
+            const grid = document.getElementById('instagramGrid');
+            grid.innerHTML = '';
+
+            posts.forEach((post, index) => {
+                const link = document.createElement('a');
+                link.href = post.permalink;
+                link.target = '_blank';
+                link.rel = 'noopener noreferrer';
+                link.className = 'insta-item';
+                
+                const img = document.createElement('img');
+                img.src = post.url;
+                img.alt = `Instagram post ${index + 1}`;
+                img.loading = 'lazy';
+                
+                link.appendChild(img);
+                grid.appendChild(link);
+            });
+        }
+
+        // Initialize Instagram feed
+        document.addEventListener('DOMContentLoaded', fetchInstagramPosts);
+
+        // ============================================
+        // PRODUCT DATA & MODAL
+        // ============================================
+        const productData = {
+            sweetpotato: {
+                name: 'Sweet Potato',
+                korean: '고구마빵',
+                image: '../images/jungnammi/Sweet Potato.jpg',
+                description: 'Our signature sweet potato bread is filled with rich, creamy purple sweet potato paste. Made with real Korean sweet potatoes for an authentic, naturally sweet taste that melts in your mouth.'
+            },
+            persimmon: {
+                name: 'Persimmon',
+                korean: '감빵',
+                image: '../images/jungnammi/Persimmon.jpg',
+                description: 'Shaped like a ripe persimmon, this bread features a luscious persimmon cream filling. The subtle sweetness and soft texture make it a perfect autumn treat.'
+            },
+            corn: {
+                name: 'Corn',
+                korean: '옥수수빵',
+                image: '../images/jungnammi/Corn.jpg',
+                description: 'A playful corn-shaped bread with sweet corn cream inside. Made with real Korean corn for a naturally sweet, slightly savory flavor profile.'
+            },
+            pumpkin: {
+                name: 'Pumpkin',
+                korean: '호박빵',
+                image: '../images/jungnammi/Pumpkin.jpg',
+                description: 'This adorable pumpkin-shaped bread is filled with smooth pumpkin cream. Rich in nutrients and flavor, it\'s both healthy and delicious.'
+            },
+            potato: {
+                name: 'Potato',
+                korean: '감자빵',
+                image: '../images/jungnammi/Potato.jpg',
+                description: 'A cute potato-shaped bread with savory potato cream filling. Light, fluffy, and satisfying — perfect for those who prefer less sweetness.'
+            },
+            chestnut: {
+                name: 'Chestnut',
+                korean: '밤빵',
+                image: '../images/jungnammi/Chestnuts.jpg',
+                description: 'Our chestnut bread features a rich chestnut paste filling. Inspired by traditional Korean chestnut desserts, it offers a warm, nutty flavor.'
+            },
+            garlic: {
+                name: 'Garlic',
+                korean: '마늘빵',
+                image: '../images/jungnammi/Garlic.jpg',
+                description: 'A unique garlic-shaped bread with savory garlic cream cheese filling. Perfect for those who love the aromatic flavor of roasted garlic.'
+            },
+            greenonion: {
+                name: 'Green Onion',
+                korean: '파빵',
+                image: '../images/jungnammi/Green_Onion.jpg',
+                description: 'Shaped like a fresh green onion, this savory bread features a mild onion cream filling. A unique Korean twist on traditional bread.'
+            },
+            onion: {
+                name: 'Onion',
+                korean: '양파빵',
+                image: '../images/jungnammi/Onion.jpg',
+                description: 'Our onion bread looks just like a real onion! Filled with caramelized onion cream, it offers a sweet and savory taste experience.'
+            },
+            chilli: {
+                name: 'Chilli',
+                korean: '고추빵',
+                image: '../images/jungnammi/Chilli.jpg',
+                description: 'A bold chilli pepper-shaped bread with a mildly spicy cream filling. Don\'t worry — it\'s more flavorful than hot!'
+            }
+        };
+
+        // Modal functionality
+        const modal = document.getElementById('productModal');
+        const modalClose = document.getElementById('modalClose');
+        const modalImage = document.getElementById('modalImage');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalKorean = document.getElementById('modalKorean');
+        const modalDescription = document.getElementById('modalDescription');
+
+        // Open modal on product click
+        document.querySelectorAll('.product-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const productKey = card.dataset.product;
+                const product = productData[productKey];
+                
+                if (product) {
+                    modalImage.src = product.image;
+                    modalTitle.textContent = product.name;
+                    modalKorean.textContent = product.korean;
+                    modalDescription.textContent = product.description;
+                    modal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                }
+            });
+        });
+
+        // Close modal
+        modalClose.addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        function closeModal() {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
