@@ -627,6 +627,12 @@
             border-radius: 10px;
             background: #e8ddd0;
             display: block;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .pev-photo:hover {
+            opacity: 0.85;
         }
 
         @media (max-width: 480px) {
@@ -881,6 +887,109 @@
             height: auto;
             border-radius: 8px;
             border: 1px solid #e0d6c8;
+        }
+
+        /* Photo Lightbox */
+        .lightbox-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.94);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 3000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .lightbox-overlay.active {
+            display: flex;
+            animation: lbFadeIn 0.2s ease;
+        }
+
+        @keyframes lbFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: grid;
+            place-items: center;
+            transition: background 0.2s;
+            z-index: 10;
+        }
+
+        .lightbox-close:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .lightbox-img {
+            max-width: min(90vw, 1000px);
+            max-height: 80vh;
+            object-fit: contain;
+            border-radius: 8px;
+            user-select: none;
+            -webkit-user-drag: none;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .lightbox-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 48px;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: none;
+            place-items: center;
+            transition: background 0.2s;
+        }
+
+        .lightbox-arrow:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .lightbox-arrow.visible {
+            display: grid;
+        }
+
+        .lightbox-prev { left: 16px; }
+        .lightbox-next { right: 16px; }
+
+        .lightbox-counter {
+            position: absolute;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 3px;
+        }
+
+        @media (max-width: 768px) {
+            .lightbox-arrow {
+                width: 40px;
+                height: 40px;
+            }
+            .lightbox-prev { left: 10px; }
+            .lightbox-next { right: 10px; }
+            .lightbox-close { top: 12px; right: 12px; }
         }
 
         /* Mobile responsive */
@@ -1180,6 +1289,21 @@
         </div>
     </div>
 
+    <!-- Photo Lightbox -->
+    <div class="lightbox-overlay" id="photoLightbox">
+        <button class="lightbox-close" id="lightboxClose">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+        <button class="lightbox-arrow lightbox-prev" id="lightboxPrev">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <img class="lightbox-img" id="lightboxImage" src="" alt="">
+        <button class="lightbox-arrow lightbox-next" id="lightboxNext">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+        <div class="lightbox-counter" id="lightboxCounter"></div>
+    </div>
+
     <script>
         // ============================================
         // INSTAGRAM FEED - USING BEHOLD (behold.so)
@@ -1387,6 +1511,70 @@
             document.body.style.overflow = '';
         }
 
+        // Photo Lightbox
+        const lightbox = document.getElementById('photoLightbox');
+        const lbImage = document.getElementById('lightboxImage');
+        const lbCounter = document.getElementById('lightboxCounter');
+        const lbPrev = document.getElementById('lightboxPrev');
+        const lbNext = document.getElementById('lightboxNext');
+        const lbClose = document.getElementById('lightboxClose');
+        let lbUrls = [];
+        let lbIndex = 0;
+
+        function openLightbox(urls, index) {
+            lbUrls = urls;
+            lbIndex = index;
+            updateLightbox();
+            lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function updateLightbox() {
+            lbImage.src = lbUrls[lbIndex];
+            const showArrows = lbUrls.length > 1;
+            lbPrev.classList.toggle('visible', showArrows);
+            lbNext.classList.toggle('visible', showArrows);
+            lbCounter.textContent = showArrows ? `${lbIndex + 1} / ${lbUrls.length}` : '';
+        }
+
+        // Event delegation for dynamically rendered photos
+        document.addEventListener('click', (e) => {
+            const photo = e.target.closest('.pev-photo');
+            if (!photo) return;
+            try {
+                const urls = JSON.parse(photo.dataset.lbUrls);
+                const idx = parseInt(photo.dataset.lbIdx) || 0;
+                openLightbox(urls, idx);
+            } catch (err) {}
+        });
+
+        lbClose.addEventListener('click', closeLightbox);
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) closeLightbox();
+        });
+        lbPrev.addEventListener('click', (e) => {
+            e.stopPropagation();
+            lbIndex = (lbIndex - 1 + lbUrls.length) % lbUrls.length;
+            updateLightbox();
+        });
+        lbNext.addEventListener('click', (e) => {
+            e.stopPropagation();
+            lbIndex = (lbIndex + 1) % lbUrls.length;
+            updateLightbox();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (!lightbox.classList.contains('active')) return;
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowLeft') { lbIndex = (lbIndex - 1 + lbUrls.length) % lbUrls.length; updateLightbox(); }
+            if (e.key === 'ArrowRight') { lbIndex = (lbIndex + 1) % lbUrls.length; updateLightbox(); }
+        });
+
         // Smooth scroll for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function(e) {
@@ -1437,9 +1625,10 @@
             if (isPast) {
                 const dateLabel = start.toLocaleDateString('en-SG', { month: 'short', year: 'numeric' }).toUpperCase();
                 const photos = ev.photoUrls || [];
+                const photosJson = JSON.stringify(photos).replace(/'/g, '&#39;');
                 const photoHtml = photos.length ? `
                 <div class="pev-photos pev-photos-${photos.length}">
-                    ${photos.map((url, i) => `<img src="${url}" alt="${ev.name}" class="pev-photo" loading="lazy">`).join('')}
+                    ${photos.map((url, i) => `<img src="${url}" alt="${ev.name}" class="pev-photo" loading="lazy" data-lb-urls='${photosJson}' data-lb-idx="${i}">`).join('')}
                 </div>` : '';
                 return `
                 <div class="past-event-row">
