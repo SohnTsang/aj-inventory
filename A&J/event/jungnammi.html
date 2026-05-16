@@ -568,6 +568,79 @@
             margin-bottom: 16px;
         }
 
+        .pev-filters {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .pev-filter-pill {
+            padding: 6px 16px;
+            border-radius: 20px;
+            border: 1.5px solid #c8a87a;
+            background: transparent;
+            color: #a08060;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .pev-filter-pill:hover {
+            background: rgba(200, 168, 122, 0.15);
+        }
+
+        .pev-filter-pill.active {
+            background: var(--deep-brown);
+            color: white;
+            border-color: var(--deep-brown);
+        }
+
+        .pev-filter-sep {
+            width: 1px;
+            height: 20px;
+            background: #c8a87a;
+            opacity: 0.4;
+            flex-shrink: 0;
+        }
+
+        .pev-filter-select {
+            padding: 6px 30px 6px 12px;
+            border-radius: 20px;
+            border: 1.5px solid #c8a87a;
+            background: transparent;
+            color: #a08060;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23a08060' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 12px;
+            transition: all 0.2s;
+            letter-spacing: 0.5px;
+        }
+
+        .pev-filter-select:focus {
+            outline: none;
+            border-color: var(--deep-brown);
+        }
+
+        .pev-filter-select.active {
+            background-color: var(--deep-brown);
+            color: white;
+            border-color: var(--deep-brown);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+        }
+
         .past-events-list {
             display: flex;
             flex-direction: column;
@@ -1659,6 +1732,79 @@
             </div>`;
         }
 
+        let allPastEvents = [];
+
+        function buildFilterBar(events) {
+            const locations = [...new Set(events.map(ev => ev.location))];
+            const dates = [...new Set(events.map(ev => {
+                const s = ev.date?.toDate ? ev.date.toDate() : new Date(ev.date);
+                return s.toLocaleDateString('en-SG', { month: 'short', year: 'numeric' });
+            }))];
+            return `
+            <div class="pev-filters" id="pev-filters">
+                <button class="pev-filter-pill active" data-filter="recent">Recent</button>
+                <button class="pev-filter-pill" data-filter="all">All</button>
+                <div class="pev-filter-sep"></div>
+                <select class="pev-filter-select" id="pev-filter-location">
+                    <option value="">Location</option>
+                    ${locations.map(l => `<option value="${l}">${l}</option>`).join('')}
+                </select>
+                <select class="pev-filter-select" id="pev-filter-date">
+                    <option value="">Date</option>
+                    ${dates.map(d => `<option value="${d}">${d}</option>`).join('')}
+                </select>
+            </div>`;
+        }
+
+        function renderFilteredPastEvents(type, value) {
+            const listEl = document.getElementById('past-events-list');
+            if (!listEl) return;
+            let filtered;
+            switch (type) {
+                case 'recent': filtered = allPastEvents.slice(0, 3); break;
+                case 'all': filtered = allPastEvents; break;
+                case 'location':
+                    filtered = allPastEvents.filter(ev => ev.location === value);
+                    break;
+                case 'date':
+                    filtered = allPastEvents.filter(ev => {
+                        const s = ev.date?.toDate ? ev.date.toDate() : new Date(ev.date);
+                        return s.toLocaleDateString('en-SG', { month: 'short', year: 'numeric' }) === value;
+                    });
+                    break;
+                default: filtered = allPastEvents.slice(0, 3);
+            }
+            listEl.innerHTML = filtered.length
+                ? filtered.map(ev => buildEventCard(ev, true)).join('')
+                : '<p style="color:#a08060;font-size:0.85rem;text-align:center;padding:20px 0;">No events found.</p>';
+        }
+
+        function attachPastEventFilters() {
+            const pills = document.querySelectorAll('#pev-filters .pev-filter-pill');
+            const locSel = document.getElementById('pev-filter-location');
+            const dateSel = document.getElementById('pev-filter-date');
+            if (!pills.length || !locSel || !dateSel) return;
+
+            function setFilter(type, value) {
+                pills.forEach(p => p.classList.toggle('active', p.dataset.filter === type));
+                locSel.classList.toggle('active', type === 'location');
+                dateSel.classList.toggle('active', type === 'date');
+                if (type !== 'location') locSel.value = '';
+                if (type !== 'date') dateSel.value = '';
+                renderFilteredPastEvents(type, value);
+            }
+
+            pills.forEach(pill => pill.addEventListener('click', () => setFilter(pill.dataset.filter)));
+            locSel.addEventListener('change', () => {
+                if (!locSel.value) { setFilter('recent'); return; }
+                setFilter('location', locSel.value);
+            });
+            dateSel.addEventListener('change', () => {
+                if (!dateSel.value) { setFilter('recent'); return; }
+                setFilter('date', dateSel.value);
+            });
+        }
+
         async function loadPopupEvents() {
             const container = document.getElementById('popup-content');
             if (!container) return;
@@ -1697,12 +1843,12 @@
                     ? upcoming.map(ev => buildEventCard(ev, false)).join('')
                     : '';
 
+                allPastEvents = pastShown;
                 const pastHtml = pastShown.length
                     ? `<div class="past-events-section">
                         <p class="past-events-heading">Past Events</p>
-                        <div class="past-events-list">
-                            ${pastShown.map(ev => buildEventCard(ev, true)).join('')}
-                        </div>
+                        ${buildFilterBar(pastShown)}
+                        <div class="past-events-list" id="past-events-list"></div>
                       </div>`
                     : '';
 
@@ -1726,6 +1872,10 @@
                         </svg>
                         Follow @${INSTAGRAM_HANDLE}
                     </a>`;
+                if (pastShown.length) {
+                    renderFilteredPastEvents('recent');
+                    attachPastEventFilters();
+                }
             } catch (err) {
                 console.error('Error loading pop-up events:', err);
                 container.innerHTML = FALLBACK_HTML;
