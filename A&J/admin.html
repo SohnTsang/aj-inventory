@@ -1208,6 +1208,14 @@
           </svg>
           Brand Banner
         </button>
+        <button id="tab-events" class="nav-item" type="button">
+          <svg class="nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+          Pop-Up Events
+        </button>
       </div>
     </nav>
     <div class="sidebar-footer">
@@ -1504,7 +1512,119 @@
         </div>
       </div>
     </section>
-    
+
+    <!-- Pop-Up Events Section -->
+    <section id="events-section" style="display: none;">
+      <div class="page-header">
+        <h1 class="page-title">Pop-Up Events</h1>
+        <p class="page-subtitle">Manage upcoming pop-up events for each brand</p>
+      </div>
+
+      <!-- Brand Selector Card -->
+      <div class="card animate-slide">
+        <div class="card-header">
+          <h2 class="card-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+              <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+            Select Brand
+          </h2>
+        </div>
+        <div class="card-body">
+          <div class="field">
+            <label class="field-label" for="ev_brand">Brand</label>
+            <select id="ev_brand" class="select">
+              <option value="jungnammi">Jungnammi (정남미)</option>
+              <!-- Add more brands here in the future -->
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Event Form Card -->
+      <div class="card animate-slide" style="animation-delay: 50ms;">
+        <div class="card-header">
+          <h2 class="card-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+              <path d="M18.375 2.625a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4Z"/>
+            </svg>
+            <span id="ev-form-title-text">Add Event</span>
+          </h2>
+          <span id="ev-edit-badge" class="badge badge-editing" style="display: none;">Editing · Click to cancel</span>
+        </div>
+        <div class="card-body">
+          <div class="form-grid">
+            <div class="field full">
+              <label class="field-label" for="ev_name">Event Name *</label>
+              <input id="ev_name" class="input" type="text" placeholder="e.g. Bugis Junction Pop-Up">
+            </div>
+            <div class="field full">
+              <label class="field-label" for="ev_location">Location *</label>
+              <input id="ev_location" class="input" type="text" placeholder="e.g. Bugis Junction B1-01">
+            </div>
+            <div class="field">
+              <label class="field-label" for="ev_date">Start Date *</label>
+              <input id="ev_date" class="input" type="date">
+            </div>
+            <div class="field">
+              <label class="field-label" for="ev_end_date">End Date (optional)</label>
+              <input id="ev_end_date" class="input" type="date">
+            </div>
+            <div class="field full">
+              <label class="field-label" for="ev_description">Description (optional)</label>
+              <textarea id="ev_description" class="textarea" rows="3" placeholder="Additional details about this event..."></textarea>
+            </div>
+            <div class="field full">
+              <button id="ev_save" type="button" class="btn btn-primary btn-lg">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                  <polyline points="17 21 17 13 7 13 7 21"/>
+                  <polyline points="7 3 7 8 15 8"/>
+                </svg>
+                Save Event
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Upcoming Events Card -->
+      <div class="card animate-slide" style="animation-delay: 100ms;">
+        <div class="card-header">
+          <h2 class="card-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+            Upcoming / Current Events
+          </h2>
+        </div>
+        <div class="card-body">
+          <div id="ev_list_upcoming"></div>
+        </div>
+      </div>
+
+      <!-- Past Events History Card -->
+      <div class="card animate-slide" style="animation-delay: 150ms;">
+        <div class="card-header">
+          <h2 class="card-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+            Past Events History
+          </h2>
+          <span style="font-size:0.8rem;color:var(--slate);">Toggle visibility on the public event page</span>
+        </div>
+        <div class="card-body">
+          <div id="ev_list_past"></div>
+        </div>
+      </div>
+    </section>
+
   </main>
 </div>
 
@@ -1538,7 +1658,7 @@
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, serverTimestamp, Timestamp, collection, query, where, orderBy, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, addDoc, serverTimestamp, Timestamp, collection, query, orderBy, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getStorage, ref, uploadBytesResumable, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 import { firebaseConfig } from "./firebase-config.js";
 
@@ -2060,18 +2180,22 @@ function initTabs(){
   const tabNews = document.getElementById('tab-news');
   const tabProducts = document.getElementById('tab-products');
   const tabBanner = document.getElementById('tab-banner');
+  const tabEvents = document.getElementById('tab-events');
   const newsSection = document.getElementById('news-section');
   const productsSection = document.getElementById('products-section');
   const bannerSection = document.getElementById('banner-section');
-  if (!tabNews || !tabProducts || !tabBanner) return;
+  const eventsSection = document.getElementById('events-section');
+  if (!tabNews || !tabProducts || !tabBanner || !tabEvents) return;
 
   function hideAllSections() {
     newsSection.style.display = 'none';
     productsSection.style.display = 'none';
     bannerSection.style.display = 'none';
+    eventsSection.style.display = 'none';
     tabNews.classList.remove('active');
     tabProducts.classList.remove('active');
     tabBanner.classList.remove('active');
+    tabEvents.classList.remove('active');
   }
 
   function activateNews(){
@@ -2093,9 +2217,17 @@ function initTabs(){
     loadBannerPreview();
     window.scrollTo({ top: 0, behavior: 'instant' });
   }
+  function activateEvents(){
+    hideAllSections();
+    eventsSection.style.display = 'block';
+    tabEvents.classList.add('active');
+    loadEvents();
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }
   tabNews.addEventListener('click', activateNews);
   tabProducts.addEventListener('click', activateProducts);
   tabBanner.addEventListener('click', activateBanner);
+  tabEvents.addEventListener('click', activateEvents);
   activateNews();
 }
 
@@ -2302,6 +2434,279 @@ async function removeBanner() {
 // Badge click handlers to cancel edit mode
 document.getElementById('edit-badge')?.addEventListener('click', clearNewsForm);
 document.getElementById('p-edit-badge')?.addEventListener('click', clearProductForm);
+document.getElementById('ev-edit-badge')?.addEventListener('click', clearEventForm);
+
+// ─── Pop-Up Events Admin ──────────────────────────────────────────
+let currentEventId = null;
+
+const evBrand = document.getElementById('ev_brand');
+const evName = document.getElementById('ev_name');
+const evLocation = document.getElementById('ev_location');
+const evDate = document.getElementById('ev_date');
+const evEndDate = document.getElementById('ev_end_date');
+const evDescription = document.getElementById('ev_description');
+
+// Reload event list when brand changes
+evBrand.addEventListener('change', loadEvents);
+
+function clearEventForm() {
+  evName.value = '';
+  evLocation.value = '';
+  evDate.value = '';
+  evEndDate.value = '';
+  evDescription.value = '';
+  currentEventId = null;
+  document.getElementById('ev-edit-badge').style.display = 'none';
+  document.getElementById('ev-form-title-text').textContent = 'Add Event';
+}
+
+document.getElementById('ev_save').addEventListener('click', async () => {
+  const brandId = evBrand.value;
+  const name = evName.value.trim();
+  const location = evLocation.value.trim();
+  const dateVal = evDate.value;
+  if (!name) return showToast('Event name is required', 'error');
+  if (!location) return showToast('Location is required', 'error');
+  if (!dateVal) return showToast('Start date is required', 'error');
+
+  const overlay = document.getElementById('saving');
+  try {
+    if (overlay) overlay.style.display = 'grid';
+    const data = {
+      name,
+      location,
+      date: Timestamp.fromDate(new Date(dateVal)),
+      endDate: evEndDate.value ? Timestamp.fromDate(new Date(evEndDate.value)) : null,
+      description: evDescription.value.trim(),
+      brandId,
+      updatedAt: serverTimestamp()
+    };
+    if (currentEventId) {
+      await setDoc(doc(db, 'brand_events', brandId, 'events', currentEventId), data, { merge: true });
+      showToast('Event updated', 'success');
+    } else {
+      data.createdAt = serverTimestamp();
+      data.showInHistory = false; // new events default to hidden in history
+      await addDoc(collection(db, 'brand_events', brandId, 'events'), data);
+      showToast('Event added', 'success');
+    }
+    clearEventForm();
+    loadEvents();
+  } catch (err) {
+    showToast(err.message || 'Save failed', 'error');
+  } finally {
+    if (overlay) overlay.style.display = 'none';
+  }
+});
+
+function renderEventCards(docs, brandId, container, isPastSection) {
+  if (!docs.length) {
+    container.innerHTML = `<p style="color:var(--mist);font-size:0.9rem;">${isPastSection ? 'No past events.' : 'No upcoming events.'}</p>`;
+    return;
+  }
+  container.innerHTML = docs.map(d => {
+    const ev = d.data();
+    const start = ev.date?.toDate ? ev.date.toDate() : new Date(ev.date);
+    const end = ev.endDate?.toDate ? ev.endDate.toDate() : null;
+    const dateStr = start.toLocaleDateString('en-SG', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+    const endStr = end ? ` – ${end.toLocaleDateString('en-SG', { day: 'numeric', month: 'short', year: 'numeric' })}` : '';
+    const shown = ev.showInHistory === true;
+    const historyToggle = isPastSection ? `
+      <button class="btn ${shown ? 'btn-primary' : 'btn-secondary'}" data-ev-toggle="${d.id}" data-ev-shown="${shown}" title="${shown ? 'Visible on public page — click to hide' : 'Hidden from public page — click to show'}">
+        ${shown ? '👁 Showing Publicly' : '🙈 Hidden'}
+      </button>` : '';
+
+    // Photo preview and upload for past events
+    const photos = isPastSection ? (ev.photoUrls || []) : [];
+    const photoPreviewHtml = photos.length ? `
+      <div class="thumb-grid" style="grid-template-columns:repeat(2,100px);margin:8px 0 12px;">
+        ${photos.map((url, i) => `
+          <div class="thumb">
+            <img src="${url}" alt="">
+            <button class="remove" data-ev-photo-rm="${d.id}" data-photo-i="${i}" title="Remove photo">×</button>
+          </div>`).join('')}
+      </div>` : '';
+    const photoUploadHtml = isPastSection && photos.length < 2 ? `
+      <input type="file" data-ev-photo-input="${d.id}" accept="image/*" ${photos.length === 0 ? 'multiple' : ''} style="display:none;">
+      <button class="btn btn-secondary" data-ev-photo-btn="${d.id}">📷 ${photos.length ? 'Add Photo' : 'Add Photos'}</button>` : '';
+
+    return `
+      <article class="news-card" style="${isPastSection ? 'opacity:0.75;' : ''}">
+        <div class="news-card-body" style="width:100%;">
+          <div class="news-card-meta">
+            <time class="news-card-date">${dateStr}${endStr}</time>
+            <span class="badge ${isPastSection ? 'badge-draft' : 'badge-published'}">${isPastSection ? 'Past' : 'Upcoming'}</span>
+          </div>
+          <h3 class="news-card-title">${ev.name}</h3>
+          <p style="color:var(--slate);font-size:0.9rem;margin-bottom:12px;">📍 ${ev.location}${ev.description ? ' · ' + ev.description : ''}</p>
+          ${photoPreviewHtml}
+          <div class="news-card-actions">
+            ${historyToggle}
+            ${photoUploadHtml}
+            <button class="btn btn-primary" data-ev-edit="${d.id}">Edit</button>
+            <button class="btn btn-danger" data-ev-del="${d.id}">Delete</button>
+          </div>
+        </div>
+      </article>`;
+  }).join('');
+
+  container.querySelectorAll('[data-ev-toggle]').forEach(btn => {
+    btn.addEventListener('click', () => toggleEventHistory(brandId, btn.getAttribute('data-ev-toggle'), btn.getAttribute('data-ev-shown') === 'true'));
+  });
+  container.querySelectorAll('[data-ev-edit]').forEach(btn => {
+    btn.addEventListener('click', () => editEvent(brandId, btn.getAttribute('data-ev-edit')));
+  });
+  container.querySelectorAll('[data-ev-del]').forEach(btn => {
+    btn.addEventListener('click', () => deleteEvent(brandId, btn.getAttribute('data-ev-del')));
+  });
+  // Photo upload button triggers hidden file input
+  container.querySelectorAll('[data-ev-photo-btn]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const evId = btn.getAttribute('data-ev-photo-btn');
+      container.querySelector(`[data-ev-photo-input="${evId}"]`)?.click();
+    });
+  });
+  // Photo file input change handler
+  container.querySelectorAll('[data-ev-photo-input]').forEach(input => {
+    input.addEventListener('change', async () => {
+      const evId = input.getAttribute('data-ev-photo-input');
+      const files = Array.from(input.files || []);
+      if (!files.length) return;
+      const invalid = files.filter(f => !f.type.startsWith('image/'));
+      if (invalid.length) return showToast('Only image files are allowed', 'error');
+      await uploadEventPhotos(brandId, evId, files);
+    });
+  });
+  // Photo remove button
+  container.querySelectorAll('[data-ev-photo-rm]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const evId = btn.getAttribute('data-ev-photo-rm');
+      const idx = parseInt(btn.getAttribute('data-photo-i'));
+      await removeEventPhoto(brandId, evId, idx);
+    });
+  });
+}
+
+async function loadEvents() {
+  const brandId = evBrand.value;
+  const upcomingEl = document.getElementById('ev_list_upcoming');
+  const pastEl = document.getElementById('ev_list_past');
+  upcomingEl.innerHTML = '<p style="color:var(--mist);font-size:0.9rem;">Loading...</p>';
+  pastEl.innerHTML = '<p style="color:var(--mist);font-size:0.9rem;">Loading...</p>';
+  try {
+    const snap = await getDocs(query(
+      collection(db, 'brand_events', brandId, 'events'),
+      orderBy('date', 'asc')
+    ));
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    const upcoming = [], past = [];
+    snap.docs.forEach(d => {
+      const start = d.data().date?.toDate ? d.data().date.toDate() : new Date(d.data().date);
+      (start < now ? past : upcoming).push(d);
+    });
+    // Show past in reverse chronological order (most recent first)
+    past.reverse();
+    renderEventCards(upcoming, brandId, upcomingEl, false);
+    renderEventCards(past, brandId, pastEl, true);
+  } catch (err) {
+    upcomingEl.innerHTML = `<p style="color:var(--danger);">Error loading events: ${err.message}</p>`;
+    pastEl.innerHTML = '';
+  }
+}
+
+async function toggleEventHistory(brandId, eventId, currentShown) {
+  try {
+    await setDoc(doc(db, 'brand_events', brandId, 'events', eventId), { showInHistory: !currentShown }, { merge: true });
+    showToast(!currentShown ? 'Event now visible on public page' : 'Event hidden from public page', 'success');
+    loadEvents();
+  } catch (err) {
+    showToast(err.message || 'Toggle failed', 'error');
+  }
+}
+
+async function editEvent(brandId, eventId) {
+  const snap = await getDoc(doc(db, 'brand_events', brandId, 'events', eventId));
+  if (!snap.exists()) return showToast('Event not found', 'error');
+  const ev = snap.data();
+  evName.value = ev.name || '';
+  evLocation.value = ev.location || '';
+  if (ev.date?.toDate) evDate.value = ev.date.toDate().toISOString().slice(0, 10);
+  if (ev.endDate?.toDate) evEndDate.value = ev.endDate.toDate().toISOString().slice(0, 10);
+  evDescription.value = ev.description || '';
+  currentEventId = eventId;
+  document.getElementById('ev-edit-badge').style.display = 'inline-flex';
+  document.getElementById('ev-form-title-text').textContent = 'Edit Event';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+async function deleteEvent(brandId, eventId) {
+  const ok = await showConfirm('Delete this event?', 'Delete');
+  if (!ok) return;
+  try {
+    await deleteDoc(doc(db, 'brand_events', brandId, 'events', eventId));
+    showToast('Event deleted', 'success');
+    loadEvents();
+  } catch (err) {
+    showToast(err.message || 'Delete failed', 'error');
+  }
+}
+
+async function uploadEventPhotos(brandId, eventId, files) {
+  const currentDoc = await getDoc(doc(db, 'brand_events', brandId, 'events', eventId));
+  if (!currentDoc.exists()) return showToast('Event not found', 'error');
+  const existing = currentDoc.data().photoUrls || [];
+  if (existing.length + files.length > 2) {
+    showToast(`Maximum 2 photos allowed. ${existing.length} already uploaded, cannot add ${files.length} more.`, 'error');
+    return;
+  }
+  const overlay = document.getElementById('saving');
+  try {
+    if (overlay) overlay.style.display = 'grid';
+    const uploaded = [];
+    for (const f of files) {
+      const compressed = await compressImage(f);
+      const clean = f.name.replace(/[^a-zA-Z0-9_.-]/g, '_').replace(/\.[^.]+$/, '.webp');
+      const r = ref(st, `events/${brandId}/${eventId}/${Date.now()}-${clean}`);
+      await new Promise((resolve, reject) => {
+        const task = uploadBytesResumable(r, compressed, {
+          cacheControl: 'public,max-age=31536000,immutable',
+          contentType: 'image/webp'
+        });
+        task.on('state_changed', () => {}, reject, async () => {
+          const url = await getDownloadURL(task.snapshot.ref);
+          uploaded.push(url);
+          resolve();
+        });
+      });
+    }
+    await setDoc(doc(db, 'brand_events', brandId, 'events', eventId), {
+      photoUrls: [...existing, ...uploaded]
+    }, { merge: true });
+    showToast('Photos uploaded', 'success');
+    loadEvents();
+  } catch (err) {
+    showToast(err.message || 'Upload failed', 'error');
+  } finally {
+    if (overlay) overlay.style.display = 'none';
+  }
+}
+
+async function removeEventPhoto(brandId, eventId, photoIndex) {
+  const ok = await showConfirm('Remove this photo?', 'Remove');
+  if (!ok) return;
+  try {
+    const snap = await getDoc(doc(db, 'brand_events', brandId, 'events', eventId));
+    if (!snap.exists()) return;
+    const photoUrls = (snap.data().photoUrls || []).slice();
+    photoUrls.splice(photoIndex, 1);
+    await setDoc(doc(db, 'brand_events', brandId, 'events', eventId), { photoUrls }, { merge: true });
+    showToast('Photo removed', 'success');
+    loadEvents();
+  } catch (err) {
+    showToast(err.message || 'Remove failed', 'error');
+  }
+}
 </script>
 </body>
 </html>

@@ -113,16 +113,24 @@
 
         .hero-image-container {
             width: 100%;
-            height: 70vh;
+            height: 100vh;
             min-height: 500px;
             position: relative;
             overflow: hidden;
+            padding-left: 20px;
+            padding-right: 20px;
         }
 
         .hero-image-container img {
             width: 100%;
             height: 100%;
             object-fit: scale-down;
+        }
+
+        .hero-image-container picture {
+            display: block;
+            width: 100%;
+            height: 100%;
         }
 
         .hero-content {
@@ -206,47 +214,6 @@
             margin-bottom: 15px;
         }
 
-        /* Cute shape masks for products */
-        .product-card:nth-child(1) .product-image-wrapper {
-            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-        }
-
-        .product-card:nth-child(2) .product-image-wrapper {
-            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-        }
-
-        .product-card:nth-child(3) .product-image-wrapper {
-            clip-path: ellipse(50% 45% at 50% 50%);
-        }
-
-        .product-card:nth-child(4) .product-image-wrapper {
-            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
-        }
-
-        .product-card:nth-child(5) .product-image-wrapper {
-            clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
-        }
-
-        .product-card:nth-child(6) .product-image-wrapper {
-            border-radius: 60% 40% 50% 50% / 50% 50% 40% 60%;
-        }
-
-        .product-card:nth-child(7) .product-image-wrapper {
-            clip-path: polygon(50% 5%, 90% 25%, 100% 60%, 75% 100%, 25% 100%, 0% 60%, 10% 25%);
-        }
-
-        .product-card:nth-child(8) .product-image-wrapper {
-            border-radius: 40% 60% 60% 40% / 60% 40% 60% 40%;
-        }
-
-        .product-card:nth-child(9) .product-image-wrapper {
-            clip-path: circle(48% at 50% 50%);
-        }
-
-        .product-card:nth-child(10) .product-image-wrapper {
-            border-radius: 50% 50% 40% 40% / 40% 40% 60% 60%;
-        }
-
         .product-image-wrapper img {
             width: 100%;
             aspect-ratio: 1;
@@ -295,7 +262,7 @@
 
         /* Coming Soon Section - Cute Jungnammi Style */
         .coming-soon-section {
-            padding: 80px 4%;
+            padding: 120px 4%;
             background: var(--golden);
             position: relative;
             overflow: hidden;
@@ -384,83 +351,312 @@
         }
 
         .deco-bread-1 {
+            /* Sweet Potato - medium */
             top: 8%;
-            left: 3%;
-            width: 120px;
-            height: 120px;
+            left: 10%;
+            width: 200px;
+            height: 200px;
             transform: rotate(-15deg);
         }
 
         .deco-bread-2 {
+            /* Pumpkin - largest */
             bottom: 8%;
-            right: 5%;
-            width: 110px;
-            height: 110px;
+            right: 10%;
+            width: 200px;
+            height: 200px;
             transform: rotate(20deg);
         }
 
         .deco-bread-3 {
-            top: 55%;
-            left: 4%;
-            width: 100px;
-            height: 100px;
+            /* Corn - medium-large */
+            top: 40%;
+            left: 14%;
+            width: 200px;
+            height: 200px;
             transform: rotate(-10deg);
         }
 
         .deco-bread-4 {
-            top: 8%;
-            right: 4%;
-            width: 115px;
-            height: 115px;
+            /* Potato - medium-small */
+            top: 13%;
+            right: 6%;
+            width: 200px;
+            height: 200px;
             transform: rotate(15deg);
         }
 
         .deco-bread-5 {
-            bottom: 15%;
+            /* Chestnuts - small */
+            bottom: 10%;
             left: 8%;
-            width: 90px;
-            height: 90px;
+            width: 180px;
+            height: 180px;
             transform: rotate(-25deg);
         }
 
         .deco-bread-6 {
-            top: 30%;
+            /* Persimmon - small-medium */
+            top: 10%;
             right: 20%;
-            width: 95px;
-            height: 95px;
+            width: 180px;
+            height: 180px;
             transform: rotate(30deg);
         }
 
         .deco-bread-7 {
-            top: 25%;
-            left: 20%;
-            width: 100px;
-            height: 100px;
+            /* Green Onion - large (long vegetable) */
+            top: 15%;
+            left: 23%;
+            width: 300px;
+            height: 300px;
             transform: rotate(12deg);
         }
 
         .deco-bread-8 {
+            /* Onion - medium */
             bottom: 35%;
-            right: 3%;
-            width: 105px;
-            height: 105px;
+            right: 10%;
+            width: 200px;
+            height: 200px;
             transform: rotate(-18deg);
         }
 
         .deco-bread-9 {
+            /* Garlic - smallest */
             top: 70%;
-            right: 15%;
-            width: 80px;
-            height: 80px;
+            right: 23%;
+            width: 170px;
+            height: 170px;
             transform: rotate(25deg);
         }
 
         .deco-bread-10 {
+            /* Chilli - small */
             bottom: 5%;
             left: 20%;
-            width: 95px;
-            height: 95px;
+            width: 180px;
+            height: 180px;
             transform: rotate(-8deg);
+        }
+
+        /* Pop-Up Event Cards */
+        .popup-events-list {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            margin-top: 35px;
+            text-align: left;
+            width: 100%;
+            max-width: 620px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .popup-event-card {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            display: flex;
+            box-shadow: 0 16px 50px rgba(45, 27, 14, 0.18);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .popup-event-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 24px 70px rgba(45, 27, 14, 0.26);
+        }
+
+        .popup-event-date-block {
+            background: var(--deep-brown);
+            color: white;
+            padding: 32px 28px;
+            text-align: center;
+            min-width: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .popup-event-date-block .ev-month {
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--golden);
+            margin-bottom: 4px;
+        }
+
+        .popup-event-date-block .ev-day {
+            font-family: 'Fraunces', serif;
+            font-size: 4.5rem;
+            font-weight: 800;
+            line-height: 1;
+            color: white;
+        }
+
+        .popup-event-date-block .ev-year {
+            font-size: 0.72rem;
+            color: rgba(255, 255, 255, 0.45);
+            margin-top: 6px;
+            letter-spacing: 1px;
+        }
+
+        .popup-event-body {
+            padding: 26px 30px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        /* Event name: small label at the top */
+        .popup-event-body h3 {
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--warm-orange);
+            margin-bottom: 4px;
+        }
+
+        /* Location: the hero line */
+        .popup-event-body .ev-location {
+            font-family: 'Fraunces', serif;
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--deep-brown);
+            line-height: 1.15;
+        }
+
+        /* Full date range: clear and readable */
+        .popup-event-body .ev-date-text {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #5a4a3a;
+            margin-top: 4px;
+        }
+
+        .popup-event-body .ev-description {
+            font-size: 0.88rem;
+            color: #8a7a6a;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #f0e8d8;
+            line-height: 1.6;
+        }
+
+        /* Past Events History */
+        .past-events-section {
+            margin-top: 50px;
+            width: 100%;
+            max-width: 620px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+        }
+
+        .past-events-heading {
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #a08060;
+            margin-bottom: 16px;
+        }
+
+        .past-events-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            text-align: left;
+        }
+
+        .past-event-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 12px;
+            padding: 12px 16px;
+            border-left: 3px solid #c8a87a;
+        }
+
+        .past-event-row .pev-date {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: #a08060;
+            white-space: nowrap;
+            min-width: 72px;
+            letter-spacing: 0.5px;
+        }
+
+        .past-event-row .pev-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--deep-brown);
+            flex: 1;
+        }
+
+        .past-event-row .pev-location {
+            font-size: 0.82rem;
+            color: #8a7a6a;
+            white-space: nowrap;
+        }
+
+        .past-event-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .past-event-row.has-photos {
+            border-radius: 12px 12px 0 0;
+        }
+
+        .pev-photos {
+            display: flex;
+            gap: 8px;
+            padding: 10px 16px 12px;
+            background: rgba(255,255,255,0.5);
+            border-left: 3px solid #c8a87a;
+            border-radius: 0 0 12px 12px;
+        }
+
+        .pev-photo {
+            width: 140px;
+            height: 95px;
+            object-fit: cover;
+            border-radius: 8px;
+            background: #e8ddd0;
+        }
+
+        @media (max-width: 480px) {
+            .past-event-row { flex-wrap: wrap; gap: 4px; }
+            .past-event-row .pev-location { width: 100%; white-space: normal; }
+            .pev-photos { padding: 8px 12px 10px; }
+            .pev-photo { width: 100px; height: 68px; }
+        }
+
+        @media (max-width: 768px) {
+            .popup-event-date-block {
+                min-width: 90px;
+                padding: 24px 18px;
+            }
+
+            .popup-event-date-block .ev-day {
+                font-size: 3.5rem;
+            }
+
+            .popup-event-body {
+                padding: 20px 22px;
+            }
+
+            .popup-event-body .ev-location {
+                font-size: 1.35rem;
+            }
         }
 
         /* Instagram Section */
@@ -493,11 +689,10 @@
         }
 
         .instagram-grid {
-            max-width: 900px;
+            max-width: 2000px;
             margin: 0 auto;
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            grid-template-rows: repeat(2, 200px);
+            grid-template-columns: repeat(4, 1fr);
             gap: 12px;
         }
 
@@ -508,6 +703,7 @@
             cursor: pointer;
             transition: opacity 0.3s;
             background: #e0d6c8;
+            aspect-ratio: 4 / 5;
         }
 
         .instagram-grid .insta-item img {
@@ -518,27 +714,6 @@
 
         .instagram-grid .insta-item:hover {
             opacity: 0.85;
-        }
-
-        /* Masonry layout: 4 posts forming rectangle */
-        .instagram-grid .insta-item:nth-child(1) {
-            grid-column: 1;
-            grid-row: 1 / 3;
-        }
-
-        .instagram-grid .insta-item:nth-child(2) {
-            grid-column: 2 / 4;
-            grid-row: 1;
-        }
-
-        .instagram-grid .insta-item:nth-child(3) {
-            grid-column: 2;
-            grid-row: 2;
-        }
-
-        .instagram-grid .insta-item:nth-child(4) {
-            grid-column: 3;
-            grid-row: 2;
         }
 
         .instagram-loading {
@@ -706,28 +881,12 @@
             margin-bottom: 20px;
         }
 
-        .modal-features {
-            display: flex;
-            gap: 20px;
-            padding-top: 15px;
-            border-top: 1px solid #f0e6d9;
-        }
-
-        .modal-feature {
-            text-align: center;
-            flex: 1;
-        }
-
-        .modal-feature strong {
-            font-family: 'Fraunces', serif;
-            font-size: 1.3rem;
-            color: var(--warm-orange);
-            display: block;
-        }
-
-        .modal-feature span {
-            font-size: 0.75rem;
-            color: #888;
+        .modal-label {
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            border: 1px solid #e0d6c8;
         }
 
         /* Mobile responsive */
@@ -741,8 +900,6 @@
             }
 
             .instagram-grid {
-                grid-template-columns: repeat(3, 1fr);
-                grid-template-rows: repeat(2, 160px);
                 gap: 10px;
             }
         }
@@ -779,28 +936,80 @@
 
             .instagram-grid {
                 grid-template-columns: repeat(2, 1fr);
-                grid-template-rows: repeat(2, 150px);
                 gap: 8px;
             }
 
-            .instagram-grid .insta-item:nth-child(1) {
-                grid-column: 1;
-                grid-row: 1;
+            /* Mobile hero image - portrait orientation */
+            .hero-image-container {
+                height: auto;
+                min-height: auto;
+                padding: 0 10px;
             }
 
-            .instagram-grid .insta-item:nth-child(2) {
-                grid-column: 2;
-                grid-row: 1;
+            .hero-image-container picture {
+                height: auto;
             }
 
-            .instagram-grid .insta-item:nth-child(3) {
-                grid-column: 1;
-                grid-row: 2;
+            .hero-image-container img {
+                height: auto;
+                object-fit: cover;
+                border-radius: 20px;
             }
 
-            .instagram-grid .insta-item:nth-child(4) {
-                grid-column: 2;
-                grid-row: 2;
+            /* Circular bread arrangement around center text */
+            .coming-soon-section {
+                padding: 120px 4%;
+            }
+
+            .deco-bread {
+                width: 30vw !important;              /* Scales with screen width */
+                height: 30vw !important;
+                left: 50% !important;
+                top: 50% !important;
+                right: auto !important;
+                bottom: auto !important;
+            }
+
+            /* Ellipse shape with proportional bread sizes */
+            .deco-bread-1 { 
+                width: 30vw !important; height: 30vw !important;  /* Sweet Potato - 200px ratio */
+                transform: translate(-50%, -50%) translate(0, -75vw) rotate(-15deg); 
+            }
+            .deco-bread-2 { 
+                width: 30vw !important; height: 30vw !important;  /* Pumpkin - 200px ratio */
+                transform: translate(-50%, -50%) translate(30vw, -41vw) rotate(20deg); 
+            }
+            .deco-bread-3 { 
+                width: 30vw !important; height: 30vw !important;  /* Corn - 200px ratio */
+                transform: translate(-50%, -50%) translate(42vw, 30vw) rotate(-10deg); 
+            }
+            .deco-bread-4 { 
+                width: 30vw !important; height: 30vw !important;  /* Potato - 200px ratio */
+                transform: translate(-50%, -50%) translate(42vw, -14vw) rotate(15deg); 
+            }
+            .deco-bread-5 { 
+                width: 25vw !important; height: 25vw !important;  /* Chestnuts - 180px ratio */
+                transform: translate(-50%, -50%) translate(26vw, 50vw) rotate(-25deg); 
+            }
+            .deco-bread-6 { 
+                width: 27vw !important; height: 27vw !important;  /* Persimmon - 180px ratio */
+                transform: translate(-50%, -50%) translate(0, 75vw) rotate(30deg); 
+            }
+            .deco-bread-7 { 
+                width: 50vw !important; height: 50vw !important;  /* Green Onion - 300px ratio (largest) */
+                transform: translate(-50%, -50%) translate(-20vw, 35vw) rotate(12deg); 
+            }
+            .deco-bread-8 { 
+                width: 30vw !important; height: 30vw !important;  /* Onion - 200px ratio */
+                transform: translate(-50%, -50%) translate(-35vw, 10vw) rotate(-18deg); 
+            }
+            .deco-bread-9 { 
+                width: 25vw !important; height: 25vw !important;  /* Garlic - 170px ratio (smallest) */
+                transform: translate(-50%, -50%) translate(-42vw, -19vw) rotate(25deg); 
+            }
+            .deco-bread-10 { 
+                width: 27vw !important; height: 27vw !important;  /* Chilli - 180px ratio */
+                transform: translate(-50%, -50%) translate(-26vw, -51vw) rotate(-8deg); 
             }
         }
     </style>
@@ -809,11 +1018,7 @@
     <!-- Header -->
     <header>
         <div class="logo">
-            <img src="../images/jungnammi/Jungnammi Logo.jpg" alt="Jungnammi Logo">
-            <div class="logo-text">
-                JUNGNAMMI
-                <span>정남미 · SINCE 1986</span>
-            </div>
+            <img src="../images/jungnammi/Jungnammi - Logo@3x.png" alt="Jungnammi Logo">
         </div>
         <nav>
             <a href="#products">Products</a>
@@ -826,7 +1031,10 @@
     <!-- Hero Section -->
     <section class="hero">
         <div class="hero-image-container">
-            <img src="../images/jungnammi/hero.jpg" alt="Jungnammi Veggie Rice Bread Collection">
+            <picture>
+                <source media="(max-width: 768px)" srcset="../images/jungnammi/JUNGNAMMI_1.jpg">
+                <img src="../images/jungnammi/hero.jpg" alt="Jungnammi Veggie Rice Bread Collection">
+            </picture>
         </div>
         <div class="hero-content">
             <h1>
@@ -926,34 +1134,19 @@
     <!-- Coming Soon Section -->
     <section class="coming-soon-section" id="popup">
         <!-- Decorative bread images -->
-        <img src="../images/jungnammi/Sweet Potato.jpg" alt="" class="deco-bread deco-bread-1">
-        <img src="../images/jungnammi/Pumpkin.jpg" alt="" class="deco-bread deco-bread-2">
-        <img src="../images/jungnammi/Corn.jpg" alt="" class="deco-bread deco-bread-3">
-        <img src="../images/jungnammi/Potato.jpg" alt="" class="deco-bread deco-bread-4">
-        <img src="../images/jungnammi/Chestnuts.jpg" alt="" class="deco-bread deco-bread-5">
-        <img src="../images/jungnammi/Persimmon.jpg" alt="" class="deco-bread deco-bread-6">
-        <img src="../images/jungnammi/Green Onion.jpg" alt="" class="deco-bread deco-bread-7">
-        <img src="../images/jungnammi/Onion.jpg" alt="" class="deco-bread deco-bread-8">
-        <img src="../images/jungnammi/Garlic.jpg" alt="" class="deco-bread deco-bread-9">
-        <img src="../images/jungnammi/Chilli.jpg" alt="" class="deco-bread deco-bread-10">
+        <img src="../images/jungnammi/Sweet Potato - clear.png" alt="" class="deco-bread deco-bread-1">
+        <img src="../images/jungnammi/Pumpkin - clear.png" alt="" class="deco-bread deco-bread-2">
+        <img src="../images/jungnammi/Corn - clear.png" alt="" class="deco-bread deco-bread-3">
+        <img src="../images/jungnammi/Potato - clear.png" alt="" class="deco-bread deco-bread-4">
+        <img src="../images/jungnammi/Chestnuts - clear.png" alt="" class="deco-bread deco-bread-5">
+        <img src="../images/jungnammi/Persimmon - clear.png" alt="" class="deco-bread deco-bread-6">
+        <img src="../images/jungnammi/Green Onion - clear.png" alt="" class="deco-bread deco-bread-7">
+        <img src="../images/jungnammi/Onion - clear.png" alt="" class="deco-bread deco-bread-8">
+        <img src="../images/jungnammi/Garlic - clear.png" alt="" class="deco-bread deco-bread-9">
+        <img src="../images/jungnammi/Chilli - clear.png" alt="" class="deco-bread deco-bread-10">
 
-        <div class="coming-soon-container">
-            <!-- Cute mascot -->
-                        <img src="../images/jungnammi/mascot.png" alt="Jungnammi Mascot" class="coming-soon-mascot-img">
-
-            <span class="coming-soon-badge">Pop-Up Event</span>
-            <h2 class="coming-soon-title">Coming <span>Soon</span> Again!</h2>
-            <p class="coming-soon-text">
-                We're preparing something special for you! Follow us on Instagram to be the first to know about our upcoming pop-up locations and dates.
-            </p>
-            <a href="https://instagram.com/jungnammi_sg" target="_blank" class="coming-soon-follow">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
-                </svg>
-                Follow @jungnammi_sg
-            </a>
+        <div class="coming-soon-container" id="popup-content">
+            <!-- Content loaded dynamically from Firebase -->
         </div>
     </section>
 
@@ -974,7 +1167,8 @@
             <a href="https://aj-hakko.com/" target="_blank" class="footer-aj-link">
                 <img src="../images/A&J Logo white-min.png" alt="A&J HAKKO" class="footer-aj-logo">
             </a>
-            <p>© 2025 A&J HAKKO PTE LTD | 201120019N</p>
+            <p style="color: rgba(255,255,255,0.7); font-size: 0.85rem; margin-bottom: 5px;">Official Distributor for Singapore</p>
+            <p style="color: white;">© 2025 A&J HAKKO PTE LTD | 201120019N</p>
         </div>
     </footer>
 
@@ -987,20 +1181,7 @@
                 <h3 id="modalTitle"></h3>
                 <span class="korean-name" id="modalKorean"></span>
                 <p id="modalDescription"></p>
-                <div class="modal-features">
-                    <div class="modal-feature">
-                        <strong>100%</strong>
-                        <span>Korean Rice</span>
-                    </div>
-                    <div class="modal-feature">
-                        <strong>Natural</strong>
-                        <span>Ingredients</span>
-                    </div>
-                    <div class="modal-feature">
-                        <strong>Handmade</strong>
-                        <span>Artisan</span>
-                    </div>
-                </div>
+                <img class="modal-label" id="modalLabel" src="" alt="Product Label">
             </div>
         </div>
     </div>
@@ -1102,61 +1283,71 @@
                 name: 'Sweet Potato',
                 korean: '고구마빵',
                 image: '../images/jungnammi/Sweet Potato.jpg',
-                description: 'Our signature sweet potato bread is filled with rich, creamy purple sweet potato paste. Made with real Korean sweet potatoes for an authentic, naturally sweet taste that melts in your mouth.'
+                label: '../images/jungnammi/labels/JUNGNAMMI PRODUCT LABEL - Sweet Potato.png',
+                description: 'Soft, sweet, and full of comforting flavor!'
             },
             persimmon: {
                 name: 'Persimmon',
                 korean: '감빵',
                 image: '../images/jungnammi/Persimmon.jpg',
-                description: 'Shaped like a ripe persimmon, this bread features a luscious persimmon cream filling. The subtle sweetness and soft texture make it a perfect autumn treat.'
+                label: '../images/jungnammi/labels/JUNGNAMMI PRODUCT LABEL - Persimmon.png',
+                description: 'A bite of autumn sunshineーsweet and tempting persimmon!'
             },
             corn: {
                 name: 'Corn',
                 korean: '옥수수빵',
                 image: '../images/jungnammi/Corn.jpg',
-                description: 'A playful corn-shaped bread with sweet corn cream inside. Made with real Korean corn for a naturally sweet, slightly savory flavor profile.'
+                label: '../images/jungnammi/labels/JUNGNAMMI PRODUCT LABEL - Corn.png',
+                description: 'Bursting with whole, chewy corn kernels!'
             },
             pumpkin: {
                 name: 'Pumpkin',
                 korean: '호박빵',
                 image: '../images/jungnammi/Pumpkin.jpg',
-                description: 'This adorable pumpkin-shaped bread is filled with smooth pumpkin cream. Rich in nutrients and flavor, it\'s both healthy and delicious.'
+                label: '../images/jungnammi/labels/JUNGNAMMI PRODUCT LABEL - Pumpkin.png',
+                description: 'Light and tender with plenty of sweek pumpkin!'
             },
             potato: {
                 name: 'Potato',
                 korean: '감자빵',
                 image: '../images/jungnammi/Potato.jpg',
-                description: 'A cute potato-shaped bread with savory potato cream filling. Light, fluffy, and satisfying — perfect for those who prefer less sweetness.'
+                label: '../images/jungnammi/labels/JUNGNAMMI PRODUCT LABEL - POTATO.png',
+                description: 'Chewy, moist, and packed with rich potato flavor!'
             },
             chestnut: {
                 name: 'Chestnut',
                 korean: '밤빵',
                 image: '../images/jungnammi/Chestnuts.jpg',
-                description: 'Our chestnut bread features a rich chestnut paste filling. Inspired by traditional Korean chestnut desserts, it offers a warm, nutty flavor.'
+                label: '../images/jungnammi/labels/JUNGNAMMI PRODUCT LABEL - Chestnuts.png',
+                description: 'Toasty and nutty with whole roasted chestnuts inside!'
             },
             garlic: {
                 name: 'Garlic',
                 korean: '마늘빵',
                 image: '../images/jungnammi/Garlic.jpg',
-                description: 'A unique garlic-shaped bread with savory garlic cream cheese filling. Perfect for those who love the aromatic flavor of roasted garlic.'
+                label: '../images/jungnammi/labels/JUNGNAMMI PRODUCT LABEL - Garlic.png',
+                description: 'Savory overload! A bold flavor Koreans love!'
             },
             greenonion: {
                 name: 'Green Onion',
                 korean: '파빵',
-                image: '../images/jungnammi/Green_Onion.jpg',
-                description: 'Shaped like a fresh green onion, this savory bread features a mild onion cream filling. A unique Korean twist on traditional bread.'
+                image: '../images/jungnammi/Green Onion.jpg',
+                label: '../images/jungnammi/labels/JUNGNAMMI PRODUCT LABEL - Green Onion.png',
+                description: '대파Umami-packed! A perfect match of Green onion and cream cheese!'
             },
             onion: {
                 name: 'Onion',
                 korean: '양파빵',
                 image: '../images/jungnammi/Onion.jpg',
-                description: 'Our onion bread looks just like a real onion! Filled with caramelized onion cream, it offers a sweet and savory taste experience.'
+                label: '../images/jungnammi/labels/JUNGNAMMI PRODUCT LABEL - Onion.png',
+                description: 'Mildly sweet onion meets smooth cream cheese in harmony!'
             },
             chilli: {
                 name: 'Chilli',
                 korean: '고추빵',
                 image: '../images/jungnammi/Chilli.jpg',
-                description: 'A bold chilli pepper-shaped bread with a mildly spicy cream filling. Don\'t worry — it\'s more flavorful than hot!'
+                label: '../images/jungnammi/labels/JUNGNAMMI PRODUCT LABEL - Chilli.png',
+                description: 'Spicy and bold! A true taste of Korea\'s heat!'
             }
         };
 
@@ -1167,6 +1358,7 @@
         const modalTitle = document.getElementById('modalTitle');
         const modalKorean = document.getElementById('modalKorean');
         const modalDescription = document.getElementById('modalDescription');
+        const modalLabel = document.getElementById('modalLabel');
 
         // Open modal on product click
         document.querySelectorAll('.product-card').forEach(card => {
@@ -1179,6 +1371,7 @@
                     modalTitle.textContent = product.name;
                     modalKorean.textContent = product.korean;
                     modalDescription.textContent = product.description;
+                    modalLabel.src = product.label;
                     modal.classList.add('active');
                     document.body.style.overflow = 'hidden';
                 }
@@ -1213,6 +1406,155 @@
                 }
             });
         });
+    </script>
+
+    <!-- Pop-Up Events: load from Firebase -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getFirestore, collection, query, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { firebaseConfig } from "../firebase-config.js";
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const INSTAGRAM_HANDLE = 'jungnammi_sg';
+        const BRAND_ID = 'jungnammi';
+
+        const FALLBACK_HTML = `
+            <img src="../images/jungnammi/mascot.png" alt="Jungnammi Mascot" class="coming-soon-mascot-img">
+            <span class="coming-soon-badge">Pop-Up Event</span>
+            <h2 class="coming-soon-title">Coming <span>Soon</span> Again!</h2>
+            <p class="coming-soon-text">
+                We're preparing something special for you! Follow us on Instagram to be the first to know about our upcoming pop-up locations and dates.
+            </p>
+            <a href="https://instagram.com/${INSTAGRAM_HANDLE}" target="_blank" class="coming-soon-follow">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                </svg>
+                Follow @${INSTAGRAM_HANDLE}
+            </a>`;
+
+        function buildEventCard(ev, isPast) {
+            const start = ev.date?.toDate ? ev.date.toDate() : new Date(ev.date);
+            const end = ev.endDate?.toDate ? ev.endDate.toDate() : null;
+
+            if (isPast) {
+                const dateLabel = start.toLocaleDateString('en-SG', { month: 'short', year: 'numeric' }).toUpperCase();
+                const photos = ev.photoUrls || [];
+                const photoHtml = photos.length ? `
+                    <div class="pev-photos">
+                        ${photos.map((url, i) => `<img src="${url}" alt="${ev.name}" class="pev-photo" loading="lazy">`).join('')}
+                    </div>` : '';
+                return `
+                <div class="past-event-item">
+                    <div class="past-event-row${photos.length ? ' has-photos' : ''}">
+                        <span class="pev-date">${dateLabel}</span>
+                        <span class="pev-name">${ev.name}</span>
+                        <span class="pev-location">📍 ${ev.location}</span>
+                    </div>
+                    ${photoHtml}
+                </div>`;
+            }
+
+            const month = start.toLocaleDateString('en-SG', { month: 'short' }).toUpperCase();
+            const day = start.getDate();
+            const year = start.getFullYear();
+            const startFull = start.toLocaleDateString('en-SG', { day: 'numeric', month: 'long', year: 'numeric' });
+            const endStr = end
+                ? ` – ${end.toLocaleDateString('en-SG', { day: 'numeric', month: 'long', year: 'numeric' })}`
+                : '';
+            return `
+            <div class="popup-event-card">
+                <div class="popup-event-date-block">
+                    <div class="ev-month">${month}</div>
+                    <div class="ev-day">${day}</div>
+                    <div class="ev-year">${year}</div>
+                </div>
+                <div class="popup-event-body">
+                    <h3>${ev.name}</h3>
+                    <div class="ev-location">${ev.location}</div>
+                    <div class="ev-date-text">${startFull}${endStr}</div>
+                    ${ev.description ? `<div class="ev-description">${ev.description}</div>` : ''}
+                </div>
+            </div>`;
+        }
+
+        async function loadPopupEvents() {
+            const container = document.getElementById('popup-content');
+            if (!container) return;
+
+            try {
+                const snap = await getDocs(query(
+                    collection(db, 'brand_events', BRAND_ID, 'events'),
+                    orderBy('date', 'asc')
+                ));
+
+                const now = new Date();
+                const upcoming = [];
+                const pastShown = [];
+
+                snap.docs.forEach(d => {
+                    const ev = { id: d.id, ...d.data() };
+                    const end = ev.endDate?.toDate ? ev.endDate.toDate() : null;
+                    const start = ev.date?.toDate ? ev.date.toDate() : new Date(ev.date);
+                    const isUpcoming = end ? end > now : start > now;
+                    if (isUpcoming) {
+                        upcoming.push(ev);
+                    } else if (ev.showInHistory === true) {
+                        pastShown.push(ev);
+                    }
+                });
+
+                // Reverse past so most recent appears first
+                pastShown.reverse();
+
+                if (!upcoming.length && !pastShown.length) {
+                    container.innerHTML = FALLBACK_HTML;
+                    return;
+                }
+
+                const upcomingHtml = upcoming.length
+                    ? upcoming.map(ev => buildEventCard(ev, false)).join('')
+                    : '';
+
+                const pastHtml = pastShown.length
+                    ? `<div class="past-events-section">
+                        <p class="past-events-heading">Past Events</p>
+                        <div class="past-events-list">
+                            ${pastShown.map(ev => buildEventCard(ev, true)).join('')}
+                        </div>
+                      </div>`
+                    : '';
+
+                const titleHtml = upcoming.length
+                    ? `<h2 class="coming-soon-title">Find Us <span>Near You!</span></h2>
+                       <p class="coming-soon-text">We're popping up at these locations — come say hi!</p>`
+                    : `<h2 class="coming-soon-title">Coming <span>Soon</span> Again!</h2>
+                       <p class="coming-soon-text">Stay tuned for our next pop-up!</p>`;
+
+                container.innerHTML = `
+                    <img src="../images/jungnammi/mascot.png" alt="Jungnammi Mascot" class="coming-soon-mascot-img">
+                    <span class="coming-soon-badge">Pop-Up Event</span>
+                    ${titleHtml}
+                    ${upcomingHtml ? `<div class="popup-events-list">${upcomingHtml}</div>` : ''}
+                    ${pastHtml}
+                    <a href="https://instagram.com/${INSTAGRAM_HANDLE}" target="_blank" class="coming-soon-follow" style="margin-top:30px;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                        </svg>
+                        Follow @${INSTAGRAM_HANDLE}
+                    </a>`;
+            } catch (err) {
+                console.error('Error loading pop-up events:', err);
+                container.innerHTML = FALLBACK_HTML;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadPopupEvents);
     </script>
 </body>
 </html>
