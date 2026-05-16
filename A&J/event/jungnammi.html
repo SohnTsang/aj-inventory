@@ -607,37 +607,31 @@
             white-space: nowrap;
         }
 
-        .past-event-item {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .past-event-row.has-photos {
-            border-radius: 12px 12px 0 0;
-        }
-
         .pev-photos {
-            display: flex;
+            display: grid;
             gap: 8px;
-            padding: 10px 16px 12px;
-            background: rgba(255,255,255,0.5);
-            border-left: 3px solid #c8a87a;
-            border-radius: 0 0 12px 12px;
+        }
+
+        .pev-photos-1 {
+            grid-template-columns: 1fr;
+        }
+
+        .pev-photos-2 {
+            grid-template-columns: 1fr 1fr;
         }
 
         .pev-photo {
-            width: 140px;
-            height: 95px;
+            width: 100%;
+            aspect-ratio: 16 / 9;
             object-fit: cover;
-            border-radius: 8px;
+            border-radius: 10px;
             background: #e8ddd0;
+            display: block;
         }
 
         @media (max-width: 480px) {
             .past-event-row { flex-wrap: wrap; gap: 4px; }
             .past-event-row .pev-location { width: 100%; white-space: normal; }
-            .pev-photos { padding: 8px 12px 10px; }
-            .pev-photo { width: 100px; height: 68px; }
         }
 
         @media (max-width: 768px) {
@@ -1444,18 +1438,16 @@
                 const dateLabel = start.toLocaleDateString('en-SG', { month: 'short', year: 'numeric' }).toUpperCase();
                 const photos = ev.photoUrls || [];
                 const photoHtml = photos.length ? `
-                    <div class="pev-photos">
-                        ${photos.map((url, i) => `<img src="${url}" alt="${ev.name}" class="pev-photo" loading="lazy">`).join('')}
-                    </div>` : '';
+                <div class="pev-photos pev-photos-${photos.length}">
+                    ${photos.map((url, i) => `<img src="${url}" alt="${ev.name}" class="pev-photo" loading="lazy">`).join('')}
+                </div>` : '';
                 return `
-                <div class="past-event-item">
-                    <div class="past-event-row${photos.length ? ' has-photos' : ''}">
-                        <span class="pev-date">${dateLabel}</span>
-                        <span class="pev-name">${ev.name}</span>
-                        <span class="pev-location">📍 ${ev.location}</span>
-                    </div>
-                    ${photoHtml}
-                </div>`;
+                <div class="past-event-row">
+                    <span class="pev-date">${dateLabel}</span>
+                    <span class="pev-name">${ev.name}</span>
+                    <span class="pev-location">📍 ${ev.location}</span>
+                </div>
+                ${photoHtml}`;
             }
 
             const month = start.toLocaleDateString('en-SG', { month: 'short' }).toUpperCase();
