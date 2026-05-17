@@ -1301,9 +1301,9 @@
               </div>
               
               <div class="field full">
-                <label class="field-label">Images</label>
+                <label class="field-label" for="images">Images</label>
                 <div class="file-input-wrap">
-                  <input type="file" id="images" class="file-input" accept="image/*" multiple>
+                  <input type="file" id="images" class="file-input" accept="image/*,.heic,.heif" multiple>
                   <div class="file-input-display">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
@@ -1383,9 +1383,9 @@
             </div>
             
             <div class="field full">
-              <label class="field-label">Product Image</label>
+              <label class="field-label" for="p_image">Product Image</label>
               <div class="file-input-wrap">
-                <input type="file" id="p_image" class="file-input" accept="image/*">
+                <input type="file" id="p_image" class="file-input" accept="image/*,.heic,.heif">
                 <div class="file-input-display">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
@@ -1451,9 +1451,9 @@
         <div class="card-body">
           <div class="form-grid">
             <div class="field full">
-              <label class="field-label">Banner Image</label>
+              <label class="field-label" for="banner_image">Banner Image</label>
               <div class="file-input-wrap">
-                <input type="file" id="banner_image" class="file-input" accept="image/*">
+                <input type="file" id="banner_image" class="file-input" accept="image/*,.heic,.heif">
                 <div class="file-input-display">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
@@ -1632,7 +1632,7 @@
 <div id="saving" class="loading-overlay" style="display: none;">
   <div class="loading-content">
     <div class="spinner"></div>
-    <div class="loading-text">Saving...</div>
+    <div class="loading-text" id="saving-text">Saving...</div>
   </div>
 </div>
 
@@ -1777,11 +1777,13 @@ document.getElementById('save').addEventListener('click', async (e) => {
       const uploaded = [];
       for (const f of files) {
         const compressedFile = await compressImage(f);
-        const clean = f.name.replace(/[^a-zA-Z0-9_.-]/g, '_').replace(/\.[^.]+$/, '.webp');
+        const ct = (compressedFile && compressedFile.type) || f.type || 'image/webp';
+        const extFromType = ct.split('/')[1] || 'webp';
+        const clean = f.name.replace(/[^a-zA-Z0-9_.-]/g, '_').replace(/\.[^.]+$/, '.' + extFromType);
         const r = ref(st, `news/${slug}/${Date.now()}-${clean}`);
-        console.log('[admin] Start upload:', r.fullPath, 'image/webp', compressedFile.size);
+        console.log('[admin] Start upload:', r.fullPath, ct, compressedFile.size);
         await new Promise((resolve, reject) => {
-          const task = uploadBytesResumable(r, compressedFile, { cacheControl: 'public,max-age=31536000,immutable', contentType: 'image/webp' });
+          const task = uploadBytesResumable(r, compressedFile, { cacheControl: 'public,max-age=31536000,immutable', contentType: ct });
           task.on('state_changed',
             (snap) => {
               const pct = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
@@ -1856,27 +1858,113 @@ const authorEl = document.getElementById('author');
 const images = document.getElementById('images');
 const thumbs = document.getElementById('thumbs');
 
-function compressImage(file, maxWidth = 800, quality = 0.8) {
-  return new Promise((resolve) => {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    const img = new Image();
-    
-    img.onload = () => {
-      const ratio = Math.min(maxWidth / img.width, maxWidth / img.height);
-      canvas.width = img.width * ratio;
-      canvas.height = img.height * ratio;
-      
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      canvas.toBlob(resolve, 'image/webp', quality);
+// HEIC/HEIF support — browsers can't decode Apple's HEIC natively, so we lazy-load
+// heic2any (a WASM converter) on first use and cache it for the rest of the session.
+function isHeic(file) {
+  if (!file) return false;
+  const type = (file.type || '').toLowerCase();
+  if (type === 'image/heic' || type === 'image/heif' ||
+      type === 'image/heic-sequence' || type === 'image/heif-sequence') return true;
+  return /\.(heic|heif)$/i.test(file.name || '');
+}
+
+let __heic2anyPromise = null;
+function loadHeic2any() {
+  if (window.heic2any) return Promise.resolve(window.heic2any);
+  if (__heic2anyPromise) return __heic2anyPromise;
+  __heic2anyPromise = new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js';
+    script.async = true;
+    script.crossOrigin = 'anonymous';
+    script.onload = () => {
+      if (window.heic2any) resolve(window.heic2any);
+      else { __heic2anyPromise = null; reject(new Error('HEIC converter loaded but unavailable')); }
     };
-    
-    img.src = URL.createObjectURL(file);
+    script.onerror = () => {
+      __heic2anyPromise = null; // allow retry on next attempt
+      reject(new Error('Could not load HEIC converter (offline?). Re-export the photo as JPEG and try again.'));
+    };
+    document.head.appendChild(script);
+  });
+  return __heic2anyPromise;
+}
+
+function setSavingMessage(msg) {
+  const el = document.getElementById('saving-text');
+  if (el) el.textContent = msg;
+}
+
+// Fire-and-forget warm-up so the WASM is in memory by the time the user hits Save
+function maybePreloadHeic(files) {
+  const list = Array.isArray(files) ? files : (files ? [files] : []);
+  if (list.some(isHeic)) loadHeic2any().catch(() => {});
+}
+
+async function convertHeicIfNeeded(file) {
+  if (!isHeic(file)) return file;
+  const prev = (document.getElementById('saving-text') || {}).textContent || 'Saving...';
+  setSavingMessage(`Converting HEIC: ${file.name}…`);
+  try {
+    const heic2any = await loadHeic2any();
+    const result = await heic2any({ blob: file, toType: 'image/jpeg', quality: 0.9 });
+    const blob = Array.isArray(result) ? result[0] : result;
+    if (!blob) throw new Error('Conversion returned no data');
+    const newName = (file.name || 'image.heic').replace(/\.(heic|heif)$/i, '.jpg');
+    return new File([blob], newName, { type: 'image/jpeg', lastModified: Date.now() });
+  } catch (err) {
+    const msg = err && err.message ? err.message : String(err);
+    throw new Error(`Could not convert HEIC photo "${file.name}": ${msg}`);
+  } finally {
+    setSavingMessage(prev);
+  }
+}
+
+async function compressImage(file, maxWidth = 800, quality = 0.8) {
+  // Convert HEIC up front since <img> can't decode it
+  const inputFile = await convertHeicIfNeeded(file);
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(inputFile);
+    const img = new Image();
+    let settled = false;
+    const finish = (value, isError) => {
+      if (settled) return;
+      settled = true;
+      URL.revokeObjectURL(url);
+      isError ? reject(value) : resolve(value);
+    };
+    // 30s safety net so a stuck decode can't hang the save forever
+    const timeout = setTimeout(() => finish(new Error(`Could not read image "${inputFile.name}" (unsupported format?)`), true), 30000);
+
+    img.onload = () => {
+      try {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const ratio = Math.min(1, maxWidth / img.width, maxWidth / img.height);
+        canvas.width = Math.max(1, Math.round(img.width * ratio));
+        canvas.height = Math.max(1, Math.round(img.height * ratio));
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob((blob) => {
+          clearTimeout(timeout);
+          // Fall back to original file if the browser can't encode webp
+          finish(blob || inputFile, false);
+        }, 'image/webp', quality);
+      } catch (err) {
+        clearTimeout(timeout);
+        finish(err, true);
+      }
+    };
+    img.onerror = () => {
+      clearTimeout(timeout);
+      finish(new Error(`Could not decode image "${inputFile.name}" (unsupported format?)`), true);
+    };
+    img.src = url;
   });
 }
 
 images.addEventListener('change', () => {
   selectedFiles = Array.from(images.files || []);
+  maybePreloadHeic(selectedFiles);
   renderSelectedFiles();
 });
 
@@ -2056,6 +2144,7 @@ let pExistingImageUrl = '';
 // Product image preview on file select
 pImage.addEventListener('change', () => {
   pSelectedFile = pImage.files?.[0] || null;
+  maybePreloadHeic(pSelectedFile);
   renderProductThumb();
 });
 
@@ -2240,6 +2329,7 @@ let bannerExistingImageUrl = '';
 // Banner image preview on file select
 bannerImage.addEventListener('change', () => {
   bannerSelectedFile = bannerImage.files?.[0] || null;
+  maybePreloadHeic(bannerSelectedFile);
   renderBannerThumb();
 });
 
@@ -2527,7 +2617,7 @@ function renderEventCards(docs, brandId, container, isPastSection) {
           </div>`).join('')}
       </div>` : '';
     const photoUploadHtml = isPastSection && photos.length < 2 ? `
-      <input type="file" data-ev-photo-input="${d.id}" accept="image/*" ${photos.length === 0 ? 'multiple' : ''} style="display:none;">
+      <input type="file" data-ev-photo-input="${d.id}" accept="image/*,.heic,.heif" ${photos.length === 0 ? 'multiple' : ''} style="display:none;">
       <button class="btn btn-secondary" data-ev-photo-btn="${d.id}">📷 ${photos.length ? 'Add Photo' : 'Add Photos'}</button>` : '';
 
     return `
@@ -2572,8 +2662,9 @@ function renderEventCards(docs, brandId, container, isPastSection) {
       const evId = input.getAttribute('data-ev-photo-input');
       const files = Array.from(input.files || []);
       if (!files.length) return;
-      const invalid = files.filter(f => !f.type.startsWith('image/'));
+      const invalid = files.filter(f => !f.type.startsWith('image/') && !isHeic(f));
       if (invalid.length) return showToast('Only image files are allowed', 'error');
+      maybePreloadHeic(files);
       await uploadEventPhotos(brandId, evId, files);
     });
   });
