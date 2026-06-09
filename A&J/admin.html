@@ -2350,9 +2350,9 @@ async function loadProducts(){
     const exp = pickField(p, ['expiration', 'expiry', 'expiryDate', 'expirationDate']);
     const pk = pickField(p, ['packing', 'package', 'packaging']);
     const details = [
-      nw ? `NET WEIGHT: ${escAdmin(nw)}` : '',
-      exp ? `EXPIRATION: ${escAdmin(exp)}` : '',
-      pk ? `PACKING: ${escAdmin(pk)}` : ''
+      nw ? `Net weight: ${escAdmin(nw)}` : '',
+      exp ? `Expiration: ${escAdmin(exp)}` : '',
+      pk ? `Packing: ${escAdmin(pk)}` : ''
     ].filter(Boolean).join(' · ');
     return `
     <article class="product-card">

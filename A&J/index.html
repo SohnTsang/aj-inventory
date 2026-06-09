@@ -300,7 +300,7 @@
           <div class="achievements-header">
             <h2 id="achievements-title" class="achievements-title" data-i18n="achievements.title">Achievements</h2>
           </div>
-          
+
           <div class="metrics-grid">
             <div class="metric-card reveal">
               <div class="metric-icon-wrapper">
@@ -790,10 +790,11 @@
 
           const cards = ps.docs.map(d => {
             const p = d.data();
-            // Use thumbnail for better performance (thumbUrl falls back to imageUrl)
-            const imgSrc = p.thumbUrl || p.imageUrl;
+            // Thumbnail for performance, falling back through the image fields.
+            const imgSrc = p.thumbUrl || p.imageUrl || p.displayUrl || p.originalUrl;
+            // Inline onclick (survives the marquee's cloneNode) → product detail.
             return `
-              <article class="product-card">
+              <article class="product-card" onclick="window.location.href='/product-detail.html?id=${encodeURIComponent(d.id)}'" style="cursor: pointer;">
                 ${imgSrc ? `<img src="${imgSrc}" alt="${p.name||''}" loading="lazy" decoding="async">` : ''}
                 <h4>${p.name || ''}</h4>
               </article>

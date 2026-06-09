@@ -704,10 +704,9 @@
   margin: 0;
   align-self: center;
   color: #6b7280;
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: .7px;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: normal;
 }
 .spec-row dd {
   margin: 0;
@@ -888,10 +887,9 @@
   margin: 0;
   align-self: center;
   color: #6b7280;
-  font-size: 11.5px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: .6px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: normal;
 }
 .product-fact-row dd {
   margin: 0;
@@ -1026,7 +1024,7 @@
   .catalog-card-link { grid-template-columns: 104px 1fr; gap: 16px; padding: 18px 0; }
   .catalog-name { font-size: 17px; }
   .spec-row { grid-template-columns: 84px 1fr; gap: 10px; padding: 7px 0; }
-  .spec-row dt { font-size: 10px; letter-spacing: .5px; }
+  .spec-row dt { font-size: 11.5px; }
   .catalog-search { width: 100%; min-width: 0; }
   .catalog-toolbar { margin-bottom: 22px; }
 }
