@@ -14,7 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" href="./images/favicon.png">
     <link rel="apple-touch-icon" href="./images/favicon.png">
-    <link rel="stylesheet" href="./styles.css?v=4" />
+    <link rel="stylesheet" href="./styles.css?v=8" />
     <style>
       .service-title {
             font-size: clamp(18px, 2vw, 18px);
@@ -214,7 +214,7 @@
         <!-- Brand Banner -->
         <div class="brand-banner-container" id="brand-banner-container" style="display: none;">
           <a id="brand-banner-link" href="#" class="brand-banner-link">
-            <img id="brand-banner-image" src="" alt="Brand Banner" class="brand-banner-image" loading="lazy" />
+            <img id="brand-banner-image" src="" alt="Brand banner" class="brand-banner-image" loading="lazy" decoding="async" />
           </a>
         </div>
       </section>
@@ -248,7 +248,7 @@
           
           
           <div class="products-actions">
-            <a class="products-btn secondary" href="/products" data-i18n="products.viewAll">View all products</a>
+            <a class="products-btn secondary" href="/products" data-i18n="products.viewCatalog">View Catalog</a>
             <a class="products-btn primary" href="https://s.lazada.sg/s.XP6SY" target="_blank" rel="noopener" data-i18n="products.shopNow">
               Visit Our Lazada 
               <svg viewBox="0 0 24 24" fill="none">
@@ -262,8 +262,11 @@
       <!-- News preview -->
       <section id="news" class="section" aria-labelledby="news-title">
         <div class="container">
-          <div class="news-header">
-            <h2 id="news-title" class="news-title" data-i18n="news.title">Latest News</h2>
+          <div class="home-news-header">
+            <div class="home-news-heading">
+              <h2 id="news-title" class="news-title" data-i18n="news.title">Latest News</h2>
+              <p class="home-news-sub" data-i18n="news.subtitle">Updates, events and announcements from A&J HAKKO</p>
+            </div>
             <a href="/news" class="view-all-btn" data-i18n="news.viewAll">
               View all news
               <svg viewBox="0 0 24 24" fill="none">
@@ -271,21 +274,23 @@
               </svg>
             </a>
           </div>
-          
-          <div class="news-grid" id="news-list" aria-live="polite" aria-busy="true">
-            <!-- Loading state - will be replaced by sample data -->
-            <div class="news-loading">
-              <span>Loading news</span>
-              <div class="loading-dots">
-                <div class="loading-dot"></div>
-                <div class="loading-dot"></div>
-                <div class="loading-dot"></div>
-              </div>
+
+          <!-- Skeleton rows shown until news is rendered (replaced by JS) -->
+          <div class="home-news-list" id="news-list" aria-live="polite" aria-busy="true">
+            <div class="home-news-skrow" aria-hidden="true">
+              <div><div class="skeleton-line skeleton-line--meta"></div><div class="skeleton-line skeleton-line--short"></div></div>
+              <div><div class="skeleton-line skeleton-line--title"></div><div class="skeleton-line skeleton-line--short"></div></div>
+            </div>
+            <div class="home-news-skrow" aria-hidden="true">
+              <div><div class="skeleton-line skeleton-line--meta"></div><div class="skeleton-line skeleton-line--short"></div></div>
+              <div><div class="skeleton-line skeleton-line--title"></div><div class="skeleton-line skeleton-line--short"></div></div>
+            </div>
+            <div class="home-news-skrow" aria-hidden="true">
+              <div><div class="skeleton-line skeleton-line--meta"></div><div class="skeleton-line skeleton-line--short"></div></div>
+              <div><div class="skeleton-line skeleton-line--title"></div><div class="skeleton-line skeleton-line--short"></div></div>
             </div>
           </div>
           <a href="/news" class="view-all-btn mobile-only" data-i18n="news.viewAll">View all news</a>
-
-
         </div>
       </section>
 
@@ -598,37 +603,102 @@
 
     <script src="./script.js" defer></script>
     <script>
-      // Render helper
+      // ── Homepage "Latest News" preview ──────────────────────────────────────
+      // Safe data helpers (never inject raw Firestore HTML into the cards).
+      function nEscapeHtml(s) {
+        return String(s == null ? '' : s).replace(/[&<>"']/g, c =>
+          ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+      }
+      function nSafeText(v) { return nEscapeHtml(typeof v === 'string' ? v : (v == null ? '' : String(v))); }
+      function nStripHtml(s) { return String(s == null ? '' : s).replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim(); }
+      function nFormatDate(d) {
+        try {
+          const dt = (d instanceof Date) ? d : new Date(d);
+          if (isNaN(dt.getTime())) return '';
+          return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        } catch (e) { return ''; }
+      }
+      function nSafeSlug(s) { return encodeURIComponent(String(s == null ? '' : s).trim()); }
+      function nIsLocalEnv() {
+        return location.protocol === 'file:' ||
+          ['localhost', '127.0.0.1', '0.0.0.0'].includes(location.hostname);
+      }
+      const N_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg>';
+
+      function nDict() {
+        const lang = localStorage.getItem('lang') || 'en';
+        return (window.translations && (window.translations[lang] || window.translations.en)) || {};
+      }
+
+      // Render a clean 3-item list (no images). `items` = [{ title, date, category, excerpt, slug }]
       function renderNewsList(items) {
         const list = document.getElementById('news-list');
         if (!list) return;
         list.setAttribute('aria-busy', 'false');
-        list.innerHTML = items.slice(0, 3).map((item, index) => `
-          <article class="news-item" onclick="window.location.href='/news/${encodeURIComponent(item.slug)}'">
-            <div class="news-content">
-              <div class="news-meta">
-                <span class="news-date">${new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
-                ${item.category ? `<span class="news-category">${item.category}</span>` : ''}
+        const arr = Array.isArray(items) ? items.slice(0, 3) : [];
+        if (!arr.length) { renderNewsEmpty(); return; }
+
+        list.className = 'home-news-list';
+        list.innerHTML = arr.map((item) => {
+          const title = nSafeText(item.title);
+          const dateStr = nFormatDate(item.date);
+          const category = nSafeText(item.category);
+          const excerpt = nSafeText(item.excerpt);
+          const href = item.slug ? '/news/' + nSafeSlug(item.slug) : '/news';
+          return `
+            <a class="home-news-row" href="${href}"${title ? ` aria-label="${title}"` : ''}>
+              <div class="home-news-rowmeta">
+                ${dateStr ? `<span class="home-news-date">${dateStr}</span>` : ''}
+                ${category ? `<span class="home-news-badge">${category}</span>` : ''}
               </div>
-              <h3 class="news-item-title">${item.title || ''}</h3>
-              ${index < 2 && item.excerpt ? `<p class="news-excerpt">${item.excerpt}</p>` : ''}
-            </div>
-            <div class="news-arrow">
-              <svg viewBox="0 0 24 24" fill="none">
-                <path d="M9 5l7 7-7 7" fill="currentColor"/>
-              </svg>
-            </div>
-          </article>
-        `).join('');
+              <div class="home-news-rowmain">
+                ${title ? `<h3 class="home-news-rowtitle">${title}</h3>` : ''}
+                ${excerpt ? `<p class="home-news-rowexcerpt">${excerpt}</p>` : ''}
+              </div>
+              <span class="home-news-rowarrow" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+            </a>`;
+        }).join('');
       }
 
-      // Local-only sample data (for file://)
+      function renderNewsEmpty() {
+        const list = document.getElementById('news-list');
+        if (!list) return;
+        list.setAttribute('aria-busy', 'false');
+        list.className = 'home-news-state';
+        const dict = nDict();
+        list.innerHTML = `
+          <div class="home-news-empty">
+            <span class="home-news-state-icon" aria-hidden="true">${N_ICON}</span>
+            <h3 data-i18n="news.noNewsAvailable">${nEscapeHtml(dict['news.noNewsAvailable'] || 'No news available')}</h3>
+            <p data-i18n="news.checkBack">${nEscapeHtml(dict['news.checkBack'] || 'Check back later for the latest updates.')}</p>
+          </div>`;
+      }
+
+      function renderNewsError() {
+        // On a real domain we never show fake headlines — only a friendly message.
+        // Locally (file:// or localhost) we render the sample list so the layout is testable.
+        if (nIsLocalEnv()) { loadLocalNewsFallback(); return; }
+        const list = document.getElementById('news-list');
+        if (!list) return;
+        list.setAttribute('aria-busy', 'false');
+        list.className = 'home-news-state';
+        const dict = nDict();
+        list.innerHTML = `
+          <div class="home-news-empty home-news-error">
+            <span class="home-news-state-icon" aria-hidden="true">${N_ICON}</span>
+            <h3 data-i18n="news.loadError">${nEscapeHtml(dict['news.loadError'] || "We couldn't load the latest news right now.")}</h3>
+            <p><a class="view-all-btn" href="/news" data-i18n="news.viewAll">${nEscapeHtml(dict['news.viewAll'] || 'View all news')}</a></p>
+          </div>`;
+      }
+
+      // Local-only sample data (file:// / localhost). Clearly fallback content — NOT real news.
       function loadLocalNewsFallback() {
         const sampleNews = [
-          { title:'A&J HAKKO Expands Cold Chain Network Across Southeast Asia', date:'2025-01-15', category:'Expansion', excerpt:'Strategic partnership with regional logistics providers strengthens our temperature-controlled delivery capabilities across five new markets.', slug:'cold-chain-expansion-2025' },
-          { title:'New Automated Warehouse Opens in Singapore', date:'2025-01-10', category:'Operations', excerpt:'State-of-the-art facility increases storage capacity by 40% with advanced robotics.', slug:'singapore-warehouse-2025' },
-          { title:'Japanese Food Festival Partnership Announcement', date:'2025-01-08', category:'Events', excerpt:'Exclusive logistics partner for upcoming Japanese food exhibitions in major department stores.', slug:'food-festival-partnership' },
-          { title:'Sustainability Initiative: Carbon Neutral Deliveries by 2026', date:'2025-01-05', category:'Sustainability', excerpt:'Commitment to environmental responsibility through electric vehicle fleet expansion.', slug:'carbon-neutral-initiative' }
+          { title: 'A&J HAKKO Expands Cold Chain Network Across Southeast Asia', date: '2025-01-15', category: 'Expansion', excerpt: 'Strategic partnership with regional logistics providers strengthens our temperature-controlled delivery capabilities across five new markets.', slug: 'cold-chain-expansion-2025' },
+          { title: 'New Automated Warehouse Opens in Singapore', date: '2025-01-10', category: 'Operations', excerpt: 'State-of-the-art facility increases storage capacity by 40% with advanced robotics.', slug: 'singapore-warehouse-2025' },
+          { title: 'Japanese Food Festival Partnership Announcement', date: '2025-01-08', category: 'Events', excerpt: 'Exclusive logistics partner for upcoming Japanese food exhibitions in major department stores.', slug: 'food-festival-partnership' }
         ];
         renderNewsList(sampleNews);
       }
@@ -637,36 +707,62 @@
       if (location.protocol === 'file:') {
         document.addEventListener('DOMContentLoaded', loadLocalNewsFallback);
       }
-      // Expose fallback for production error path
+      // Expose for the Firebase module (separate module scope)
+      window.renderNewsList = renderNewsList;
+      window.renderNewsEmpty = renderNewsEmpty;
+      window.renderNewsError = renderNewsError;
+      window.nStripHtml = nStripHtml;
       window.loadLocalNewsFallback = loadLocalNewsFallback;
     </script>
 
     <script>
-      // Fallback function to load local customer logos
-      function loadLocalCustomerLogos() {
+      // Shared, safe logo renderer used by both the Firebase Storage path and the
+      // local fallback. Renders once via a DocumentFragment (no per-image reflow),
+      // reserves layout with fixed CSS dimensions, and hides any logo that fails to load.
+      function renderCustomerLogos(logos) {
         const track = document.querySelector('.brand-track');
-        if (track) {
-          const localLogos = [
-            'CFC-Logo.webp',
-            'FOOD BASE LOGO.webp', 
-            'inic_coffee.webp',
-            'KANENA MISO LOGO.webp',
-            'Kinokuniya.webp',
-            'NISHIKIYA KITCHEN LOGO.webp',
-            'PIONEER LOGO.webp',
-            'Sankyo FOods.webp',
-            'URESHINO LABO LOGO.webp'
-          ];
-          
-          track.innerHTML = localLogos.map(logo => {
-            const name = logo.replace(/\.[^/.]+$/, '').replace(/[_-]/g, ' ');
-            return `<img src="./images/customers/${logo}" alt="${name}" loading="lazy" />`;
-          }).join('');
-          
-          console.log('Loaded', localLogos.length, 'customer logos from local images folder');
+        if (!track || !Array.isArray(logos) || logos.length === 0) return false;
+        const frag = document.createDocumentFragment();
+        logos.forEach((logo, i) => {
+          if (!logo || !logo.src) return;
+          const img = document.createElement('img');
+          img.src = logo.src;
+          img.alt = logo.name || '';
+          img.decoding = 'async';
+          // First few logos are visible immediately; the rest can lazy-load.
+          img.loading = i < 4 ? 'eager' : 'lazy';
+          img.addEventListener('error', () => { img.classList.add('is-broken'); }, { once: true });
+          frag.appendChild(img);
+        });
+        track.innerHTML = '';
+        track.appendChild(frag);
+        return true;
+      }
+      window.renderCustomerLogos = renderCustomerLogos;
+
+      // Fallback: load the bundled local customer logos from ./images/customers/
+      function loadLocalCustomerLogos() {
+        const files = [
+          'CFC-Logo.webp',
+          'FOOD BASE LOGO.webp',
+          'inic_coffee.webp',
+          'KANENA MISO LOGO.webp',
+          'Kinokuniya.webp',
+          'NISHIKIYA KITCHEN LOGO.webp',
+          'PIONEER LOGO.webp',
+          'Sankyo FOods.webp',
+          'URESHINO LABO LOGO.webp'
+        ];
+        const logos = files.map(file => ({
+          src: `./images/customers/${file}`,
+          name: file.replace(/\.[^/.]+$/, '').replace(/[_-]/g, ' ')
+        }));
+        if (renderCustomerLogos(logos)) {
+          console.log('Loaded', logos.length, 'customer logos from local images folder');
         }
       }
-      
+      window.loadLocalCustomerLogos = loadLocalCustomerLogos;
+
       // Load local logos immediately for file:// protocol
       if (location.protocol === 'file:') {
         document.addEventListener('DOMContentLoaded', loadLocalCustomerLogos);
@@ -706,45 +802,79 @@
           if (window.initProductsSlider) {
               window.initProductsSlider(cards, { immediate: true });
           }
-          // Load customer logos from Firebase Storage
-          const { getStorage, ref, listAll, getDownloadURL } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js");
-          const storage = getStorage(app);
-          const customersRef = ref(storage, 'customers');
-          const customersList = await listAll(customersRef);
+          // Load customer logos from Firebase Storage.
+          // Isolated in its own try/catch so a Storage failure can't break the
+          // banner/news below; URLs are fetched concurrently and rendered once.
+          try {
+            const { getStorage, ref, listAll, getDownloadURL } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js");
+            const storage = getStorage(app);
+            const customersRef = ref(storage, 'customers');
+            const customersList = await listAll(customersRef);
 
-          if (customersList.items.length > 0) {
-            const track = document.querySelector('.brand-track');
-            if (track) {
-              track.innerHTML = '';
-              for (const item of customersList.items) {
-                const url = await getDownloadURL(item);
-                const name = item.name.replace(/\.[^/.]+$/, '').replace(/[_-]/g, ' ');
-                track.insertAdjacentHTML('beforeend', `<img src="${url}" alt="${name}" loading="lazy" />`);
+            if (customersList.items.length > 0) {
+              const settled = await Promise.allSettled(customersList.items.map(item => getDownloadURL(item)));
+              const logos = [];
+              settled.forEach((res, i) => {
+                if (res.status === 'fulfilled' && res.value) {
+                  const item = customersList.items[i];
+                  logos.push({ src: res.value, name: item.name.replace(/\.[^/.]+$/, '').replace(/[_-]/g, ' ') });
+                }
+              });
+              if (window.renderCustomerLogos(logos)) {
+                console.log('Loaded', logos.length, 'customer logos from Firebase Storage');
+              } else {
+                window.loadLocalCustomerLogos();
               }
-              console.log('Loaded', customersList.items.length, 'customer logos from Firebase Storage');
+            } else {
+              window.loadLocalCustomerLogos();
             }
-          } else {
-            loadLocalCustomerLogos();
+          } catch (logoErr) {
+            console.warn('Customer logos: Storage unavailable, using local fallback.', logoErr);
+            window.loadLocalCustomerLogos();
           }
 
-          // Load brand banner from Firestore
+          // Load brand banner from Firestore.
+          // Prefer the optimized display image; keep the original as a fallback.
           try {
             const bannerDoc = await getDoc(doc(db, 'settings', 'brandBanner'));
             if (bannerDoc.exists()) {
               const bannerData = bannerDoc.data();
-              if (bannerData.imageUrl) {
+              const primarySrc = bannerData.displayUrl || bannerData.optimizedUrl || bannerData.imageUrl;
+              if (primarySrc) {
                 const bannerContainer = document.getElementById('brand-banner-container');
                 const bannerImage = document.getElementById('brand-banner-image');
                 const bannerLink = document.getElementById('brand-banner-link');
-                
+
                 if (bannerContainer && bannerImage && bannerLink) {
-                  bannerImage.src = bannerData.imageUrl;
+                  const originalSrc = bannerData.imageUrl || '';
+                  let triedOriginal = false;
+
+                  bannerLink.classList.add('is-loading');
+                  bannerImage.addEventListener('load', () => {
+                    bannerLink.classList.remove('is-loading');
+                    bannerImage.classList.add('is-loaded');
+                  });
+                  bannerImage.addEventListener('error', () => {
+                    // Optimized image failed: try the original once, then hide gracefully.
+                    if (!triedOriginal && originalSrc && bannerImage.src !== originalSrc) {
+                      triedOriginal = true;
+                      console.warn('Brand banner: optimized image failed, falling back to original.');
+                      bannerImage.src = originalSrc;
+                      return;
+                    }
+                    console.warn('Brand banner: image failed to load, hiding banner.');
+                    bannerLink.classList.remove('is-loading');
+                    bannerContainer.style.display = 'none';
+                  });
+
                   bannerLink.href = bannerData.linkUrl || '#';
                   if (bannerData.linkUrl) {
                     bannerLink.target = bannerData.linkUrl.startsWith('http') ? '_blank' : '_self';
+                    if (bannerData.linkUrl.startsWith('http')) bannerLink.rel = 'noopener';
                   }
                   bannerContainer.style.display = 'block';
-                  console.log('Brand banner loaded successfully');
+                  bannerImage.src = primarySrc;
+                  console.log('Brand banner loaded');
                 }
               }
             }
@@ -752,58 +882,53 @@
             console.log('No brand banner configured or error loading:', bannerErr);
           }
 
-        // Load latest news (limit 3)
-        const lang = localStorage.getItem('lang') || 'en';
-        const ns = await getDocs(
-          query(
-            collection(db, 'news'),
-            where('published', '==', true),
-            where('lang', '==', lang),
-            orderBy('publishedAt', 'desc'),
-            limit(3)
-          )
-        );
+        // Load latest news (limit 3). Isolated so a news failure shows a
+        // friendly state instead of breaking products/banner above.
+        try {
+          const lang = localStorage.getItem('lang') || 'en';
+          const ns = await getDocs(
+            query(
+              collection(db, 'news'),
+              where('published', '==', true),
+              where('lang', '==', lang),
+              orderBy('publishedAt', 'desc'),
+              limit(3)
+            )
+          );
 
-        const newsList = document.getElementById('news-list');
-        if (newsList) {
           if (!ns.empty) {
             const items = ns.docs.map(d => {
               const n = d.data();
               const dt = n.publishedAt?.toDate ? n.publishedAt.toDate()
                       : n.publishedAt ? new Date(n.publishedAt)
-                      : new Date();
-              const rawBody = String(n.body || '').replace(/<[^>]*>/g, '');
-              const excerpt = n.excerpt 
-                || (rawBody.length > 160 ? rawBody.slice(0, 160) + '...' : rawBody);
+                      : null;
+              const rawBody = window.nStripHtml(n.body || '');
+              const excerpt = n.excerpt
+                || (rawBody.length > 160 ? rawBody.slice(0, 160) + '…' : rawBody);
+              const cover = n.thumbUrl || n.coverUrl
+                || (Array.isArray(n.thumbUrls) && n.thumbUrls[0])
+                || (Array.isArray(n.imageUrls) && n.imageUrls[0])
+                || '';
               return {
                 title: n.title || '',
-                date: dt.toISOString(),
+                date: dt ? dt.toISOString() : '',
                 category: n.category || '',
                 excerpt,
-                slug: n.slug || d.id
+                slug: n.slug || d.id,
+                cover
               };
             });
-
-            // Render and mark as loaded
             renderNewsList(items);
           } else {
-            // No news in Firestore – clear placeholder
-            newsList.setAttribute('aria-busy', 'false');
-            newsList.innerHTML = '<p style="color:#6b7280;" data-i18n="news.noNews">No news yet.</p>';
-            // Re-trigger translation for dynamically added element
-            const currentLang = localStorage.getItem('lang') || 'en';
-            const noNewsEl = newsList.querySelector('[data-i18n="news.noNews"]');
-            if (noNewsEl && window.translations) {
-              const dict = window.translations[currentLang] || window.translations.en;
-              if (dict['news.noNews']) {
-                noNewsEl.textContent = dict['news.noNews'];
-              }
-            }
+            renderNewsEmpty();
           }
+        } catch (newsErr) {
+          console.error('News load error:', newsErr);
+          renderNewsError();
         }
         } catch (err) {
           console.error('Firebase error:', err);
-          loadLocalNewsFallback();
+          renderNewsError();
         }
       }
     </script>

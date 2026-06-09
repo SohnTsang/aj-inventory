@@ -773,25 +773,43 @@
     }
     
     .product-card-image {
+      position: relative;
       aspect-ratio: 1;
       background: var(--frost);
       overflow: hidden;
     }
-    
+
     .product-card-image img {
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
-    
+
+    .product-card-image.is-empty {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(15, 60, 76, 0.25);
+    }
+    .product-card-ph { display: none; }
+    .product-card-image.is-empty .product-card-ph { display: flex; }
+    .product-card-ph svg { width: 40px; height: 40px; }
+
     .product-card-body {
       padding: var(--space-4);
     }
-    
+
     .product-card-title {
       font-size: 14px;
       font-weight: 600;
       color: var(--ink);
+      margin-bottom: var(--space-3);
+    }
+
+    .product-card-meta {
+      font-size: 12px;
+      color: #6b7280;
+      line-height: 1.5;
       margin-bottom: var(--space-3);
     }
     
@@ -1381,7 +1399,22 @@
               <label class="field-label" for="p_intro">Introduction</label>
               <textarea id="p_intro" class="textarea" placeholder="Short description of the product..." style="min-height: 100px;"></textarea>
             </div>
-            
+
+            <div class="field full">
+              <label class="field-label" for="p_net_weight">Net weight</label>
+              <input id="p_net_weight" class="input" type="text" placeholder="e.g. 500 g">
+            </div>
+
+            <div class="field full">
+              <label class="field-label" for="p_expiration">Expiration</label>
+              <input id="p_expiration" class="input" type="text" placeholder="e.g. 12 months (frozen)">
+            </div>
+
+            <div class="field full">
+              <label class="field-label" for="p_packing">Packing</label>
+              <input id="p_packing" class="input" type="text" placeholder="e.g. 10 packs / carton">
+            </div>
+
             <div class="field full">
               <label class="field-label" for="p_image">Product Image</label>
               <div class="file-input-wrap">
@@ -1843,9 +1876,13 @@ function clearNewsForm() {
 function clearProductForm() {
   pName.value = '';
   pIntro.value = '';
+  pNetWeight.value = '';
+  pExpiration.value = '';
+  pPacking.value = '';
   pImage.value = '';
   pSelectedFile = null;
   pExistingImageUrl = '';
+  pExistingThumbUrl = '';
   renderProductThumb();
   currentProductId = null;
   document.getElementById('p-edit-badge').style.display = 'none';
@@ -1959,6 +1996,33 @@ async function compressImage(file, maxWidth = 800, quality = 0.8) {
       finish(new Error(`Could not decode image "${inputFile.name}" (unsupported format?)`), true);
     };
     img.src = url;
+  });
+}
+
+// Reject obviously-unsupported files before we attempt any upload.
+function isImageFile(file) {
+  if (!file) return false;
+  if (isHeic(file)) return true;
+  if ((file.type || '').startsWith('image/')) return true;
+  return /\.(png|jpe?g|gif|webp|avif|bmp|svg)$/i.test(file.name || '');
+}
+
+// Build a storage-safe filename, optionally forcing an extension.
+function cleanName(name, forceExt) {
+  let base = (name || 'image').replace(/[^a-zA-Z0-9_.-]/g, '_');
+  if (forceExt) base = base.replace(/\.[^.]+$/, '') + forceExt;
+  return base;
+}
+
+// Upload a File/Blob to Storage and resolve with its download URL.
+function uploadFile(path, data, contentType) {
+  const r = ref(st, path);
+  const task = uploadBytesResumable(r, data, { cacheControl: 'public,max-age=31536000,immutable', contentType });
+  return new Promise((resolve, reject) => {
+    task.on('state_changed', () => {}, reject, async () => {
+      try { resolve(await getDownloadURL(task.snapshot.ref)); }
+      catch (e) { reject(e); }
+    });
   });
 }
 
@@ -2137,9 +2201,28 @@ function showConfirm(message, okText = 'OK') {
 // Products admin
 const pName = document.getElementById('p_name');
 const pIntro = document.getElementById('p_intro');
+const pNetWeight = document.getElementById('p_net_weight');
+const pExpiration = document.getElementById('p_expiration');
+const pPacking = document.getElementById('p_packing');
 const pImage = document.getElementById('p_image');
 let pSelectedFile = null;
 let pExistingImageUrl = '';
+let pExistingThumbUrl = '';
+
+const PRODUCT_PH_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>';
+
+// First non-empty value across legacy/lowercase field variants.
+function pickField(obj, keys) {
+  for (const k of keys) {
+    const v = obj ? obj[k] : undefined;
+    if (v != null && String(v).trim() !== '') return String(v).trim();
+  }
+  return '';
+}
+function escAdmin(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
 
 // Product image preview on file select
 pImage.addEventListener('change', () => {
@@ -2166,6 +2249,7 @@ function renderProductThumb() {
   wrap.querySelector('.remove')?.addEventListener('click', () => {
     pSelectedFile = null;
     pExistingImageUrl = '';
+    pExistingThumbUrl = '';
     pImage.value = '';
     renderProductThumb();
   });
@@ -2173,31 +2257,56 @@ function renderProductThumb() {
 
 document.getElementById('p_save').addEventListener('click', async (e) => {
   e.preventDefault();
+  const btn = e.currentTarget;
+  if (btn.dataset.saving === '1') return; // prevent double submit
   const name = pName.value.trim();
   const intro = pIntro.value.trim();
+  const netWeight = pNetWeight.value.trim();
+  const expiration = pExpiration.value.trim();
+  const packing = pPacking.value.trim();
   const published = true;
+  const overlay = document.getElementById('saving');
+  // Keep existing images when editing without choosing a new file.
+  let imageUrl = pExistingImageUrl || '';
+  let thumbUrl = pExistingThumbUrl || '';
   try {
-    const overlay = document.getElementById('saving');
-    if (overlay) overlay.style.display = 'grid';
-    let imageUrl = pExistingImageUrl || '';
-    if (pSelectedFile) {
-      const compressedFile = await compressImage(pSelectedFile);
-      const clean = pSelectedFile.name.replace(/[^a-zA-Z0-9_.-]/g, '_').replace(/\.[^.]+$/, '.webp');
-      const r = ref(st, `products/${Date.now()}-${clean}`);
-      const task = uploadBytesResumable(r, compressedFile, { cacheControl: 'public,max-age=31536000,immutable', contentType: 'image/webp' });
-      await new Promise((resolve, reject)=>{
-        task.on('state_changed', () => {}, reject, async ()=>{ imageUrl = await getDownloadURL(task.snapshot.ref); resolve(); });
-      });
+    if (pSelectedFile && !isImageFile(pSelectedFile)) {
+      showToast('Please choose an image file (PNG, JPG, WebP, HEIC…)', 'error');
+      return;
     }
+    // Non-blocking: a product without a name still saves (frontend shows a fallback).
+    if (!name) showToast('Heads up: product name is empty', 'error');
+
+    btn.dataset.saving = '1';
+    btn.disabled = true;
+    if (overlay) overlay.style.display = 'grid';
+
+    if (pSelectedFile) {
+      // Higher-quality display image kept as imageUrl + smaller thumbnail for grids.
+      setSavingMessage('Optimizing product image…');
+      const display = await compressImage(pSelectedFile, 1280, 0.85);
+      const thumb = await compressImage(pSelectedFile, 600, 0.72);
+      const baseName = cleanName(pSelectedFile.name, '.webp');
+      setSavingMessage('Uploading product image…');
+      imageUrl = await uploadFile(`products/${Date.now()}-${baseName}`, display, 'image/webp');
+      thumbUrl = await uploadFile(`products/${Date.now()}-thumb-${baseName}`, thumb, 'image/webp');
+    }
+
     const id = currentProductId || generateSlug();
-    await setDoc(doc(db,'products', id), { name, intro, imageUrl, published, createdAt: serverTimestamp() });
-    showToast('Product saved','success');
+    setSavingMessage('Saving product…');
+    const data = { name, intro, imageUrl, thumbUrl, netWeight, expiration, packing, published, updatedAt: serverTimestamp() };
+    if (!currentProductId) data.createdAt = serverTimestamp(); // never overwrite createdAt on edit
+    await setDoc(doc(db, 'products', id), data, { merge: true });
+
+    showToast('Product saved', 'success');
     clearProductForm();
     loadProducts();
   } catch (err) {
     showToast(err.message || 'Save failed', 'error');
   } finally {
-    const overlay = document.getElementById('saving');
+    btn.dataset.saving = '';
+    btn.disabled = false;
+    setSavingMessage('Saving...');
     if (overlay) overlay.style.display = 'none';
   }
 });
@@ -2219,13 +2328,25 @@ async function loadProducts(){
   }
   grid.innerHTML = snap.docs.map(d=>{
     const p = d.data();
+    const img = pickField(p, ['thumbUrl', 'imageUrl', 'displayUrl']);
+    const name = pickField(p, ['name']) || 'Unnamed product';
+    const nw = pickField(p, ['netWeight', 'net_weight', 'netweight']);
+    const exp = pickField(p, ['expiration', 'expiry', 'expiryDate', 'expirationDate']);
+    const pk = pickField(p, ['packing', 'package', 'packaging']);
+    const details = [
+      nw ? `Net weight: ${escAdmin(nw)}` : '',
+      exp ? `Expiration: ${escAdmin(exp)}` : '',
+      pk ? `Packing: ${escAdmin(pk)}` : ''
+    ].filter(Boolean).join(' · ');
     return `
     <article class="product-card">
-      <div class="product-card-image">
-        ${p.imageUrl ? `<img src="${p.imageUrl}" alt="">` : ''}
+      <div class="product-card-image${img ? '' : ' is-empty'}">
+        ${img ? `<img src="${escAdmin(img)}" alt="" onerror="this.remove(); if(this.parentElement) this.parentElement.classList.add('is-empty');">` : ''}
+        <span class="product-card-ph" aria-hidden="true">${PRODUCT_PH_ICON}</span>
       </div>
       <div class="product-card-body">
-        <h4 class="product-card-title">${p.name||''}</h4>
+        <h4 class="product-card-title">${escAdmin(name)}</h4>
+        ${details ? `<p class="product-card-meta">${details}</p>` : ''}
         <div class="product-card-actions">
           <button class="btn btn-primary" data-action="p-edit" data-id="${d.id}">Edit</button>
           <button class="btn btn-danger" data-action="p-del" data-id="${d.id}">Delete</button>
@@ -2239,9 +2360,14 @@ async function loadProducts(){
     if (!snap.exists()) return showToast('Product not found', 'error');
     const p = snap.data();
     pName.value = p.name || '';
-    pIntro.value = p.intro || '';
+    pIntro.value = pickField(p, ['intro', 'description', 'desc']);
+    // Map legacy/lowercase field variants into the form.
+    pNetWeight.value = pickField(p, ['netWeight', 'net_weight', 'netweight']);
+    pExpiration.value = pickField(p, ['expiration', 'expiry', 'expiryDate', 'expirationDate']);
+    pPacking.value = pickField(p, ['packing', 'package', 'packaging']);
     pSelectedFile = null;
-    pExistingImageUrl = p.imageUrl || '';
+    pExistingImageUrl = pickField(p, ['imageUrl', 'displayUrl', 'thumbUrl']);
+    pExistingThumbUrl = pickField(p, ['thumbUrl']);
     renderProductThumb();
     currentProductId = id;
     document.getElementById('p-edit-badge').style.display = 'inline-flex';
@@ -2358,25 +2484,48 @@ function renderBannerThumb() {
 
 document.getElementById('banner_save').addEventListener('click', async (e) => {
   e.preventDefault();
+  const btn = e.currentTarget;
+  if (btn.dataset.saving === '1') return; // guard against double-clicks
   const linkUrl = bannerLink.value.trim();
+  const overlay = document.getElementById('saving');
   try {
-    const overlay = document.getElementById('saving');
-    if (overlay) overlay.style.display = 'grid';
-    let imageUrl = bannerExistingImageUrl || '';
-    if (bannerSelectedFile) {
-      const compressedFile = await compressImage(bannerSelectedFile, 1920, 1);
-      const clean = bannerSelectedFile.name.replace(/[^a-zA-Z0-9_.-]/g, '_').replace(/\.[^.]+$/, '.webp');
-      const r = ref(st, `banners/${Date.now()}-${clean}`);
-      const task = uploadBytesResumable(r, compressedFile, { cacheControl: 'public,max-age=31536000,immutable', contentType: 'image/webp' });
-      await new Promise((resolve, reject)=>{
-        task.on('state_changed', () => {}, reject, async ()=>{ imageUrl = await getDownloadURL(task.snapshot.ref); resolve(); });
-      });
+    if (bannerSelectedFile && !isImageFile(bannerSelectedFile)) {
+      showToast('Please choose an image file (PNG, JPG, WebP, HEIC…)', 'error');
+      return;
     }
-    if (!imageUrl) {
+    if (!bannerSelectedFile && !bannerExistingImageUrl) {
       showToast('Please select a banner image', 'error');
       return;
     }
-    await setDoc(doc(db, 'settings', 'brandBanner'), { imageUrl, linkUrl, updatedAt: serverTimestamp() });
+    btn.dataset.saving = '1';
+    btn.disabled = true;
+    if (overlay) overlay.style.display = 'grid';
+
+    // Only the changed fields are written; merge keeps any existing imageUrl/displayUrl.
+    const payload = { linkUrl, updatedAt: serverTimestamp() };
+
+    if (bannerSelectedFile) {
+      // Keep the original/full-quality image available (HEIC is transcoded to JPEG
+      // since browsers can't display HEIC, but resolution is preserved).
+      setSavingMessage('Uploading original banner…');
+      const original = await convertHeicIfNeeded(bannerSelectedFile);
+      payload.imageUrl = await uploadFile(
+        `banners/${Date.now()}-orig-${cleanName(original.name)}`,
+        original,
+        original.type || 'image/jpeg'
+      );
+      // Optimized WebP that the website actually displays (smaller, faster).
+      setSavingMessage('Generating optimized banner…');
+      const display = await compressImage(bannerSelectedFile, 1600, 0.82);
+      payload.displayUrl = await uploadFile(
+        `banners/${Date.now()}-disp-${cleanName(bannerSelectedFile.name, '.webp')}`,
+        display,
+        'image/webp'
+      );
+    }
+
+    setSavingMessage('Saving banner…');
+    await setDoc(doc(db, 'settings', 'brandBanner'), payload, { merge: true });
     showToast('Banner saved', 'success');
     bannerImage.value = '';
     bannerSelectedFile = null;
@@ -2386,7 +2535,9 @@ document.getElementById('banner_save').addEventListener('click', async (e) => {
   } catch (err) {
     showToast(err.message || 'Save failed', 'error');
   } finally {
-    const overlay = document.getElementById('saving');
+    btn.dataset.saving = '';
+    btn.disabled = false;
+    setSavingMessage('Saving...');
     if (overlay) overlay.style.display = 'none';
   }
 });
@@ -2396,10 +2547,10 @@ async function loadBannerPreview() {
   if (!previewEl) return;
   try {
     const bannerDoc = await getDoc(doc(db, 'settings', 'brandBanner'));
-    if (bannerDoc.exists() && bannerDoc.data().imageUrl) {
+    if (bannerDoc.exists() && (bannerDoc.data().displayUrl || bannerDoc.data().imageUrl)) {
       const data = bannerDoc.data();
       previewEl.innerHTML = `
-        <img src="${data.imageUrl}" alt="Current Banner" class="banner-preview-image" />
+        <img src="${data.displayUrl || data.imageUrl}" alt="Current Banner" class="banner-preview-image" />
         <div class="banner-preview-info">
           <div class="banner-preview-link"><strong>Link:</strong> <span id="banner_link_display">${data.linkUrl || '(No link set)'}</span></div>
           <div class="banner-preview-actions">
@@ -2478,13 +2629,11 @@ async function openEditLinkModal() {
       const overlay = document.getElementById('saving');
       if (overlay) overlay.style.display = 'grid';
       
-      // Get current banner data and update only the link
-      const currentData = bannerDoc.data();
+      // Update only the link; merge preserves imageUrl/displayUrl.
       await setDoc(doc(db, 'settings', 'brandBanner'), {
-        imageUrl: currentData.imageUrl,
         linkUrl: newLink,
         updatedAt: serverTimestamp()
-      });
+      }, { merge: true });
       
       showToast('Link updated', 'success');
       modal.remove();

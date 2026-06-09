@@ -5,8 +5,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Products — A&J HAKKO</title>
-  <link rel="stylesheet" href="./subpage.css?v=3">
-  <link rel="stylesheet" href="./styles.css?v=3">
+  <link rel="stylesheet" href="./subpage.css?v=4">
+  <link rel="stylesheet" href="./styles.css?v=8">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
@@ -45,21 +45,40 @@
   </header>
 
   <main>
-    <section class="services-hero">
+    <section class="services-hero" style="--hero-img:url('/images/ISETAN FAIR-min.jpg')">
       <div class="hero-mesh"></div>
       <div class="container">
         <div class="hero-content">
-          <h1 class="hero-title" data-animate="fade-up" data-delay="100">
-            <span data-i18n="products.hero.title">Premium Japanese Products</span>
-          </h1>
+          <span class="hero-eyebrow" data-i18n="products.hero.tag">Our Products</span>
+          <h1 class="hero-title" data-i18n="products.catalog.title">Catalog</h1>
+          <p class="hero-subtitle" data-i18n="products.catalog.intro">Browse our range of premium Japanese food products — quality you can trust, delivered fresh across Asia.</p>
+          <nav class="hero-breadcrumb" aria-label="Breadcrumb">
+            <a href="/" data-i18n="nav.home">Home</a>
+            <span class="sep" aria-hidden="true">/</span>
+            <span aria-current="page" data-i18n="products.catalog.title">Catalog</span>
+          </nav>
         </div>
       </div>
       <div class="hero-bottom-accent"></div>
     </section>
 
-    <section class="section" style="padding-top: 60px">
+    <section class="section catalog-section">
       <div class="container">
-        <div id="product-list" class="products-grid" style="display: grid !important; grid-template-columns: repeat(4, 1fr) !important; gap: 24px !important;"></div>
+        <div class="catalog-toolbar">
+          <p class="catalog-intro" data-i18n="products.catalog.intro">Browse our range of premium Japanese food products — quality you can trust, delivered fresh across Asia.</p>
+          <div class="catalog-search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input id="catalog-search-input" type="search" class="catalog-search-input" placeholder="Search products…" data-i18n-placeholder="products.search" aria-label="Search products by name">
+          </div>
+        </div>
+
+        <div id="product-list" class="catalog-grid" aria-live="polite" aria-busy="true">
+          <article class="catalog-card catalog-card--skeleton" aria-hidden="true"><div class="catalog-card-link"><div class="catalog-media"></div><div class="catalog-info"><div class="sk-line sm"></div><div class="sk-line lg"></div><div class="sk-line"></div><div class="sk-line"></div></div></div></article>
+          <article class="catalog-card catalog-card--skeleton" aria-hidden="true"><div class="catalog-card-link"><div class="catalog-media"></div><div class="catalog-info"><div class="sk-line sm"></div><div class="sk-line lg"></div><div class="sk-line"></div><div class="sk-line"></div></div></div></article>
+          <article class="catalog-card catalog-card--skeleton" aria-hidden="true"><div class="catalog-card-link"><div class="catalog-media"></div><div class="catalog-info"><div class="sk-line sm"></div><div class="sk-line lg"></div><div class="sk-line"></div><div class="sk-line"></div></div></div></article>
+          <article class="catalog-card catalog-card--skeleton" aria-hidden="true"><div class="catalog-card-link"><div class="catalog-media"></div><div class="catalog-info"><div class="sk-line sm"></div><div class="sk-line lg"></div><div class="sk-line"></div><div class="sk-line"></div></div></div></article>
+        </div>
+        <nav id="catalog-pagination" class="catalog-pagination" aria-label="Catalog pages" hidden></nav>
       </div>
     </section>
   </main>
@@ -89,20 +108,190 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getFirestore, collection, query, where, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
     import { firebaseConfig } from "/firebase-config.js";
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+
     const grid = document.getElementById('product-list');
-    const q = query(collection(db,'products'), where('published','==', true), orderBy('createdAt', 'desc'));
-    const snap = await getDocs(q);
-    grid.innerHTML = snap.docs.map(d => {
-      const p = d.data();
-      // Use thumbnail for grid view (much smaller file size)
-      const img = p.thumbUrl || p.imageUrl;
+    const searchInput = document.getElementById('catalog-search-input');
+    const ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>';
+
+    // ── Safe helpers ──────────────────────────────────────────
+    const escapeHtml = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, c =>
+      ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const firstNonEmpty = (...vals) => {
+      for (const v of vals) { if (v != null && String(v).trim() !== '') return String(v).trim(); }
+      return '';
+    };
+    const dict = () => {
+      const lang = localStorage.getItem('lang') || 'en';
+      return (window.translations && (window.translations[lang] || window.translations.en)) || {};
+    };
+    const t = (key, fallback) => dict()[key] || fallback;
+    const isLocal = () => location.protocol === 'file:' ||
+      ['localhost', '127.0.0.1', '0.0.0.0'].includes(location.hostname);
+
+    // Map Firestore fields (incl. legacy/lowercase variants) to a clean shape.
+    function normalize(p) {
+      return {
+        name: firstNonEmpty(p.name),
+        intro: firstNonEmpty(p.intro, p.description, p.desc),
+        cardImage: firstNonEmpty(p.thumbUrl, p.displayUrl, p.imageUrl),
+        netWeight: firstNonEmpty(p.netWeight, p.net_weight, p.netweight),
+        expiration: firstNonEmpty(p.expiration, p.expiry, p.expiryDate, p.expirationDate),
+        packing: firstNonEmpty(p.packing, p.package, p.packaging)
+      };
+    }
+
+    function specRow(labelKey, fallbackLabel, value) {
+      if (!value) return ''; // hide missing rows entirely (no "undefined")
+      return `<div class="spec-row"><dt data-i18n="${labelKey}">${escapeHtml(t(labelKey, fallbackLabel))}</dt><dd>${escapeHtml(value)}</dd></div>`;
+    }
+
+    function cardHtml(id, p, n) {
+      const name = escapeHtml(p.name); // empty name stays empty — no fallback label
+      const hasImg = !!p.cardImage;
+      const media = `
+        <div class="catalog-media${hasImg ? '' : ' is-empty'}">
+          ${hasImg ? `<img src="${escapeHtml(p.cardImage)}" alt="" loading="lazy" decoding="async" onerror="this.remove(); if(this.parentElement) this.parentElement.classList.add('is-empty');">` : ''}
+          <span class="catalog-media-ph" aria-hidden="true">${ICON}</span>
+        </div>`;
+      const specs = specRow('products.netWeight', 'Net weight', p.netWeight)
+        + specRow('products.expiration', 'Expiration', p.expiration)
+        + specRow('products.packing', 'Packing', p.packing);
+      const more = escapeHtml(t('products.viewDetails', 'View details'));
+      const idx = String(n).padStart(2, '0');
+      const ariaLabel = name || more; // keep the link accessible even when unnamed
       return `
-      <article class="products-page-card" onclick="window.location.href='/product-detail.html?id=${encodeURIComponent(d.id)}'" style="cursor: pointer;">
-        ${img ? `<img src="${img}" alt="" loading="lazy" decoding="async">` : ''}
-        <h4>${p.name||''}</h4>
-      </article>`;
-    }).join('') || '<p>No products yet.</p>';
+        <article class="catalog-card" data-name="${escapeHtml((p.name || '').toLowerCase())}">
+          <a class="catalog-card-link" href="/product-detail.html?id=${encodeURIComponent(id)}" aria-label="${ariaLabel}">
+            ${media}
+            <div class="catalog-info">
+              <span class="catalog-index" aria-hidden="true">${idx}</span>
+              ${name ? `<h3 class="catalog-name">${name}</h3>` : ''}
+              ${p.intro ? `<p class="catalog-desc">${escapeHtml(p.intro)}</p>` : ''}
+              ${specs ? `<dl class="spec-table">${specs}</dl>` : ''}
+              <span class="catalog-cta">${more}
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+            </div>
+          </a>
+        </article>`;
+    }
+
+    function clearPagination() {
+      const nav = document.getElementById('catalog-pagination');
+      if (nav) { nav.innerHTML = ''; nav.hidden = true; }
+    }
+
+    function renderState(message, opts) {
+      opts = opts || {};
+      grid.setAttribute('aria-busy', 'false');
+      const searchWrap = document.querySelector('.catalog-search');
+      if (searchWrap && opts.hideSearch !== false) searchWrap.style.display = 'none';
+      grid.className = 'catalog-state';
+      grid.innerHTML = `
+        <div class="catalog-empty${opts.error ? ' catalog-error' : ''}">
+          <span class="catalog-state-icon" aria-hidden="true">${ICON}</span>
+          <h3>${escapeHtml(message)}</h3>
+        </div>`;
+      clearPagination();
+    }
+
+    // ── Pagination (10 products per page) ─────────────────────
+    const PER_PAGE = 10;
+    let allItems = [];
+    const state = { page: 1, query: '' };
+
+    function getFiltered() {
+      const q = state.query.trim().toLowerCase();
+      if (!q) return allItems;
+      return allItems.filter(it => (it.p.name || '').toLowerCase().includes(q));
+    }
+
+    function pageWindow(page, total) {
+      if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+      const pages = [1];
+      const left = Math.max(2, page - 1), right = Math.min(total - 1, page + 1);
+      if (left > 2) pages.push('…');
+      for (let p = left; p <= right; p++) pages.push(p);
+      if (right < total - 1) pages.push('…');
+      pages.push(total);
+      return pages;
+    }
+
+    function renderPagination(page, totalPages) {
+      const nav = document.getElementById('catalog-pagination');
+      if (!nav) return;
+      if (totalPages <= 1) { nav.innerHTML = ''; nav.hidden = true; return; }
+      nav.hidden = false;
+      let html = `<button type="button" class="catalog-page-btn nav" data-page="${page - 1}"${page <= 1 ? ' disabled' : ''} aria-label="Previous page">‹</button>`;
+      pageWindow(page, totalPages).forEach(p => {
+        html += (p === '…')
+          ? '<span class="catalog-page-ellipsis" aria-hidden="true">…</span>'
+          : `<button type="button" class="catalog-page-btn${p === page ? ' is-active' : ''}" data-page="${p}"${p === page ? ' aria-current="page"' : ''}>${p}</button>`;
+      });
+      html += `<button type="button" class="catalog-page-btn nav" data-page="${page + 1}"${page >= totalPages ? ' disabled' : ''} aria-label="Next page">›</button>`;
+      nav.innerHTML = html;
+      nav.querySelectorAll('.catalog-page-btn:not([disabled])').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const p = parseInt(btn.getAttribute('data-page'), 10);
+          if (!p || p === state.page) return;
+          state.page = p;
+          renderPage();
+          document.querySelector('.catalog-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      });
+    }
+
+    function renderPage() {
+      const items = getFiltered();
+      grid.setAttribute('aria-busy', 'false');
+      if (!items.length) {
+        if (state.query) renderState(t('products.noMatch', 'No products match your search.'), { hideSearch: false });
+        else renderState(t('products.none', 'No products available yet.'));
+        return;
+      }
+      const totalPages = Math.ceil(items.length / PER_PAGE);
+      state.page = Math.min(Math.max(1, state.page), totalPages);
+      const start = (state.page - 1) * PER_PAGE;
+      const slice = items.slice(start, start + PER_PAGE);
+      grid.className = 'catalog-grid';
+      grid.innerHTML = slice.map((it, i) => cardHtml(it.id, it.p, start + i + 1)).join('');
+      renderPagination(state.page, totalPages);
+    }
+
+    // Local-only sample catalog (clearly fallback content — NOT real products).
+    function localSample() {
+      const base = [
+        { name: 'Hokkaido Crossbred Beef', intro: 'Premium marbled beef, carefully temperature-controlled from Japan to your table.', imageUrl: './images/test.png', netWeight: '500 g', expiration: '12 months (frozen)', packing: '10 packs / carton' },
+        { name: 'Sample Product (image only)', imageUrl: './images/test.png' },
+        { name: 'Yuzu Seasoning (no image)', intro: 'Aromatic Japanese citrus seasoning.', net_weight: '120 ml', expiry: '2026-12-31', packaging: '24 bottles / case' },
+        { name: '' }
+      ];
+      // Duplicate to demonstrate pagination locally (>10 items).
+      const out = [];
+      for (let i = 0; i < 14; i++) out.push({ id: 'sample-' + i, p: normalize(base[i % base.length]) });
+      return out;
+    }
+
+    // Search filters the full list and resets to page 1.
+    if (searchInput) {
+      searchInput.addEventListener('input', () => {
+        state.query = searchInput.value;
+        state.page = 1;
+        renderPage();
+      });
+    }
+
+    try {
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+      const snap = await getDocs(query(collection(db, 'products'), where('published', '==', true), orderBy('createdAt', 'desc')));
+      allItems = snap.docs.map(d => ({ id: d.id, p: normalize(d.data()) }));
+      state.page = 1;
+      renderPage();
+    } catch (err) {
+      console.error('Catalog load error:', err);
+      if (isLocal()) { allItems = localSample(); state.page = 1; renderPage(); }
+      else renderState(t('products.loadError', "We couldn't load the catalog right now."), { error: true });
+    }
   </script>
 </body></html>

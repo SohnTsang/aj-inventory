@@ -1,25 +1,42 @@
 /* Simple Modern Hero Section - For Services and Company Pages */
 /* No animations, properly positioned under navbar */
 
-/* Base Hero Styles */
+/* Base Hero — photo-backed, left-aligned business hero */
 .services-hero,
 .company-hero {
   position: relative;
-  background: linear-gradient(135deg, #0f3c4c 0%, #165a72 100%);
-  padding: 140px 0 70px;
+  isolation: isolate;
+  overflow: hidden;
+  background: #0c3442; /* deep teal fallback if the photo is missing */
+  padding: clamp(100px, 10vw, 128px) 0 clamp(48px, 6vw, 62px);
   display: flex;
   align-items: center;
-  margin-top: 0; /* No negative margin - sits under navbar */
+  margin-top: 0; /* sits under fixed navbar */
 }
 
-/* Simple gradient overlay for depth */
+/* Photo layer — per-page image supplied via the --hero-img custom property */
 .services-hero::before,
 .company-hero::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 30% 50%, rgba(190, 224, 236, 0.08) 0%, transparent 60%);
-  pointer-events: none;
+  z-index: -2;
+  background-image: var(--hero-img, none);
+  background-size: cover;
+  background-position: center 35%;
+  transform: scale(1.02);
+}
+
+/* Brand duotone overlay — strongest on the left for legible, on-brand text */
+.services-hero::after,
+.company-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(90deg, rgba(8, 38, 49, 0.95) 0%, rgba(11, 50, 64, 0.88) 42%, rgba(13, 58, 74, 0.62) 100%),
+    linear-gradient(0deg, rgba(8, 38, 49, 0.55) 0%, rgba(8, 38, 49, 0) 58%);
 }
 
 /* Container */
@@ -30,17 +47,64 @@
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 24px;
 }
 
-/* Content wrapper */
-.hero-content {
-  text-align: center;
-  max-width: 900px;
-  margin: 0 auto;
+/* Content wrapper — left aligned (overrides the centered .hero-content in styles.css) */
+.services-hero .hero-content,
+.company-hero .hero-content {
+  text-align: left;
+  align-items: flex-start;
+  max-width: 720px;
+  margin: 0;
+  padding: 0;
 }
 
-/* Hero Tag */
+/* Eyebrow — short accent rule + label (editorial, not a pill) */
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 0;
+  color: #bee0ec;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 2.2px;
+  text-transform: uppercase;
+}
+.hero-eyebrow::before {
+  content: '';
+  width: 30px;
+  height: 2px;
+  border-radius: 0;
+  background: #bee0ec;
+}
+
+/* Breadcrumb row (Home / Current page) — left aligned */
+.hero-breadcrumb {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 22px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.6);
+}
+.hero-breadcrumb a {
+  color: rgba(255, 255, 255, 0.82);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+.hero-breadcrumb a:hover { color: #fff; }
+.hero-breadcrumb .sep { opacity: 0.4; }
+.hero-breadcrumb [aria-current="page"] { color: #bee0ec; font-weight: 600; }
+
+/* Hero Tag (legacy) */
 .hero-tag {
   display: inline-block;
   padding: 8px 24px;
@@ -58,24 +122,25 @@
   text-transform: uppercase;
 }
 
-/* Hero Title */
+/* Hero Title — confident weight, left aligned */
 .hero-title {
-  font-size: 48px;
-  font-weight: 300;
-  color: white;
-  line-height: 1.2;
-  margin: 0 0 24px 0;
-  letter-spacing: -0.5px;
+  font-size: clamp(30px, 4vw, 46px);
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.12;
+  margin: 0;
+  letter-spacing: -0.6px;
+  word-break: break-word;
 }
 
-/* Hero Subtitle */
+/* Hero Subtitle — left aligned */
 .hero-subtitle {
-  font-size: 19px;
-  color: rgba(255, 255, 255, 0.9);
+  font-size: clamp(15px, 1.5vw, 17px);
+  color: rgba(255, 255, 255, 0.85);
   line-height: 1.6;
-  max-width: 700px;
-  margin: 0 auto;
-  font-weight: 300;
+  max-width: 600px;
+  margin: 16px 0 0;
+  font-weight: 400;
 }
 
 /* Company Stats - Only for Company Page */
@@ -228,11 +293,11 @@
 @media (max-width: 1024px) {
   .services-hero,
   .company-hero {
-    padding: 120px 0 60px;
+    padding: 96px 0 44px;
   }
-  
+
   .hero-title {
-    font-size: 42px;
+    font-size: 34px;
   }
   
   .hero-subtitle {
@@ -265,15 +330,13 @@
   }
   
   .hero-title {
-    font-size: 32px;
-    margin-bottom: 20px;
+    font-size: 30px;
   }
-  
+
   .hero-subtitle {
-    font-size: 17px;
-    padding: 0 20px;
+    font-size: 16px;
   }
-  
+
   .company-hero .hero-subtitle {
     margin-bottom: 40px;
   }
@@ -351,14 +414,11 @@
   
   .hero-title {
     font-size: 26px;
-    margin-bottom: 16px;
-    padding: 0 10px;
   }
-  
+
   .hero-subtitle {
     font-size: 15px;
     line-height: 1.5;
-    padding: 0 15px;
   }
   
   .company-hero .hero-subtitle {
@@ -495,11 +555,262 @@
   .products-page-card img {
     height: 180px;
   }
-  
+
   .products-page-card h4 {
     padding: 14px;
     font-size: 14px;
   }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Product Catalog (/products) — print-style product spec sheets
+   ───────────────────────────────────────────────────────────── */
+.catalog-section { padding-top: 52px; }
+
+/* Editorial header rule (catalog masthead) */
+.catalog-toolbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #0f3c4c;
+}
+.catalog-intro {
+  margin: 0;
+  max-width: 620px;
+  color: #4a5568;
+  font-size: 15.5px;
+  line-height: 1.6;
+}
+.catalog-search { position: relative; flex: 0 0 auto; min-width: 240px; }
+.catalog-search svg {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  color: #8aa0a8;
+  pointer-events: none;
+}
+.catalog-search-input {
+  width: 100%;
+  padding: 11px 14px 11px 40px;
+  border: 1px solid rgba(15, 60, 76, 0.18);
+  border-radius: 8px;
+  font-size: 14px;
+  color: #0f3c4c;
+  background: #fff;
+  font-family: inherit;
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+.catalog-search-input:focus {
+  outline: none;
+  border-color: #165a72;
+  box-shadow: 0 0 0 3px rgba(22, 90, 114, 0.12);
+}
+
+/* Two product sheets per row (like a printed catalog spread) */
+.catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px 40px;
+}
+
+.catalog-card { position: relative; }
+.catalog-card-link {
+  display: grid;
+  grid-template-columns: 184px 1fr;
+  gap: 22px;
+  height: 100%;
+  padding: 24px 0;
+  text-decoration: none;
+  color: inherit;
+  border-bottom: 1px solid rgba(15, 60, 76, 0.12);
+  transition: opacity .2s ease;
+}
+.catalog-card-link:focus-visible { outline: 3px solid #165a72; outline-offset: 4px; }
+
+/* Product photo */
+.catalog-media {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  background: #f4f7f8;
+  border: 1px solid rgba(15, 60, 76, 0.08);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.catalog-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform .45s ease;
+}
+.catalog-card:hover .catalog-media img { transform: scale(1.05); }
+.catalog-media-ph {
+  display: none;
+  position: absolute;
+  inset: 0;
+  align-items: center;
+  justify-content: center;
+  color: rgba(15, 60, 76, 0.22);
+}
+.catalog-media-ph svg { width: 44px; height: 44px; }
+.catalog-media.is-empty .catalog-media-ph { display: flex; }
+
+/* Info column */
+.catalog-info { display: flex; flex-direction: column; min-width: 0; }
+.catalog-index {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  font-weight: 600;
+  color: #9bb0b8;
+  margin-bottom: 6px;
+}
+.catalog-name {
+  margin: 0 0 8px;
+  font-size: 19px;
+  font-weight: 700;
+  color: #0f3c4c;
+  line-height: 1.28;
+}
+.catalog-desc {
+  margin: 0 0 14px;
+  color: #5a6b73;
+  font-size: 13.5px;
+  line-height: 1.55;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Specification table (the heart of a catalog entry) */
+.spec-table { margin: auto 0 0; }
+.spec-row {
+  display: grid;
+  grid-template-columns: 118px 1fr;
+  gap: 14px;
+  padding: 8px 0;
+  border-top: 1px solid rgba(15, 60, 76, 0.10);
+}
+.spec-row:last-child { border-bottom: 1px solid rgba(15, 60, 76, 0.10); }
+.spec-row dt {
+  margin: 0;
+  align-self: center;
+  color: #6b7280;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .7px;
+}
+.spec-row dd {
+  margin: 0;
+  color: #1f343c;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.catalog-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 14px;
+  color: #165a72;
+  font-size: 13px;
+  font-weight: 600;
+}
+.catalog-cta svg { width: 15px; height: 15px; transition: transform .25s ease; }
+.catalog-card:hover .catalog-cta svg { transform: translateX(3px); }
+
+/* Empty / error state */
+.catalog-empty {
+  text-align: center;
+  padding: 60px 24px;
+  background: linear-gradient(135deg, #f6fafb, #eef4f6);
+  border: 1px dashed rgba(15, 60, 76, 0.18);
+  border-radius: 16px;
+}
+.catalog-state-icon { display: inline-flex; color: rgba(15, 60, 76, .3); margin-bottom: 12px; }
+.catalog-state-icon svg { width: 46px; height: 46px; }
+.catalog-empty h3 { margin: 0 0 6px; color: #0f3c4c; font-size: 18px; font-weight: 600; }
+.catalog-empty p { margin: 0; color: #6b7280; font-size: 14px; }
+
+/* Pagination */
+.catalog-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin-top: 44px;
+  flex-wrap: wrap;
+}
+.catalog-pagination[hidden] { display: none; }
+.catalog-page-btn {
+  min-width: 40px;
+  height: 40px;
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(15, 60, 76, 0.16);
+  background: #fff;
+  color: #0f3c4c;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background .2s ease, border-color .2s ease, color .2s ease;
+}
+.catalog-page-btn:hover:not([disabled]):not(.is-active) { border-color: #165a72; background: #f4f7f8; }
+.catalog-page-btn.is-active { background: #0f3c4c; border-color: #0f3c4c; color: #fff; cursor: default; }
+.catalog-page-btn[disabled] { opacity: .4; cursor: not-allowed; }
+.catalog-page-btn.nav { font-size: 18px; line-height: 1; }
+.catalog-page-ellipsis { padding: 0 4px; color: #9bb0b8; }
+
+/* Skeleton */
+.catalog-card--skeleton .catalog-card-link { pointer-events: none; }
+.catalog-card--skeleton .catalog-media,
+.catalog-card--skeleton .sk-line { position: relative; overflow: hidden; background: #e9eef1; }
+.catalog-card--skeleton .catalog-media::after,
+.catalog-card--skeleton .sk-line::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .6), transparent);
+  background-size: 200% 100%;
+  animation: catalogShimmer 1.3s ease-in-out infinite;
+}
+.catalog-card--skeleton .sk-line { height: 12px; border-radius: 6px; margin: 8px 0; }
+.catalog-card--skeleton .sk-line.lg { height: 18px; width: 70%; }
+.catalog-card--skeleton .sk-line.sm { width: 45%; }
+@keyframes catalogShimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .catalog-card--skeleton .catalog-media::after,
+  .catalog-card--skeleton .sk-line::after { animation: none; }
+}
+
+/* Tablet: one sheet per row */
+@media (max-width: 900px) {
+  .catalog-grid { grid-template-columns: 1fr; gap: 0; }
+}
+
+/* Mobile: compact, still scannable */
+@media (max-width: 560px) {
+  .catalog-card-link { grid-template-columns: 104px 1fr; gap: 16px; padding: 18px 0; }
+  .catalog-name { font-size: 17px; }
+  .spec-row { grid-template-columns: 84px 1fr; gap: 10px; padding: 7px 0; }
+  .spec-row dt { font-size: 10px; letter-spacing: .5px; }
+  .catalog-search { width: 100%; min-width: 0; }
+  .catalog-toolbar { margin-bottom: 22px; }
 }
 
 /* Company Hero Split Layout */

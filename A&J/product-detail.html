@@ -5,16 +5,29 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Product — A&J HAKKO</title>
-  <link rel="stylesheet" href="./subpage.css?v=1">
-  <link rel="stylesheet" href="./styles.css?v=3">
+  <link rel="stylesheet" href="./subpage.css?v=4">
+  <link rel="stylesheet" href="./styles.css?v=8">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho&display=swap" rel="stylesheet">
   <style>
-    .product-detail { display:grid; grid-template-columns: 1.2fr 1fr; gap: 18px; }
-    @media (max-width: 900px){ .product-detail { grid-template-columns: 1fr; } }
-    .product-detail img { width: 100%; border-radius: 12px; aspect-ratio: 1/1; object-fit: cover; }
+    .product-detail { display:grid; grid-template-columns: 1fr 1.05fr; gap: 36px; align-items: start; }
+    @media (max-width: 900px){ .product-detail { grid-template-columns: 1fr; gap: 24px; } }
+    .pd-media { position: relative; border-radius: 14px; overflow: hidden; aspect-ratio: 1/1; background: linear-gradient(135deg, #eef4f6 0%, #dfeaef 100%); }
+    .pd-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .pd-media-ph { display:none; position:absolute; inset:0; align-items:center; justify-content:center; color: rgba(15,60,76,0.28); }
+    .pd-media-ph svg { width: 56px; height: 56px; }
+    .pd-media.is-empty .pd-media-ph { display:flex; }
+    .product-detail .copy h1 { font-size: clamp(24px, 3.4vw, 34px); color: #0f3c4c; margin: 0 0 14px; line-height: 1.2; }
+    .pd-intro { color: #4a5568; font-size: 16px; line-height: 1.7; margin: 0 0 22px; white-space: pre-line; }
+    .pd-specs { margin: 0 0 26px; }
+    .pd-back { display: inline-flex; align-items: center; gap: 8px; }
+    .pd-state { text-align: center; padding: 60px 24px; background: linear-gradient(135deg,#f6fafb,#eef4f6); border: 1px dashed rgba(15,60,76,0.18); border-radius: 16px; grid-column: 1 / -1; }
+    .pd-state-icon { display:inline-flex; color: rgba(15,60,76,.3); margin-bottom: 12px; }
+    .pd-state-icon svg { width: 48px; height: 48px; }
+    .pd-state h2 { margin: 0 0 8px; color:#0f3c4c; font-size: 20px; }
+    .pd-state p { margin: 0 0 18px; color:#6b7280; font-size: 15px; }
   </style>
 </head>
 <body>
@@ -50,13 +63,17 @@
   </header>
 
   <main>
-    <section class="services-hero">
+    <section class="services-hero" style="--hero-img:url('/images/ISETAN FAIR-min.jpg')">
       <div class="hero-mesh"></div>
       <div class="container">
         <div class="hero-content">
-          <h1 class="hero-title" data-animate="fade-up" data-delay="100">
-            <span data-i18n="products.hero.title">Premium Japanese Products</span>
-          </h1>
+          <span class="hero-eyebrow" data-i18n="products.hero.tag">Our Products</span>
+          <h1 class="hero-title" id="product-hero-title" data-i18n="products.catalog.title">Catalog</h1>
+          <nav class="hero-breadcrumb" aria-label="Breadcrumb">
+            <a href="/" data-i18n="nav.home">Home</a>
+            <span class="sep" aria-hidden="true">/</span>
+            <a href="/products" data-i18n="products.catalog.title">Catalog</a>
+          </nav>
         </div>
       </div>
       <div class="hero-bottom-accent"></div>
@@ -96,24 +113,89 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
     import { firebaseConfig } from "/firebase-config.js";
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const id = new URLSearchParams(location.search).get('id') || '';
-    const ref = doc(db,'products', id);
-    const snap = await getDoc(ref);
+
     const el = document.getElementById('product');
-    if (!snap.exists()) { el.innerHTML = '<p>Not found.</p>'; throw new Error('Not found'); }
-    const p = snap.data();
-    // Use full image for detail view
-    el.innerHTML = `
-      <div class="copy">
-        <h1>${p.name||''}</h1>
-        <p>${p.intro||''}</p>
-      </div>
-      <div class="media">
-        ${p.imageUrl ? `<img src="${p.imageUrl}" alt="" loading="lazy" decoding="async">` : ''}
-      </div>
-    `;
-    document.title = (p.name||'Product') + ' — Products';
+    const ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>';
+
+    const escapeHtml = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, c =>
+      ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const firstNonEmpty = (...vals) => {
+      for (const v of vals) { if (v != null && String(v).trim() !== '') return String(v).trim(); }
+      return '';
+    };
+    const dict = () => {
+      const lang = localStorage.getItem('lang') || 'en';
+      return (window.translations && (window.translations[lang] || window.translations.en)) || {};
+    };
+    const t = (key, fallback) => dict()[key] || fallback;
+
+    function normalize(p) {
+      return {
+        name: firstNonEmpty(p.name),
+        intro: firstNonEmpty(p.intro, p.description, p.desc),
+        image: firstNonEmpty(p.imageUrl, p.displayUrl, p.thumbUrl),
+        netWeight: firstNonEmpty(p.netWeight, p.net_weight, p.netweight),
+        expiration: firstNonEmpty(p.expiration, p.expiry, p.expiryDate, p.expirationDate),
+        packing: firstNonEmpty(p.packing, p.package, p.packaging)
+      };
+    }
+    function specRow(labelKey, fallbackLabel, value) {
+      if (!value) return '';
+      return `<div class="spec-row"><dt>${escapeHtml(t(labelKey, fallbackLabel))}</dt><dd>${escapeHtml(value)}</dd></div>`;
+    }
+    function setHeroTitle(text) {
+      const h = document.getElementById('product-hero-title');
+      if (h && text) { h.removeAttribute('data-i18n'); h.textContent = text; }
+    }
+    function renderState(title, message) {
+      const back = t('products.catalog.title', 'Catalog');
+      el.innerHTML = `
+        <div class="pd-state">
+          <span class="pd-state-icon" aria-hidden="true">${ICON}</span>
+          <h2>${escapeHtml(title)}</h2>
+          <p>${escapeHtml(message)}</p>
+          <a class="btn btn-secondary pd-back" href="/products">← ${escapeHtml(back)}</a>
+        </div>`;
+    }
+
+    try {
+      const id = new URLSearchParams(location.search).get('id') || '';
+      if (!id) {
+        renderState('Product not found', 'This product link is missing an identifier.');
+      } else {
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const snap = await getDoc(doc(db, 'products', id));
+        if (!snap.exists()) {
+          renderState(t('products.notFound', 'Product not found'), t('products.notFoundHint', "This product may have been moved or is no longer available."));
+        } else {
+          const p = normalize(snap.data());
+          const name = escapeHtml(p.name); // empty name stays empty — no fallback label
+          const hasImg = !!p.image;
+          const specs = specRow('products.netWeight', 'Net weight', p.netWeight)
+            + specRow('products.expiration', 'Expiration', p.expiration)
+            + specRow('products.packing', 'Packing', p.packing);
+          const back = escapeHtml(t('products.catalog.title', 'Catalog'));
+          el.innerHTML = `
+            <div class="media">
+              <div class="pd-media${hasImg ? '' : ' is-empty'}">
+                ${hasImg ? `<img src="${escapeHtml(p.image)}" alt="${name}" loading="lazy" decoding="async" onerror="this.remove(); if(this.parentElement) this.parentElement.classList.add('is-empty');">` : ''}
+                <span class="pd-media-ph" aria-hidden="true">${ICON}</span>
+              </div>
+            </div>
+            <div class="copy">
+              ${name ? `<h1>${name}</h1>` : ''}
+              ${p.intro ? `<p class="pd-intro">${escapeHtml(p.intro)}</p>` : ''}
+              ${specs ? `<dl class="spec-table pd-specs">${specs}</dl>` : ''}
+              <a class="btn btn-secondary pd-back" href="/products">← ${back}</a>
+            </div>`;
+          setHeroTitle(p.name);
+          document.title = (p.name || 'Product') + ' — Catalog';
+        }
+      }
+    } catch (err) {
+      console.error('Product detail load error:', err);
+      renderState("Something went wrong", "We couldn't load this product right now. Please try again later.");
+    }
   </script>
 </body></html>

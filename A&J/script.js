@@ -79,8 +79,8 @@
       'location.sg.title': 'Singapore', 'location.sg.addr': '1 Buroh Lane, #2M-04, Singapore 618292',
       'location.jp.title': 'Japan', 'location.jp.addr': '〒8830-0062 Miyazaki Prefecture, Hyuga City, Oaza Nichiya 16392',
       'achievements.title': 'Achievements', 'achievements.subtitle': 'Delivering excellence across Asia-Pacific with proven results', 'achievements.import': 'Years of import experience', 'achievements.containers': 'Containers handled', 'achievements.monthly': 'Boxes handled monthly', 'achievements.partners': 'Japanese business partners',
-      'products.title': 'Our Products', 'products.subtitle': 'Premium Japanese products delivered fresh to your doorstep', 'products.hero.tag': 'Our Products', 'products.hero.title': 'Our Products', 'products.p1': 'Premium Supplements', 'products.p2': 'Skincare Essentials', 'products.p3': 'Cosmetics', 'products.p4': 'Snacks & Beverages', 'products.shop': 'Visit Lazada', 'products.shopNow': 'Visit Our Lazada', 'products.viewAll': 'View all',
-	      'news.title': 'Latest News', 'news.hero.tag': 'News & Updates', 'news.hero.title': 'Latest News & Updates', 'news.viewAll': 'View all news', 'news.noNews': 'No news yet.', 'news.noNewsAvailable': 'No news available', 'news.checkBack': 'Check back later for the latest updates.'
+      'products.title': 'Our Products', 'products.subtitle': 'Premium Japanese products delivered fresh to your doorstep', 'products.hero.tag': 'Our Products', 'products.hero.title': 'Our Products', 'products.p1': 'Premium Supplements', 'products.p2': 'Skincare Essentials', 'products.p3': 'Cosmetics', 'products.p4': 'Snacks & Beverages', 'products.shop': 'Visit Lazada', 'products.shopNow': 'Visit Our Lazada', 'products.viewAll': 'View all', 'products.viewCatalog': 'View Catalog', 'products.catalog.title': 'Catalog', 'products.catalog.intro': 'Browse our range of premium Japanese food products — quality you can trust, delivered fresh across Asia.', 'products.netWeight': 'Net weight', 'products.expiration': 'Expiration', 'products.packing': 'Packing', 'products.unnamed': 'Unnamed product', 'products.search': 'Search products…', 'products.none': 'No products available yet.', 'products.noMatch': 'No products match your search.', 'products.loadError': "We couldn't load the catalog right now.", 'products.notFound': 'Product not found', 'products.notFoundHint': 'This product may have been moved or is no longer available.', 'products.viewDetails': 'View details',
+	      'news.title': 'Latest News', 'news.subtitle': 'Updates, events and announcements from A&J HAKKO', 'news.readMore': 'Read more', 'news.untitled': 'Untitled', 'news.loadError': "We couldn't load the latest news right now.", 'news.hero.tag': 'News & Updates', 'news.hero.title': 'Latest News & Updates', 'news.viewAll': 'View all news', 'news.noNews': 'No news yet.', 'news.noNewsAvailable': 'No news available', 'news.checkBack': 'Check back later for the latest updates.'
     },
     enTitle: {
       'achievements.onTimeTip': 'On-time deliveries divided by total deliveries completed in the last quarter.',
@@ -115,8 +115,8 @@
       'company.hero.tag': '会社情報', 'company.hero.title': 'アジアを身近に',
       'company.hero.badge': '1954年創業', 'company.hero.title1': 'アジアを', 'company.hero.title2': '身近に', 'company.hero.description': '八興運輸株式会社から70年以上の歴史を持つ当社は、品質を保持しながら本格的な日本製品をアジア全域にお届けする技術を習得してきました。', 'company.stats.import': '輸入実績', 'company.stats.containers': 'コンテナ取扱い実績', 'company.stats.monthly': '月間取扱い箱数', 'company.stats.partners': '日本企業取引先', 'company.overview.label': '企業情報', 'company.overview.title': '会社概要', 'company.licenses.label': 'コンプライアンス', 'company.licenses.title': '許認可', 'company.history.label': '当社の歴史', 'company.history.title': '沿革', 'company.history.2025': '事務所兼倉庫を現在の場所に移転', 'company.history.2023': '伊勢丹シンガポール委託販売開始', 'company.history.2022b': 'LAZADA オンライン販売開始', 'company.history.2022a': '取扱貨物増加に伴い冷凍倉庫格納数を3000パレットに拡充', 'company.history.2019c': 'A&J HAKKOの100%子会社としてA&J HAKKO (M) SDN.BHD.をマレーシアに設立', 'company.history.2019b': '輸出入通関事業を開始', 'company.history.2019a': '中国・シンガポール拠点の会社と共に中国に合弁会社 CJS Holdings Pte.,Ltd設立', 'company.history.2018': 'タイのBANGSUEにてシャトレーゼ社フランチャイズ店舗をオープン', 'company.history.2017b': 'タイのEkkamaiにてシャトレーゼ社フランチャイズ店舗をオープン', 'company.history.2017a': 'タイ・シンガポール拠点の会社と共にタイに合弁会社 JST Foods Co., Ltd設立', 'company.history.2016': 'ビジネス拡大に伴い、事務所兼倉庫移転', 'company.history.2015': '冷凍を主とした物流事業開始（保管・配送）', 'company.history.2013b': '北海道産　交雑牛（牛肉）輸入販売開始', 'company.history.2013a': '日系デパート物産展　物流取りまとめ事業開始', 'company.history.2012': '$2ショップ NANAIROをTampinesにオープン（現在閉店）。同時にシンガポール向け食品雑貨輸入事業開始', 'company.history.2011': '八興運輸㈱100%子会社としてA&J HAKKO PTE LTD設立', 'company.group.label': 'ネットワーク', 'company.group.title': 'グループ企業', 'company.group.subtitle': 'アジア全域で卓越性を提供する専門企業の強力なネットワーク', 'company.group.japan': '日本', 'company.group.malaysia': 'マレーシア', 'company.group.hakko.desc': '運送業・港湾荷役業・通関業', 'company.group.auto.desc': '自動車整備事業・民間車検工場', 'company.group.travel.desc': '旅行業', 'company.group.bayfront.desc': '曳船業・ポートサービス業', 'company.group.vanliner.desc': 'コンテナ輸送事業', 'company.group.hutec.desc': '労働者派遣業', 'company.group.insurance.desc': '保険業', 'company.group.shoji.desc': '輸出業', 'company.group.malaysia.desc': '輸入業',
       'achievements.title': '実績', 'achievements.subtitle': '実証された成果でアジア太平洋地域に卓越性を提供', 'achievements.import': '輸入実績', 'achievements.containers': 'コンテナ取扱い実績', 'achievements.monthly': '月間ハンドリング数量', 'achievements.partners': '日本企業取引先',
-      'products.title': '製品', 'products.subtitle': '新鮮な状態でお客様のもとへお届けする高品質な日本製品', 'products.hero.tag': '製品', 'products.hero.title': 'プレミアム日本製品', 'products.p1': 'プレミアムサプリ', 'products.p2': 'スキンケア', 'products.p3': 'コスメ', 'products.p4': 'スナック・飲料', 'products.shop': 'Lazadaで購入', 'products.shopNow': 'Lazadaで購入', 'products.viewAll': 'すべて見る',
-	      'news.title': '最新ニュース', 'news.hero.tag': 'ニュース', 'news.hero.title': '最新ニュース', 'news.viewAll': 'ニュース一覧へ', 'news.noNews': 'まだニュースはありません。', 'news.noNewsAvailable': 'ニュースはありません', 'news.checkBack': '最新情報は後ほどご確認ください。'
+      'products.title': '製品', 'products.subtitle': '新鮮な状態でお客様のもとへお届けする高品質な日本製品', 'products.hero.tag': '製品', 'products.hero.title': 'プレミアム日本製品', 'products.p1': 'プレミアムサプリ', 'products.p2': 'スキンケア', 'products.p3': 'コスメ', 'products.p4': 'スナック・飲料', 'products.shop': 'Lazadaで購入', 'products.shopNow': 'Lazadaで購入', 'products.viewAll': 'すべて見る', 'products.viewCatalog': 'カタログを見る', 'products.catalog.title': 'カタログ', 'products.catalog.intro': '高品質な日本食品のラインナップをご覧ください。確かな品質を、新鮮なままアジアへお届けします。', 'products.netWeight': '内容量', 'products.expiration': '賞味期限', 'products.packing': '荷姿', 'products.unnamed': '商品名未設定', 'products.search': '商品を検索…', 'products.none': '現在、商品はございません。', 'products.noMatch': '検索条件に一致する商品はありません。', 'products.loadError': 'カタログを読み込めませんでした。', 'products.notFound': '商品が見つかりません', 'products.notFoundHint': 'この商品は移動されたか、現在ご利用いただけません。', 'products.viewDetails': '詳細を見る',
+	      'news.title': '最新ニュース', 'news.subtitle': 'A&J HAKKOからのお知らせ・イベント・最新情報', 'news.readMore': '続きを読む', 'news.untitled': '無題', 'news.loadError': '最新ニュースを読み込めませんでした。', 'news.hero.tag': 'ニュース', 'news.hero.title': '最新ニュース', 'news.viewAll': 'ニュース一覧へ', 'news.noNews': 'まだニュースはありません。', 'news.noNewsAvailable': 'ニュースはありません', 'news.checkBack': '最新情報は後ほどご確認ください。'
     },
     jpTitle: {
       'achievements.onTimeTip': '直近四半期の納品完了件数に対する定時納品件数の割合。',
@@ -140,8 +140,8 @@
       'location.sg.title': '新加坡', 'location.sg.addr': '1 Buroh Lane, #2M-04, Singapore 618292',
       'location.jp.title': '日本', 'location.jp.addr': '〒8830-0062 宫崎県日向市大字日知屋16392番地',
       'achievements.title': '成绩', 'achievements.onTime': '准时交付率', 'achievements.lanes': '覆盖的航线/国家', 'achievements.clearance': '平均清关时间', 'achievements.skus': '月度SKU/TEU处理量',
-      'products.title': '我们的产品', 'products.p1': '高端保健品', 'products.p2': '护肤品', 'products.p3': '彩妆', 'products.p4': '零食饮料', 'products.shop': '前往 Lazada', 'products.shopNow': '立即购买', 'products.viewAll': '查看全部',
-	      'news.title': '最新资讯', 'news.viewAll': '查看全部'
+      'products.title': '我们的产品', 'products.p1': '高端保健品', 'products.p2': '护肤品', 'products.p3': '彩妆', 'products.p4': '零食饮料', 'products.shop': '前往 Lazada', 'products.shopNow': '立即购买', 'products.viewAll': '查看全部', 'products.viewCatalog': '查看产品目录', 'products.catalog.title': '产品目录', 'products.catalog.intro': '浏览我们的优质日本食品系列——品质可靠，新鲜直达亚洲各地。', 'products.netWeight': '净重', 'products.expiration': '保质期', 'products.packing': '包装', 'products.unnamed': '未命名产品', 'products.search': '搜索产品…', 'products.none': '暂无产品。', 'products.noMatch': '没有符合搜索条件的产品。', 'products.loadError': '暂时无法加载产品目录。', 'products.notFound': '未找到该产品', 'products.notFoundHint': '该产品可能已被移动或不再提供。', 'products.viewDetails': '查看详情',
+	      'news.title': '最新资讯', 'news.subtitle': '来自 A&J HAKKO 的最新动态、活动与公告', 'news.readMore': '阅读更多', 'news.untitled': '无标题', 'news.loadError': '暂时无法加载最新资讯。', 'news.viewAll': '查看全部', 'news.noNewsAvailable': '暂无资讯', 'news.checkBack': '请稍后再来查看最新动态。'
     },
     zhTitle: {
       'achievements.onTimeTip': '上季度按时交付次数与完成交付总次数之比。',
@@ -537,6 +537,14 @@
       if (!key) return;
       const val = (translations[`${lang}Title`]||{})[key];
       if (val) el.setAttribute('title', val);
+    });
+
+    // Update placeholders (e.g. catalog search field)
+    document.querySelectorAll('[data-i18n-placeholder]').forEach((el) => {
+      const key = el.getAttribute('data-i18n-placeholder');
+      if (!key) return;
+      const val = dict[key];
+      if (val) el.setAttribute('placeholder', val);
     });
     
     // Update HTML lang attribute
