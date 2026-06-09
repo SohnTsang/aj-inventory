@@ -2274,6 +2274,10 @@ document.getElementById('p_save').addEventListener('click', async (e) => {
       showToast('Please choose an image file (PNG, JPG, WebP, HEIC…)', 'error');
       return;
     }
+    if (pSelectedFile && pSelectedFile.size > 10 * 1024 * 1024) {
+      showToast('Image is too large (max 10MB). Please choose a smaller file.', 'error');
+      return;
+    }
     // Non-blocking: a product without a name still saves (frontend shows a fallback).
     if (!name) showToast('Heads up: product name is empty', 'error');
 
@@ -2282,14 +2286,26 @@ document.getElementById('p_save').addEventListener('click', async (e) => {
     if (overlay) overlay.style.display = 'grid';
 
     if (pSelectedFile) {
-      // Higher-quality display image kept as imageUrl + smaller thumbnail for grids.
-      setSavingMessage('Optimizing product image…');
-      const display = await compressImage(pSelectedFile, 1280, 0.85);
-      const thumb = await compressImage(pSelectedFile, 600, 0.72);
+      // We never upload the raw original. Generate a high-quality compressed
+      // master (imageUrl) + a small catalog thumbnail (thumbUrl), both WebP.
       const baseName = cleanName(pSelectedFile.name, '.webp');
+
+      // Master / display image — sharp enough for the product-detail page.
+      setSavingMessage('Optimizing product image…');
+      const master = await compressImage(pSelectedFile, 1800, 0.9);
       setSavingMessage('Uploading product image…');
-      imageUrl = await uploadFile(`products/${Date.now()}-${baseName}`, display, 'image/webp');
-      thumbUrl = await uploadFile(`products/${Date.now()}-thumb-${baseName}`, thumb, 'image/webp');
+      imageUrl = await uploadFile(`products/display/${Date.now()}-${baseName}`, master, 'image/webp');
+
+      // Thumbnail — non-fatal: if it fails, keep the product and warn.
+      try {
+        setSavingMessage('Generating thumbnail…');
+        const thumb = await compressImage(pSelectedFile, 600, 0.84);
+        thumbUrl = await uploadFile(`products/thumbs/${Date.now()}-thumb-${baseName}`, thumb, 'image/webp');
+      } catch (thumbErr) {
+        console.warn('Thumbnail generation/upload failed; falling back to master image:', thumbErr);
+        showToast('Saved, but the thumbnail could not be generated.', 'error');
+        thumbUrl = imageUrl; // catalog grid falls back to the master image
+      }
     }
 
     const id = currentProductId || generateSlug();
@@ -2334,9 +2350,9 @@ async function loadProducts(){
     const exp = pickField(p, ['expiration', 'expiry', 'expiryDate', 'expirationDate']);
     const pk = pickField(p, ['packing', 'package', 'packaging']);
     const details = [
-      nw ? `Net weight: ${escAdmin(nw)}` : '',
-      exp ? `Expiration: ${escAdmin(exp)}` : '',
-      pk ? `Packing: ${escAdmin(pk)}` : ''
+      nw ? `NET WEIGHT: ${escAdmin(nw)}` : '',
+      exp ? `EXPIRATION: ${escAdmin(exp)}` : '',
+      pk ? `PACKING: ${escAdmin(pk)}` : ''
     ].filter(Boolean).join(' · ');
     return `
     <article class="product-card">

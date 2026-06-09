@@ -4,31 +4,14 @@
   <!-- Google tag (gtag.js) --> <script async src="https://www.googletagmanager.com/gtag/js?id=G-1G8W933880"></script> <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-1G8W933880'); </script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Product — A&J HAKKO</title>
-  <link rel="stylesheet" href="./subpage.css?v=4">
+  <title>Product Detail | A&J HAKKO</title>
+  <meta name="description" id="meta-desc" content="Product details from the A&J HAKKO catalog.">
+  <link rel="stylesheet" href="./subpage.css?v=6">
   <link rel="stylesheet" href="./styles.css?v=8">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho&display=swap" rel="stylesheet">
-  <style>
-    .product-detail { display:grid; grid-template-columns: 1fr 1.05fr; gap: 36px; align-items: start; }
-    @media (max-width: 900px){ .product-detail { grid-template-columns: 1fr; gap: 24px; } }
-    .pd-media { position: relative; border-radius: 14px; overflow: hidden; aspect-ratio: 1/1; background: linear-gradient(135deg, #eef4f6 0%, #dfeaef 100%); }
-    .pd-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .pd-media-ph { display:none; position:absolute; inset:0; align-items:center; justify-content:center; color: rgba(15,60,76,0.28); }
-    .pd-media-ph svg { width: 56px; height: 56px; }
-    .pd-media.is-empty .pd-media-ph { display:flex; }
-    .product-detail .copy h1 { font-size: clamp(24px, 3.4vw, 34px); color: #0f3c4c; margin: 0 0 14px; line-height: 1.2; }
-    .pd-intro { color: #4a5568; font-size: 16px; line-height: 1.7; margin: 0 0 22px; white-space: pre-line; }
-    .pd-specs { margin: 0 0 26px; }
-    .pd-back { display: inline-flex; align-items: center; gap: 8px; }
-    .pd-state { text-align: center; padding: 60px 24px; background: linear-gradient(135deg,#f6fafb,#eef4f6); border: 1px dashed rgba(15,60,76,0.18); border-radius: 16px; grid-column: 1 / -1; }
-    .pd-state-icon { display:inline-flex; color: rgba(15,60,76,.3); margin-bottom: 12px; }
-    .pd-state-icon svg { width: 48px; height: 48px; }
-    .pd-state h2 { margin: 0 0 8px; color:#0f3c4c; font-size: 20px; }
-    .pd-state p { margin: 0 0 18px; color:#6b7280; font-size: 15px; }
-  </style>
 </head>
 <body>
   <header class="site-header solid2" role="banner">
@@ -67,22 +50,29 @@
       <div class="hero-mesh"></div>
       <div class="container">
         <div class="hero-content">
-          <span class="hero-eyebrow" data-i18n="products.hero.tag">Our Products</span>
-          <h1 class="hero-title" id="product-hero-title" data-i18n="products.catalog.title">Catalog</h1>
-          <nav class="hero-breadcrumb" aria-label="Breadcrumb">
-            <a href="/" data-i18n="nav.home">Home</a>
-            <span class="sep" aria-hidden="true">/</span>
-            <a href="/products" data-i18n="products.catalog.title">Catalog</a>
-          </nav>
+          <span class="hero-eyebrow" id="product-hero-eyebrow">Product Catalog</span>
+          <h1 class="hero-title" id="product-hero-title">Product Detail</h1>
         </div>
       </div>
       <div class="hero-bottom-accent"></div>
     </section>
 
-    <section class="section" style="padding-top: 60px">
+    <section class="section product-detail-page">
       <div class="container">
-        <div id="product" class="product-detail">
-          <div class="copy"><h1>Loading…</h1></div>
+        <a class="product-back-link" id="pd-back-link" href="/products">← Back to Catalog</a>
+
+        <div id="product" class="product-detail-shell" aria-live="polite">
+          <!-- Loading skeleton (replaced by JS) -->
+          <div class="product-detail-loading" aria-hidden="true">
+            <div class="pdl-panel"></div>
+            <div>
+              <div class="pdl-line sm"></div>
+              <div class="pdl-line lg"></div>
+              <div class="pdl-line"></div>
+              <div class="pdl-line"></div>
+              <div class="pdl-line sm"></div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -107,95 +97,245 @@
       </div>
     </div>
   </footer>
-  
+
   <script src="./script.js" defer></script>
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
     import { firebaseConfig } from "/firebase-config.js";
 
-    const el = document.getElementById('product');
+    // Neutral, non-photo package icon used for placeholders/error states.
     const ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>';
 
-    const escapeHtml = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, c =>
-      ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-    const firstNonEmpty = (...vals) => {
-      for (const v of vals) { if (v != null && String(v).trim() !== '') return String(v).trim(); }
-      return '';
+    // Page-local translations (kept in this file so the page is self-contained;
+    // shared keys like nav.home / products.catalog.title still come from script.js).
+    const PD_I18N = {
+      en: {
+        detailTitle: 'Product Detail', eyebrow: 'Product Catalog', productName: 'Product name',
+        information: 'Product Information', backToCatalog: 'Back to Catalog', contactUs: 'Contact Us',
+        netWeight: 'NET WEIGHT', expiration: 'EXPIRATION', packing: 'PACKING',
+        catalogNote: 'For availability, carton details, or wholesale information, please refer to the catalog or contact A&J HAKKO directly.',
+        noId: 'Product not specified', noIdHint: 'Please return to the catalog and choose a product.',
+        notFound: 'Product not found', notFoundHint: 'This product may have been moved or is no longer available.',
+        loadError: 'We could not load this product right now.', tryAgain: 'Try Again',
+        imageUnavailable: 'Product image unavailable'
+      },
+      jp: {
+        detailTitle: '製品詳細', eyebrow: '製品カタログ', productName: '商品名',
+        information: '商品情報', backToCatalog: 'カタログへ戻る', contactUs: 'お問い合わせ',
+        netWeight: '内容量', expiration: '賞味期限', packing: '荷姿',
+        catalogNote: '在庫状況、カートン情報、卸売に関する詳細は、カタログをご参照いただくか、A&J HAKKOまで直接お問い合わせください。',
+        noId: '商品が指定されていません', noIdHint: 'カタログに戻って商品をお選びください。',
+        notFound: '商品が見つかりません', notFoundHint: 'この商品は移動されたか、現在ご利用いただけません。',
+        loadError: 'この商品を読み込めませんでした。', tryAgain: '再試行',
+        imageUnavailable: '商品画像はありません'
+      },
+      zh: {
+        detailTitle: '产品详情', eyebrow: '产品目录', productName: '产品名称',
+        information: '产品信息', backToCatalog: '返回目录', contactUs: '联系我们',
+        netWeight: '净重', expiration: '保质期', packing: '包装',
+        catalogNote: '如需了解库存、整箱信息或批发详情，请参阅目录或直接联系 A&J HAKKO。',
+        noId: '未指定产品', noIdHint: '请返回目录并选择产品。',
+        notFound: '未找到该产品', notFoundHint: '该产品可能已被移动或不再提供。',
+        loadError: '暂时无法加载该产品。', tryAgain: '重试',
+        imageUnavailable: '暂无产品图片'
+      }
     };
-    const dict = () => {
-      const lang = localStorage.getItem('lang') || 'en';
-      return (window.translations && (window.translations[lang] || window.translations.en)) || {};
-    };
-    const t = (key, fallback) => dict()[key] || fallback;
+    function currentLang() { return localStorage.getItem('lang') || 'en'; }
+    function t(key, fallback) {
+      const lang = currentLang();
+      return (PD_I18N[lang] && PD_I18N[lang][key]) || (PD_I18N.en && PD_I18N.en[key]) || fallback || '';
+    }
 
-    function normalize(p) {
+    // ── Safe data helpers ────────────────────────────────────
+    function esc(s) {
+      return String(s == null ? '' : s).replace(/[&<>"']/g, c =>
+        ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+    function stripHtml(value) {
+      return String(value == null ? '' : value).replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+    }
+    function safeText(value, fallback = '') {
+      const s = String(value == null ? '' : value).trim();
+      return s || fallback;
+    }
+    function normalizeProduct(data) {
+      const d = data || {};
+      const pick = (...keys) => {
+        for (const k of keys) {
+          const v = d[k];
+          if (v != null && String(v).trim() !== '') return String(v).trim();
+        }
+        return '';
+      };
       return {
-        name: firstNonEmpty(p.name),
-        intro: firstNonEmpty(p.intro, p.description, p.desc),
-        image: firstNonEmpty(p.imageUrl, p.displayUrl, p.thumbUrl),
-        netWeight: firstNonEmpty(p.netWeight, p.net_weight, p.netweight),
-        expiration: firstNonEmpty(p.expiration, p.expiry, p.expiryDate, p.expirationDate),
-        packing: firstNonEmpty(p.packing, p.package, p.packaging)
+        name: pick('name'),
+        intro: pick('intro', 'description', 'desc'),
+        netWeight: pick('netWeight', 'net_weight', 'netweight'),
+        expiration: pick('expiration', 'expiry', 'expiryDate', 'expirationDate', 'shelfLife'),
+        packing: pick('packing', 'packaging', 'package', 'carton', 'cartonInfo'),
+        imageUrl: pick('imageUrl'),
+        displayUrl: pick('displayUrl'),
+        originalUrl: pick('originalUrl'),
+        thumbUrl: pick('thumbUrl')
       };
     }
-    function specRow(labelKey, fallbackLabel, value) {
-      if (!value) return '';
-      return `<div class="spec-row"><dt>${escapeHtml(t(labelKey, fallbackLabel))}</dt><dd>${escapeHtml(value)}</dd></div>`;
+    // Detail prefers the high-quality master image; never upscaled visually (see CSS).
+    function getProductImageUrls(p) {
+      const out = [];
+      [p.imageUrl, p.displayUrl, p.originalUrl, p.thumbUrl].forEach(u => {
+        const s = (u == null ? '' : String(u)).trim();
+        if (s && /^(https?:\/\/|\/|\.\/)/.test(s) && !out.includes(s)) out.push(s);
+      });
+      return out;
     }
-    function setHeroTitle(text) {
-      const h = document.getElementById('product-hero-title');
-      if (h && text) { h.removeAttribute('data-i18n'); h.textContent = text; }
+    function renderFactRow(label, value, opts) {
+      opts = opts || {};
+      const has = value != null && String(value).trim() !== '';
+      if (!has && opts.hideEmpty) return '';
+      return `<div class="product-fact-row"><dt>${esc(label)}</dt><dd>${has ? esc(String(value).trim()) : '—'}</dd></div>`;
     }
-    function renderState(title, message) {
-      const back = t('products.catalog.title', 'Catalog');
-      el.innerHTML = `
-        <div class="pd-state">
-          <span class="pd-state-icon" aria-hidden="true">${ICON}</span>
-          <h2>${escapeHtml(title)}</h2>
-          <p>${escapeHtml(message)}</p>
-          <a class="btn btn-secondary pd-back" href="/products">← ${escapeHtml(back)}</a>
-        </div>`;
+    function renderProductPlaceholder() {
+      const label = esc(t('imageUnavailable', 'Product image unavailable'));
+      return `<div class="product-placeholder" role="img" aria-label="${label}">
+        <span class="product-placeholder-icon" aria-hidden="true">${ICON}</span>
+        <span class="product-placeholder-text">${label}</span>
+      </div>`;
     }
 
-    try {
+    // ── State ────────────────────────────────────────────────
+    let currentProduct = null;
+    let currentState = null; // 'ok' | 'noid' | 'notfound' | 'error'
+
+    function attachImageBehavior(img, urls, panel) {
+      let idx = 0;
+      img.addEventListener('error', () => {
+        idx += 1;
+        if (idx < urls.length) {
+          console.warn('Product image failed, trying fallback:', urls[idx]);
+          img.src = urls[idx];
+        } else {
+          console.warn('All product image URLs failed; showing neutral placeholder.');
+          panel.classList.remove('is-low-res-image');
+          panel.innerHTML = renderProductPlaceholder();
+        }
+      });
+      img.addEventListener('load', () => {
+        const w = img.naturalWidth, h = img.naturalHeight;
+        // Presentation only: small source → show at a modest, crisp size (never upscaled).
+        if (w && h && Math.max(w, h) < 400) panel.classList.add('is-low-res-image');
+        else panel.classList.remove('is-low-res-image');
+      });
+    }
+
+    function renderProduct(p) {
+      const container = document.getElementById('product');
+      if (!container) return;
+      container.className = 'product-detail-shell';
+      const name = p.name;
+      const urls = getProductImageUrls(p);
+      const altText = esc((name ? name + ' ' : '') + 'product image');
+      const imageBlock = urls.length
+        ? `<img class="product-main-image" src="${esc(urls[0])}" alt="${altText}" decoding="async" loading="eager">`
+        : renderProductPlaceholder();
+
+      // Single facts table — missing values show "—" (no undefined/null).
+      const facts = renderFactRow(t('netWeight', 'Net weight'), p.netWeight, {})
+        + renderFactRow(t('expiration', 'Expiration'), p.expiration, {})
+        + renderFactRow(t('packing', 'Packing'), p.packing, {});
+
+      container.innerHTML = `
+        <div class="product-detail-card">
+          <div class="product-media-panel">${imageBlock}</div>
+          <div class="product-summary-panel">
+            <span class="product-eyebrow">${esc(t('eyebrow', 'Product Catalog'))}</span>
+            ${name ? `<h1 class="product-title">${esc(name)}</h1>` : ''}
+            ${p.intro ? `<p class="product-overview">${esc(p.intro)}</p>` : ''}
+            <dl class="product-facts">${facts}</dl>
+            <p class="product-catalog-note">${esc(t('catalogNote', 'For availability, carton details, or wholesale information, please refer to the catalog or contact A&J HAKKO directly.'))}</p>
+          </div>
+        </div>`;
+
+      const img = container.querySelector('.product-main-image');
+      if (img) attachImageBehavior(img, urls, container.querySelector('.product-media-panel'));
+    }
+
+    function showProductError(heading, opts) {
+      opts = opts || {};
+      const container = document.getElementById('product');
+      if (!container) return;
+      container.className = 'product-detail-shell';
+      const tryBtn = opts.showTryAgain
+        ? `<button type="button" class="btn-detail btn-detail--primary" id="pd-retry">${esc(t('tryAgain', 'Try Again'))}</button>`
+        : '';
+      container.innerHTML = `
+        <div class="product-error-state" role="alert">
+          <span class="product-error-icon" aria-hidden="true">${ICON}</span>
+          <h2>${esc(heading)}</h2>
+          ${opts.sub ? `<p>${esc(opts.sub)}</p>` : ''}
+          <div class="product-detail-actions product-detail-actions--center">
+            ${tryBtn}
+            <a class="btn-detail btn-detail--ghost" href="/products">← ${esc(t('backToCatalog', 'Back to Catalog'))}</a>
+          </div>
+        </div>`;
+      const r = document.getElementById('pd-retry');
+      if (r) r.addEventListener('click', () => location.reload());
+    }
+
+    function updateHero() {
+      const eyebrow = document.getElementById('product-hero-eyebrow');
+      const title = document.getElementById('product-hero-title');
+      if (eyebrow) eyebrow.textContent = t('eyebrow', 'Product Catalog');
+      if (title) {
+        const name = currentProduct && currentProduct.name;
+        title.textContent = (name && name.length <= 48) ? name : t('detailTitle', 'Product Detail');
+      }
+    }
+    function updateBackLink() {
+      const link = document.getElementById('pd-back-link');
+      if (link) link.textContent = '← ' + t('backToCatalog', 'Back to Catalog');
+    }
+    function updateMeta() {
+      const name = currentProduct && currentProduct.name;
+      document.title = (name ? name + ' — ' : '') + 'Catalog | A&J HAKKO';
+      const md = document.getElementById('meta-desc');
+      if (md && currentProduct && currentProduct.intro) {
+        md.setAttribute('content', stripHtml(currentProduct.intro).slice(0, 155));
+      }
+    }
+
+    // Repaint everything from current state (also re-run on language change).
+    function paint() {
+      updateHero();
+      updateBackLink();
+      updateMeta();
+      if (currentState === 'ok' && currentProduct) renderProduct(currentProduct);
+      else if (currentState === 'noid') showProductError(t('noId', 'Product not specified'), { sub: t('noIdHint', 'Please return to the catalog and choose a product.') });
+      else if (currentState === 'notfound') showProductError(t('notFound', 'Product not found'), { sub: t('notFoundHint', 'This product may have been moved or is no longer available.') });
+      else if (currentState === 'error') showProductError(t('loadError', 'We could not load this product right now.'), { showTryAgain: true });
+    }
+
+    async function load() {
       const id = new URLSearchParams(location.search).get('id') || '';
-      if (!id) {
-        renderState('Product not found', 'This product link is missing an identifier.');
-      } else {
+      if (!id) { currentState = 'noid'; paint(); return; }
+      try {
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const snap = await getDoc(doc(db, 'products', id));
-        if (!snap.exists()) {
-          renderState(t('products.notFound', 'Product not found'), t('products.notFoundHint', "This product may have been moved or is no longer available."));
-        } else {
-          const p = normalize(snap.data());
-          const name = escapeHtml(p.name); // empty name stays empty — no fallback label
-          const hasImg = !!p.image;
-          const specs = specRow('products.netWeight', 'Net weight', p.netWeight)
-            + specRow('products.expiration', 'Expiration', p.expiration)
-            + specRow('products.packing', 'Packing', p.packing);
-          const back = escapeHtml(t('products.catalog.title', 'Catalog'));
-          el.innerHTML = `
-            <div class="media">
-              <div class="pd-media${hasImg ? '' : ' is-empty'}">
-                ${hasImg ? `<img src="${escapeHtml(p.image)}" alt="${name}" loading="lazy" decoding="async" onerror="this.remove(); if(this.parentElement) this.parentElement.classList.add('is-empty');">` : ''}
-                <span class="pd-media-ph" aria-hidden="true">${ICON}</span>
-              </div>
-            </div>
-            <div class="copy">
-              ${name ? `<h1>${name}</h1>` : ''}
-              ${p.intro ? `<p class="pd-intro">${escapeHtml(p.intro)}</p>` : ''}
-              ${specs ? `<dl class="spec-table pd-specs">${specs}</dl>` : ''}
-              <a class="btn btn-secondary pd-back" href="/products">← ${back}</a>
-            </div>`;
-          setHeroTitle(p.name);
-          document.title = (p.name || 'Product') + ' — Catalog';
-        }
+        if (!snap.exists()) { currentState = 'notfound'; paint(); return; }
+        currentProduct = normalizeProduct(snap.data());
+        currentState = 'ok';
+        paint();
+      } catch (err) {
+        console.error('Product detail load error:', err);
+        currentState = 'error';
+        paint();
       }
-    } catch (err) {
-      console.error('Product detail load error:', err);
-      renderState("Something went wrong", "We couldn't load this product right now. Please try again later.");
     }
+
+    // Re-localize when the language is switched (script.js dispatches this).
+    window.addEventListener('languageChanged', () => { try { paint(); } catch (e) { console.warn(e); } });
+
+    load();
   </script>
 </body></html>

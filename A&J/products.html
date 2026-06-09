@@ -133,7 +133,7 @@
       return {
         name: firstNonEmpty(p.name),
         intro: firstNonEmpty(p.intro, p.description, p.desc),
-        cardImage: firstNonEmpty(p.thumbUrl, p.displayUrl, p.imageUrl),
+        cardImage: firstNonEmpty(p.thumbUrl, p.imageUrl, p.displayUrl, p.originalUrl),
         netWeight: firstNonEmpty(p.netWeight, p.net_weight, p.netweight),
         expiration: firstNonEmpty(p.expiration, p.expiry, p.expiryDate, p.expirationDate),
         packing: firstNonEmpty(p.packing, p.package, p.packaging)
