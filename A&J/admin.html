@@ -812,7 +812,33 @@
       line-height: 1.5;
       margin-bottom: var(--space-3);
     }
-    
+
+    /* ─── Catalog Brands ───────────────────────────────────────── */
+    .cb-form-actions { display: flex; gap: 10px; align-items: center; }
+    .cb-list { margin-top: 16px; display: grid; gap: 8px; }
+    .cb-empty { font-size: 13px; color: #6b7280; margin: 8px 0 0; }
+    .cb-row {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 12px 14px; border: 1px solid var(--cloud); border-radius: var(--radius);
+      background: var(--white); flex-wrap: wrap;
+    }
+    .cb-row-left { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .cb-row-thumb { flex: 0 0 auto; width: 56px; height: 40px; border: 1px solid var(--cloud); border-radius: 8px; background: #f7fafb; display: flex; align-items: center; justify-content: center; overflow: hidden; font-size: 13px; font-weight: 700; color: #8a98a3; }
+    .cb-row-thumb img { max-width: 100%; max-height: 100%; object-fit: contain; padding: 4px; }
+    .cb-row-main { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+    .cb-row-name { font-weight: 600; color: var(--ink); font-size: 14px; word-break: break-word; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .cb-row-meta { font-size: 12px; color: #6b7280; }
+    .cb-pill { display: inline-block; font-size: 10.5px; font-weight: 700; letter-spacing: .02em; border-radius: 999px; padding: 1px 8px; }
+    .cb-pill--on { color: #1c7a4a; background: rgba(34,160,94,.12); }
+    .cb-pill--off { color: #9a6b00; background: rgba(220,160,20,.16); }
+    .cb-optional { font-weight: 400; color: #8a98a3; font-size: 12px; }
+    .cb-check { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--ink); cursor: pointer; }
+    .cb-check input { width: 16px; height: 16px; }
+    .cb-row-actions { display: flex; gap: 6px; flex-shrink: 0; }
+    .cb-row-actions .btn { padding: var(--space-2) var(--space-3); font-size: 12px; }
+    .product-card-brand { display: inline-block; font-size: 11px; font-weight: 600; color: #165a72; background: rgba(190,224,236,.22); border: 1px solid rgba(190,224,236,.5); border-radius: 999px; padding: 2px 9px; margin-bottom: var(--space-2); }
+    .product-card-brand.is-missing { color: #b4540a; background: rgba(180,84,10,.08); border-color: rgba(180,84,10,.3); }
+
     .product-card-actions {
       display: flex;
       gap: var(--space-2);
@@ -1373,7 +1399,67 @@
         <h1 class="page-title">Products</h1>
         <p class="page-subtitle">Manage your product catalog</p>
       </div>
-      
+
+      <!-- Catalog Brands Card -->
+      <div class="card animate-slide">
+        <div class="card-header">
+          <h2 class="card-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>
+            </svg>
+            <span id="cb-form-title-text">Catalog Brands</span>
+          </h2>
+          <span id="cb-edit-badge" class="badge badge-editing" style="display: none;">Editing · Click cancel</span>
+        </div>
+        <div class="card-body">
+          <p class="page-subtitle" style="margin-top:0;">Brands group products on the Catalog page. (Separate from the homepage Brand Banner.)</p>
+          <div class="form-grid">
+            <div class="field full">
+              <label class="field-label" for="cb_name">Brand Name</label>
+              <input id="cb_name" class="input" type="text" placeholder="e.g. Nishikiya Kitchen">
+            </div>
+
+            <div class="field full">
+              <label class="field-label" for="cb_image">Brand Image / Logo <span class="cb-optional">(optional)</span></label>
+              <div class="file-input-wrap">
+                <input type="file" id="cb_image" class="file-input" accept="image/*,.heic,.heif">
+                <div class="file-input-display">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="17 8 12 3 7 8"/>
+                    <line x1="12" y1="3" x2="12" y2="15"/>
+                  </svg>
+                  <span>Upload brand image</span>
+                </div>
+              </div>
+              <span class="field-hint">Real brand logo / product image only. Compressed on upload. Optional — no image shows a clean text header.</span>
+              <div id="cb_thumbs" class="thumb-grid"></div>
+            </div>
+
+            <div class="field full">
+              <label class="field-label" for="cb_desc">Description <span class="cb-optional">(optional)</span></label>
+              <textarea id="cb_desc" class="textarea" placeholder="Short description shown in the catalog brand header..." style="min-height: 80px;"></textarea>
+            </div>
+
+            <div class="field full">
+              <label class="field-label" for="cb_sort">Sort Order</label>
+              <input id="cb_sort" class="input" type="number" value="999" min="0" step="1">
+              <span class="field-hint">Lower numbers appear first on the catalog.</span>
+            </div>
+
+            <div class="field full">
+              <label class="cb-check"><input id="cb_published" type="checkbox" checked> <span>Published (show this brand on the catalog)</span></label>
+            </div>
+
+            <div class="field full cb-form-actions">
+              <button id="cb_save" type="button" class="btn btn-primary">Save Brand</button>
+              <button id="cb_cancel" type="button" class="btn btn-secondary" style="display: none;">Cancel</button>
+            </div>
+          </div>
+          <div id="cb_list" class="cb-list"></div>
+        </div>
+      </div>
+
       <!-- Product Editor Card -->
       <div class="card animate-slide">
         <div class="card-header">
@@ -1394,10 +1480,23 @@
               <label class="field-label" for="p_name">Product Name</label>
               <input id="p_name" class="input" type="text" placeholder="Enter product name...">
             </div>
-            
+
+            <div class="field full">
+              <label class="field-label" for="p_brand">Brand / Category</label>
+              <select id="p_brand" class="input">
+                <option value="uncategorized">Uncategorized</option>
+              </select>
+              <span class="field-hint" id="p_brand_hint"></span>
+            </div>
+
             <div class="field full">
               <label class="field-label" for="p_intro">Introduction</label>
               <textarea id="p_intro" class="textarea" placeholder="Short description of the product..." style="min-height: 100px;"></textarea>
+            </div>
+
+            <div class="field full">
+              <label class="field-label" for="p_origin">Product Origin <span class="cb-optional">(optional)</span></label>
+              <input id="p_origin" class="input" type="text" placeholder="e.g. Miyazaki, Japan">
             </div>
 
             <div class="field full">
@@ -1732,7 +1831,7 @@ onAuthStateChanged(auth, (user) => {
     if (userAvatar) userAvatar.textContent = (user.email || 'A')[0].toUpperCase();
     
     loadList();
-    loadProducts();
+    loadBrands().then(() => loadProducts()).catch(() => loadProducts());
     initTabs();
   }
 });
@@ -1876,6 +1975,7 @@ function clearNewsForm() {
 function clearProductForm() {
   pName.value = '';
   pIntro.value = '';
+  if (pOrigin) pOrigin.value = '';
   pNetWeight.value = '';
   pExpiration.value = '';
   pPacking.value = '';
@@ -1883,6 +1983,7 @@ function clearProductForm() {
   pSelectedFile = null;
   pExistingImageUrl = '';
   pExistingThumbUrl = '';
+  if (typeof renderBrandDropdown === 'function') renderBrandDropdown('uncategorized');
   renderProductThumb();
   currentProductId = null;
   document.getElementById('p-edit-badge').style.display = 'none';
@@ -2201,6 +2302,7 @@ function showConfirm(message, okText = 'OK') {
 // Products admin
 const pName = document.getElementById('p_name');
 const pIntro = document.getElementById('p_intro');
+const pOrigin = document.getElementById('p_origin');
 const pNetWeight = document.getElementById('p_net_weight');
 const pExpiration = document.getElementById('p_expiration');
 const pPacking = document.getElementById('p_packing');
@@ -2222,6 +2324,241 @@ function pickField(obj, keys) {
 function escAdmin(s) {
   return String(s == null ? '' : s).replace(/[&<>"']/g, c =>
     ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+// ── Catalog Brands (separate from the homepage Brand Banner) ──
+const cbName = document.getElementById('cb_name');
+const cbImage = document.getElementById('cb_image');
+const cbDesc = document.getElementById('cb_desc');
+const cbSort = document.getElementById('cb_sort');
+const cbPublished = document.getElementById('cb_published');
+const pBrand = document.getElementById('p_brand');
+let currentBrandId = null;
+let brandsCache = [];
+const brandsById = {};
+let cbSelectedFile = null;
+let cbExistingImageUrl = '';
+let cbExistingThumbUrl = '';
+
+if (cbImage) cbImage.addEventListener('change', () => {
+  cbSelectedFile = cbImage.files && cbImage.files[0] ? cbImage.files[0] : null;
+  maybePreloadHeic(cbSelectedFile);
+  renderBrandThumb();
+});
+
+function renderBrandThumb() {
+  const wrap = document.getElementById('cb_thumbs');
+  if (!wrap) return;
+  if (!cbSelectedFile && !cbExistingImageUrl) { wrap.innerHTML = ''; return; }
+  if (cbSelectedFile) {
+    wrap.innerHTML = `<div class="thumb"><img src="${URL.createObjectURL(cbSelectedFile)}" alt=""><button class="remove" type="button" data-type="new" title="Remove">×</button></div>`;
+  } else {
+    wrap.innerHTML = `<div class="thumb"><img src="${escAdmin(cbExistingImageUrl)}" alt=""><button class="remove" type="button" data-type="existing" title="Remove">×</button></div>`;
+  }
+  const rm = wrap.querySelector('.remove');
+  if (rm) rm.addEventListener('click', () => {
+    cbSelectedFile = null; cbExistingImageUrl = ''; cbExistingThumbUrl = '';
+    if (cbImage) cbImage.value = '';
+    renderBrandThumb();
+  });
+}
+
+function slugify(s) {
+  return String(s || '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'brand';
+}
+
+async function loadBrands() {
+  const list = document.getElementById('cb_list');
+  try {
+    const snap = await getDocs(collection(db, 'catalogBrands'));
+    brandsCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  } catch (err) {
+    console.warn('Could not load catalog brands (deploy Firestore rules for "catalogBrands"?):', err);
+    brandsCache = [];
+    if (list) list.innerHTML = '<p class="cb-empty">Catalog brands are unavailable. Deploy Firestore rules for the "catalogBrands" collection to enable brand management. Products can still be saved as “Uncategorized”.</p>';
+  }
+  brandsCache.sort((a, b) =>
+    (Number(a.sortOrder ?? 999) - Number(b.sortOrder ?? 999)) ||
+    String(a.name || '').localeCompare(String(b.name || '')));
+  Object.keys(brandsById).forEach(k => delete brandsById[k]);
+  brandsCache.forEach(b => { brandsById[b.id] = b; });
+  renderBrandDropdown();
+  renderBrandList();
+}
+
+function renderBrandDropdown(selectId) {
+  if (!pBrand) return;
+  const keep = selectId != null ? selectId : pBrand.value;
+  let html = '<option value="uncategorized">Uncategorized</option>';
+  brandsCache.filter(b => b.published !== false).forEach(b => {
+    html += `<option value="${escAdmin(b.id)}">${escAdmin(b.name || '(unnamed brand)')}</option>`;
+  });
+  pBrand.innerHTML = html;
+  if (keep && keep !== 'uncategorized') {
+    pBrand.value = keep;
+    if (pBrand.value !== keep) {
+      // Product references a missing/unpublished brand — add a temp option so it can be reassigned.
+      const opt = document.createElement('option');
+      opt.value = keep;
+      opt.textContent = brandsById[keep] && brandsById[keep].name
+        ? `${brandsById[keep].name} (unpublished)`
+        : '(Missing brand — please reassign)';
+      pBrand.appendChild(opt);
+      pBrand.value = keep;
+    }
+  } else if (keep) {
+    pBrand.value = keep;
+  }
+}
+
+function renderBrandList() {
+  const list = document.getElementById('cb_list');
+  if (!list) return;
+  if (!brandsCache.length) {
+    if (!list.querySelector('.cb-empty')) list.innerHTML = '<p class="cb-empty">No brands yet. Add a brand to organize the catalog. Products can also be saved as “Uncategorized”.</p>';
+    return;
+  }
+  list.innerHTML = brandsCache.map(b => {
+    const name = b.name || '(unnamed brand)';
+    const img = pickField(b, ['thumbUrl', 'imageUrl']);
+    const desc = pickField(b, ['description']);
+    const sort = (b.sortOrder == null ? 999 : b.sortOrder);
+    const pub = b.published !== false;
+    const initials = escAdmin((String(name).trim()[0] || '?').toUpperCase());
+    const thumb = img
+      ? `<img src="${escAdmin(img)}" alt="" onerror="var p=this.parentElement; this.remove(); if(p) p.textContent='${initials}';">`
+      : initials;
+    return `
+    <div class="cb-row">
+      <div class="cb-row-left">
+        <div class="cb-row-thumb">${thumb}</div>
+        <div class="cb-row-main">
+          <span class="cb-row-name">${escAdmin(name)} <span class="cb-pill cb-pill--${pub ? 'on' : 'off'}">${pub ? 'Published' : 'Hidden'}</span></span>
+          <span class="cb-row-meta">${desc ? escAdmin(desc) + ' · ' : ''}Sort: ${escAdmin(String(sort))}</span>
+        </div>
+      </div>
+      <div class="cb-row-actions">
+        <button class="btn btn-secondary" data-action="cb-edit" data-id="${escAdmin(b.id)}">Edit</button>
+        <button class="btn btn-danger" data-action="cb-del" data-id="${escAdmin(b.id)}">Delete</button>
+      </div>
+    </div>`;
+  }).join('');
+  list.querySelectorAll('[data-action="cb-edit"]').forEach(btn => btn.addEventListener('click', () => editBrand(btn.getAttribute('data-id'))));
+  list.querySelectorAll('[data-action="cb-del"]').forEach(btn => btn.addEventListener('click', () => deleteBrand(btn.getAttribute('data-id'))));
+}
+
+function clearBrandForm() {
+  cbName.value = '';
+  if (cbDesc) cbDesc.value = '';
+  if (cbSort) cbSort.value = '999';
+  if (cbPublished) cbPublished.checked = true;
+  if (cbImage) cbImage.value = '';
+  cbSelectedFile = null;
+  cbExistingImageUrl = '';
+  cbExistingThumbUrl = '';
+  renderBrandThumb();
+  currentBrandId = null;
+  document.getElementById('cb-edit-badge').style.display = 'none';
+  document.getElementById('cb_cancel').style.display = 'none';
+  document.getElementById('cb-form-title-text').textContent = 'Catalog Brands';
+}
+
+function editBrand(id) {
+  const b = brandsById[id];
+  if (!b) return showToast('Brand not found', 'error');
+  cbName.value = b.name || '';
+  if (cbDesc) cbDesc.value = pickField(b, ['description']);
+  if (cbSort) cbSort.value = String(b.sortOrder == null ? 999 : b.sortOrder);
+  if (cbPublished) cbPublished.checked = b.published !== false;
+  cbSelectedFile = null;
+  cbExistingImageUrl = pickField(b, ['imageUrl', 'thumbUrl']);
+  cbExistingThumbUrl = pickField(b, ['thumbUrl']);
+  if (cbImage) cbImage.value = '';
+  renderBrandThumb();
+  currentBrandId = id;
+  document.getElementById('cb-edit-badge').style.display = 'inline-flex';
+  document.getElementById('cb_cancel').style.display = 'inline-flex';
+  document.getElementById('cb-form-title-text').textContent = 'Edit Brand';
+  cbName.focus();
+}
+
+document.getElementById('cb_cancel').addEventListener('click', clearBrandForm);
+
+document.getElementById('cb_save').addEventListener('click', async (e) => {
+  const btn = e.currentTarget;
+  if (btn.dataset.saving === '1') return; // no double submit
+  const name = cbName.value.trim();
+  if (!name) return showToast('Brand name is required', 'error');
+  if (cbSelectedFile && !isImageFile(cbSelectedFile)) return showToast('Please choose an image file (PNG, JPG, WebP, HEIC…)', 'error');
+  if (cbSelectedFile && cbSelectedFile.size > 15 * 1024 * 1024) return showToast('Brand image is too large (max 15MB). Please choose a smaller file.', 'error');
+  const overlay = document.getElementById('saving');
+  // Preserve existing images when editing without choosing a new file.
+  let imageUrl = cbExistingImageUrl || '';
+  let thumbUrl = cbExistingThumbUrl || '';
+  try {
+    btn.dataset.saving = '1'; btn.disabled = true;
+    if (overlay) overlay.style.display = 'grid';
+    setSavingMessage('Saving brand…');
+
+    if (cbSelectedFile) {
+      // Never upload the raw original — compress to a sharp WebP (≤1200px) + optional thumb (≤600px).
+      const baseName = cleanName(cbSelectedFile.name, '.webp');
+      setSavingMessage('Optimizing brand image…');
+      const master = await compressImage(cbSelectedFile, 1200, 0.88);
+      setSavingMessage('Uploading brand image…');
+      imageUrl = await uploadFile(`catalog-brands/images/${Date.now()}-${baseName}`, master, 'image/webp');
+      try {
+        setSavingMessage('Generating brand thumbnail…');
+        const thumb = await compressImage(cbSelectedFile, 600, 0.84);
+        thumbUrl = await uploadFile(`catalog-brands/thumbs/${Date.now()}-thumb-${baseName}`, thumb, 'image/webp');
+      } catch (thumbErr) {
+        console.warn('Brand thumbnail generation/upload failed; falling back to master image:', thumbErr);
+        thumbUrl = imageUrl;
+      }
+    }
+
+    const parsedSort = parseInt(cbSort && cbSort.value, 10);
+    const data = {
+      name,
+      slug: slugify(name),
+      description: (cbDesc && cbDesc.value.trim()) || '',
+      published: cbPublished ? !!cbPublished.checked : true,
+      sortOrder: Number.isFinite(parsedSort) ? parsedSort : 999,
+      imageUrl: imageUrl || '',
+      thumbUrl: thumbUrl || '',
+      imageAlt: name,
+      updatedAt: serverTimestamp()
+    };
+    const id = currentBrandId || generateSlug();
+    if (!currentBrandId) data.createdAt = serverTimestamp();
+    await setDoc(doc(db, 'catalogBrands', id), data, { merge: true });
+    showToast('Brand saved', 'success');
+    clearBrandForm();
+    await loadBrands();
+  } catch (err) {
+    showToast(err.message || 'Could not save brand (check Firestore rules for catalogBrands)', 'error');
+  } finally {
+    btn.dataset.saving = ''; btn.disabled = false;
+    setSavingMessage('Saving...');
+    if (overlay) overlay.style.display = 'none';
+  }
+});
+
+async function deleteBrand(id) {
+  const ok = await showConfirm('Delete this brand? Products are NOT deleted, but become “Uncategorized” until reassigned. (Unpublish is usually safer.)', 'Delete');
+  if (!ok) return;
+  const overlay = document.getElementById('saving');
+  try {
+    if (overlay) overlay.style.display = 'grid';
+    await deleteDoc(doc(db, 'catalogBrands', id));
+    showToast('Brand deleted', 'success');
+    if (currentBrandId === id) clearBrandForm();
+    await loadBrands();
+  } catch (err) {
+    showToast(err.message || 'Delete failed', 'error');
+  } finally {
+    if (overlay) overlay.style.display = 'none';
+  }
 }
 
 // Product image preview on file select
@@ -2261,6 +2598,7 @@ document.getElementById('p_save').addEventListener('click', async (e) => {
   if (btn.dataset.saving === '1') return; // prevent double submit
   const name = pName.value.trim();
   const intro = pIntro.value.trim();
+  const origin = (pOrigin && pOrigin.value.trim()) || '';
   const netWeight = pNetWeight.value.trim();
   const expiration = pExpiration.value.trim();
   const packing = pPacking.value.trim();
@@ -2310,7 +2648,12 @@ document.getElementById('p_save').addEventListener('click', async (e) => {
 
     const id = currentProductId || generateSlug();
     setSavingMessage('Saving product…');
-    const data = { name, intro, imageUrl, thumbUrl, netWeight, expiration, packing, published, updatedAt: serverTimestamp() };
+    // Resolve the selected brand (denormalize name/slug for display + safe fallback).
+    const brandId = (pBrand && pBrand.value) || 'uncategorized';
+    const brandMeta = brandsById[brandId];
+    const brandName = brandId === 'uncategorized' ? 'Uncategorized' : ((brandMeta && brandMeta.name) || '');
+    const brandSlug = brandId === 'uncategorized' ? 'uncategorized' : ((brandMeta && brandMeta.slug) || slugify(brandName));
+    const data = { name, intro, origin, imageUrl, thumbUrl, netWeight, expiration, packing, brandId, brandName, brandSlug, published, updatedAt: serverTimestamp() };
     if (!currentProductId) data.createdAt = serverTimestamp(); // never overwrite createdAt on edit
     await setDoc(doc(db, 'products', id), data, { merge: true });
 
@@ -2346,10 +2689,16 @@ async function loadProducts(){
     const p = d.data();
     const img = pickField(p, ['thumbUrl', 'imageUrl', 'displayUrl']);
     const name = pickField(p, ['name']) || 'Unnamed product';
+    const origin = pickField(p, ['origin', 'productOrigin', 'countryOfOrigin', 'madeIn', 'sourceCountry']);
     const nw = pickField(p, ['netWeight', 'net_weight', 'netweight']);
     const exp = pickField(p, ['expiration', 'expiry', 'expiryDate', 'expirationDate']);
     const pk = pickField(p, ['packing', 'package', 'packaging']);
+    const brandId = pickField(p, ['brandId']);
+    const isUnc = !brandId || brandId === 'uncategorized';
+    const brandMissing = !isUnc && !brandsById[brandId];
+    const brandLabel = isUnc ? 'Uncategorized' : (pickField(p, ['brandName']) || (brandsById[brandId] && brandsById[brandId].name) || 'Missing brand');
     const details = [
+      origin ? `Origin: ${escAdmin(origin)}` : '',
       nw ? `Net weight: ${escAdmin(nw)}` : '',
       exp ? `Expiration: ${escAdmin(exp)}` : '',
       pk ? `Packing: ${escAdmin(pk)}` : ''
@@ -2361,6 +2710,7 @@ async function loadProducts(){
         <span class="product-card-ph" aria-hidden="true">${PRODUCT_PH_ICON}</span>
       </div>
       <div class="product-card-body">
+        <span class="product-card-brand${brandMissing ? ' is-missing' : ''}">${escAdmin(brandLabel)}</span>
         <h4 class="product-card-title">${escAdmin(name)}</h4>
         ${details ? `<p class="product-card-meta">${details}</p>` : ''}
         <div class="product-card-actions">
@@ -2378,12 +2728,14 @@ async function loadProducts(){
     pName.value = p.name || '';
     pIntro.value = pickField(p, ['intro', 'description', 'desc']);
     // Map legacy/lowercase field variants into the form.
+    if (pOrigin) pOrigin.value = pickField(p, ['origin', 'productOrigin', 'countryOfOrigin', 'madeIn', 'sourceCountry']);
     pNetWeight.value = pickField(p, ['netWeight', 'net_weight', 'netweight']);
     pExpiration.value = pickField(p, ['expiration', 'expiry', 'expiryDate', 'expirationDate']);
     pPacking.value = pickField(p, ['packing', 'package', 'packaging']);
     pSelectedFile = null;
     pExistingImageUrl = pickField(p, ['imageUrl', 'displayUrl', 'thumbUrl']);
     pExistingThumbUrl = pickField(p, ['thumbUrl']);
+    renderBrandDropdown(pickField(p, ['brandId']) || 'uncategorized');
     renderProductThumb();
     currentProductId = id;
     document.getElementById('p-edit-badge').style.display = 'inline-flex';

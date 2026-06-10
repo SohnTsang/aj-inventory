@@ -4,8 +4,8 @@
   <!-- Google tag (gtag.js) --> <script async src="https://www.googletagmanager.com/gtag/js?id=G-1G8W933880"></script> <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-1G8W933880'); </script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Products — A&J HAKKO</title>
-  <link rel="stylesheet" href="./subpage.css?v=7">
+  <title>Catalog — A&J HAKKO</title>
+  <link rel="stylesheet" href="./subpage.css?v=13">
   <link rel="stylesheet" href="./styles.css?v=8">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -50,35 +50,37 @@
       <div class="container">
         <div class="hero-content">
           <span class="hero-eyebrow" data-i18n="products.hero.tag">Our Products</span>
-          <h1 class="hero-title" data-i18n="products.catalog.title">Catalog</h1>
+          <h1 class="hero-title" data-i18n="catalog.title">Catalog</h1>
           <p class="hero-subtitle" data-i18n="products.catalog.intro">Browse our range of premium Japanese food products — quality you can trust, delivered fresh across Asia.</p>
           <nav class="hero-breadcrumb" aria-label="Breadcrumb">
             <a href="/" data-i18n="nav.home">Home</a>
             <span class="sep" aria-hidden="true">/</span>
-            <span aria-current="page" data-i18n="products.catalog.title">Catalog</span>
+            <span aria-current="page" data-i18n="catalog.title">Catalog</span>
           </nav>
         </div>
       </div>
       <div class="hero-bottom-accent"></div>
     </section>
 
-    <section class="section catalog-section">
+    <section class="section catalog-page">
       <div class="container">
-        <div class="catalog-toolbar">
-          <p class="catalog-intro" data-i18n="products.catalog.intro">Browse our range of premium Japanese food products — quality you can trust, delivered fresh across Asia.</p>
-          <div class="catalog-search">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-            <input id="catalog-search-input" type="search" class="catalog-search-input" placeholder="Search products…" data-i18n-placeholder="products.search" aria-label="Search products by name">
-          </div>
+        <p class="catalog-intro" data-i18n="catalog.lead">Browse our product catalog by brand. Each section highlights available products and key product information for quick comparison.</p>
+
+        <div id="catalog-root" aria-live="polite" aria-busy="true">
+          <!-- Skeleton brand section (replaced by JS) -->
+          <section class="catalog-brand-section catalog-brand-section--skeleton" aria-hidden="true">
+            <div class="catalog-brand-header"><div class="sk-line sk-line--brand"></div></div>
+            <div class="catalog-product-grid">
+              <div class="catalog-product-card catalog-product-card--skeleton"><div class="catalog-product-media"></div><div class="catalog-product-body"><div class="sk-line lg"></div><div class="sk-line"></div><div class="sk-line sm"></div></div></div>
+              <div class="catalog-product-card catalog-product-card--skeleton"><div class="catalog-product-media"></div><div class="catalog-product-body"><div class="sk-line lg"></div><div class="sk-line"></div><div class="sk-line sm"></div></div></div>
+              <div class="catalog-product-card catalog-product-card--skeleton"><div class="catalog-product-media"></div><div class="catalog-product-body"><div class="sk-line lg"></div><div class="sk-line"></div><div class="sk-line sm"></div></div></div>
+            </div>
+          </section>
         </div>
 
-        <div id="product-list" class="catalog-grid" aria-live="polite" aria-busy="true">
-          <article class="catalog-card catalog-card--skeleton" aria-hidden="true"><div class="catalog-card-link"><div class="catalog-media"></div><div class="catalog-info"><div class="sk-line sm"></div><div class="sk-line lg"></div><div class="sk-line"></div><div class="sk-line"></div></div></div></article>
-          <article class="catalog-card catalog-card--skeleton" aria-hidden="true"><div class="catalog-card-link"><div class="catalog-media"></div><div class="catalog-info"><div class="sk-line sm"></div><div class="sk-line lg"></div><div class="sk-line"></div><div class="sk-line"></div></div></div></article>
-          <article class="catalog-card catalog-card--skeleton" aria-hidden="true"><div class="catalog-card-link"><div class="catalog-media"></div><div class="catalog-info"><div class="sk-line sm"></div><div class="sk-line lg"></div><div class="sk-line"></div><div class="sk-line"></div></div></div></article>
-          <article class="catalog-card catalog-card--skeleton" aria-hidden="true"><div class="catalog-card-link"><div class="catalog-media"></div><div class="catalog-info"><div class="sk-line sm"></div><div class="sk-line lg"></div><div class="sk-line"></div><div class="sk-line"></div></div></div></article>
+        <div class="catalog-load-more-wrap">
+          <button id="load-more-brands" class="catalog-load-more" type="button" hidden data-i18n="catalog.loadMoreBrands">Load more brands</button>
         </div>
-        <nav id="catalog-pagination" class="catalog-pagination" aria-label="Catalog pages" hidden></nav>
       </div>
     </section>
   </main>
@@ -103,15 +105,18 @@
     </div>
   </footer>
 
-  <script src="./script.js" defer></script>
+  <script src="./script.js?v=2" defer></script>
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, collection, query, where, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getFirestore, collection, query, where, orderBy, limit, startAfter, getDocs, getCountFromServer } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
     import { firebaseConfig } from "/firebase-config.js";
 
-    const grid = document.getElementById('product-list');
-    const searchInput = document.getElementById('catalog-search-input');
-    const ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>';
+    const root = document.getElementById('catalog-root');
+    const loadMoreBtn = document.getElementById('load-more-brands');
+    const PAGE_SIZE = 6;   // products shown per brand page (2 rows × 3 cols)
+    const BRAND_PAGE = 5;  // brand sections per "page"
+    const UNASSIGNED_SCAN = 200; // recent published products scanned for the no-brand catch-all
+    const PKG_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>';
 
     // ── Safe helpers ──────────────────────────────────────────
     const escapeHtml = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, c =>
@@ -125,173 +130,366 @@
       return (window.translations && (window.translations[lang] || window.translations.en)) || {};
     };
     const t = (key, fallback) => dict()[key] || fallback;
-    const isLocal = () => location.protocol === 'file:' ||
-      ['localhost', '127.0.0.1', '0.0.0.0'].includes(location.hostname);
 
-    // Map Firestore fields (incl. legacy/lowercase variants) to a clean shape.
     function normalize(p) {
       return {
         name: firstNonEmpty(p.name),
         intro: firstNonEmpty(p.intro, p.description, p.desc),
-        cardImage: firstNonEmpty(p.thumbUrl, p.imageUrl, p.displayUrl, p.originalUrl),
+        // Catalog cards: thumbUrl || imageUrl || displayUrl || originalUrl
+        image: firstNonEmpty(p.thumbUrl, p.imageUrl, p.displayUrl, p.originalUrl),
+        origin: firstNonEmpty(p.origin, p.productOrigin, p.countryOfOrigin, p.madeIn, p.sourceCountry),
         netWeight: firstNonEmpty(p.netWeight, p.net_weight, p.netweight),
-        expiration: firstNonEmpty(p.expiration, p.expiry, p.expiryDate, p.expirationDate),
-        packing: firstNonEmpty(p.packing, p.package, p.packaging)
+        expiration: firstNonEmpty(p.expiration, p.expiry, p.expiryDate, p.expirationDate, p.shelfLife),
+        packing: firstNonEmpty(p.packing, p.packaging, p.package, p.carton, p.cartonInfo)
       };
     }
 
     function specRow(labelKey, fallbackLabel, value) {
-      if (!value) return ''; // hide missing rows entirely (no "undefined")
-      return `<div class="spec-row"><dt data-i18n="${labelKey}">${escapeHtml(t(labelKey, fallbackLabel))}</dt><dd>${escapeHtml(value)}</dd></div>`;
+      const has = value != null && String(value).trim() !== '';
+      return `<div class="catalog-spec-row"><dt>${escapeHtml(t(labelKey, fallbackLabel))}</dt><dd>${has ? escapeHtml(value) : '—'}</dd></div>`;
     }
 
-    function cardHtml(id, p, n) {
-      const name = escapeHtml(p.name); // empty name stays empty — no fallback label
-      const hasImg = !!p.cardImage;
-      const media = `
-        <div class="catalog-media${hasImg ? '' : ' is-empty'}">
-          ${hasImg ? `<img src="${escapeHtml(p.cardImage)}" alt="" loading="lazy" decoding="async" onerror="this.remove(); if(this.parentElement) this.parentElement.classList.add('is-empty');">` : ''}
-          <span class="catalog-media-ph" aria-hidden="true">${ICON}</span>
-        </div>`;
-      const specs = specRow('products.netWeight', 'Net weight', p.netWeight)
-        + specRow('products.expiration', 'Expiration', p.expiration)
-        + specRow('products.packing', 'Packing', p.packing);
-      const more = escapeHtml(t('products.viewDetails', 'View details'));
-      const idx = String(n).padStart(2, '0');
-      const ariaLabel = name || more; // keep the link accessible even when unnamed
+    function productCardHtml(id, raw) {
+      const p = normalize(raw);
+      const name = escapeHtml(p.name);
+      const hasImg = !!p.image;
+      const ariaLabel = name || escapeHtml(t('catalog.uncategorized', 'Product'));
       return `
-        <article class="catalog-card" data-name="${escapeHtml((p.name || '').toLowerCase())}">
-          <a class="catalog-card-link" href="/product-detail.html?id=${encodeURIComponent(id)}" aria-label="${ariaLabel}">
-            ${media}
-            <div class="catalog-info">
-              <span class="catalog-index" aria-hidden="true">${idx}</span>
-              ${name ? `<h3 class="catalog-name">${name}</h3>` : ''}
-              ${p.intro ? `<p class="catalog-desc">${escapeHtml(p.intro)}</p>` : ''}
-              ${specs ? `<dl class="spec-table">${specs}</dl>` : ''}
-              <span class="catalog-cta">${more}
-                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              </span>
-            </div>
-          </a>
-        </article>`;
+        <a class="catalog-product-card" href="/product-detail.html?id=${encodeURIComponent(id)}" aria-label="${ariaLabel}">
+          <div class="catalog-product-media${hasImg ? '' : ' is-empty'}">
+            ${hasImg ? `<img src="${escapeHtml(p.image)}" alt="${name ? `${name} product image` : 'Product image'}" loading="lazy" decoding="async" onerror="this.remove(); if(this.parentElement) this.parentElement.classList.add('is-empty');">` : ''}
+            <span class="catalog-product-ph" aria-hidden="true">${PKG_ICON}</span>
+          </div>
+          <div class="catalog-product-body">
+            ${name ? `<h3 class="catalog-product-title">${name}</h3>` : ''}
+            ${p.intro ? `<p class="catalog-product-intro">${escapeHtml(p.intro)}</p>` : ''}
+            <dl class="catalog-product-specs">
+              ${specRow('catalog.spec.origin', 'Origin', p.origin)}
+              ${specRow('catalog.spec.netWeight', 'Net weight', p.netWeight)}
+              ${specRow('catalog.spec.expiration', 'Expiration', p.expiration)}
+              ${specRow('catalog.spec.packing', 'Packing', p.packing)}
+            </dl>
+          </div>
+        </a>`;
     }
 
-    function clearPagination() {
-      const nav = document.getElementById('catalog-pagination');
-      if (nav) { nav.innerHTML = ''; nav.hidden = true; }
+    let db = null;
+    const brandCursor = { last: null, hasMore: false, done: false };
+    let uncategorizedEl = null; // keep the Uncategorized section last
+
+    // Build a per-brand product query (equality-only → no composite index needed;
+    // the "all" mode uses the existing published+createdAt index).
+    function productQuery(section, afterDoc) {
+      const col = collection(db, 'products');
+      const cons = [where('published', '==', true)];
+      if (section.mode === 'all') cons.push(orderBy('createdAt', 'desc'));
+      else cons.push(where('brandId', '==', section.id));
+      if (afterDoc) cons.push(startAfter(afterDoc));
+      cons.push(limit(PAGE_SIZE + 1)); // +1 to detect a next page
+      return query(col, ...cons);
     }
 
-    function renderState(message, opts) {
-      opts = opts || {};
+    function skeletonCards(n) {
+      let s = '';
+      for (let i = 0; i < n; i++) s += '<div class="catalog-product-card catalog-product-card--skeleton"><div class="catalog-product-media"></div><div class="catalog-product-body"><div class="sk-line lg"></div><div class="sk-line"></div><div class="sk-line sm"></div></div></div>';
+      return s;
+    }
+
+    function renderPager(section) {
+      const hasNext = !!section.hasNext[section.pageIndex];
+      const hasPrev = section.pageIndex > 0;
+      const multiPage = hasNext || hasPrev; // single page (≤6 products) → no arrows at all
+      if (section.prevBtn) { section.prevBtn.hidden = !multiPage; section.prevBtn.disabled = !hasPrev; }
+      if (section.nextBtn) { section.nextBtn.hidden = !multiPage; section.nextBtn.disabled = !hasNext; }
+      if (!multiPage) { section.pagerEl.hidden = true; return; }
+      section.pagerEl.hidden = false;
+      const totalPages = (section.total != null) ? Math.max(1, Math.ceil(section.total / PAGE_SIZE)) : null;
+      section.indicatorEl.textContent = totalPages != null ? `${section.pageIndex + 1} / ${totalPages}` : `${section.pageIndex + 1}`;
+    }
+
+    function buildGridFragment(items) {
+      const frag = document.createDocumentFragment();
+      const tmp = document.createElement('div');
+      tmp.innerHTML = items.map(it => productCardHtml(it.id, it.data)).join('');
+      while (tmp.firstChild) frag.appendChild(tmp.firstChild);
+      return frag;
+    }
+
+    const prefersReducedMotion = () =>
+      !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+
+    function renderSectionPage(section, pageIndex) {
+      const prevShown = section.displayedIndex;
+      section.pageIndex = pageIndex;
+      const items = section.pages[pageIndex] || [];
+      const grid = section.gridEl;
+      grid.className = 'catalog-product-grid';
       grid.setAttribute('aria-busy', 'false');
-      const searchWrap = document.querySelector('.catalog-search');
-      if (searchWrap && opts.hideSearch !== false) searchWrap.style.display = 'none';
-      grid.className = 'catalog-state';
-      grid.innerHTML = `
-        <div class="catalog-empty${opts.error ? ' catalog-error' : ''}">
-          <span class="catalog-state-icon" aria-hidden="true">${ICON}</span>
-          <h3>${escapeHtml(message)}</h3>
+
+      const paint = () => {
+        if (!items.length) {
+          grid.innerHTML = `<p class="catalog-products-empty">${escapeHtml(t('catalog.products.empty', 'No products in this section yet.'))}</p>`;
+          section.pagerEl.hidden = true;
+          return;
+        }
+        grid.replaceChildren(buildGridFragment(items));
+        renderPager(section);
+        // Lock the grid to the tallest page seen so a shorter page (e.g. the last
+        // page with fewer cards) can't collapse the section and jump the scroll.
+        const multiPage = section.hasNext[pageIndex] || pageIndex > 0;
+        if (multiPage) {
+          grid.style.minHeight = '0px';                  // measure natural height
+          section.fullH = Math.max(section.fullH || 0, grid.offsetHeight);
+          grid.style.minHeight = section.fullH + 'px';
+        } else {
+          grid.style.minHeight = '';
+        }
+      };
+
+      const animate = prevShown != null && prevShown !== pageIndex
+        && !prefersReducedMotion() && typeof grid.animate === 'function';
+      section.displayedIndex = pageIndex;
+
+      // Cancel any in-flight animation so rapid clicks/swipes don't overlap or paint stale pages.
+      if (section._anim) { try { section._anim.cancel(); } catch (e) {} section._anim = null; }
+
+      if (!animate) { paint(); return; }
+
+      const dir = pageIndex > prevShown ? 1 : -1;   // next → slide left, prev → slide right
+      const dist = 20;                               // stays within the card padding (no page scroll)
+      const out = grid.animate(
+        [{ transform: 'translateX(0)', opacity: 1 }, { transform: `translateX(${-dir * dist}px)`, opacity: 0 }],
+        { duration: 150, easing: 'cubic-bezier(.4,0,1,1)', fill: 'forwards' }
+      );
+      section._anim = out;
+      out.onfinish = () => {
+        if (section._anim !== out) return;           // superseded by a newer render
+        paint();
+        const inn = grid.animate(
+          [{ transform: `translateX(${dir * dist}px)`, opacity: 0 }, { transform: 'translateX(0)', opacity: 1 }],
+          { duration: 240, easing: 'cubic-bezier(.16,1,.3,1)' }
+        );
+        section._anim = inn;
+        inn.onfinish = () => { if (section._anim === inn) section._anim = null; };
+        try { out.cancel(); } catch (e) {}
+      };
+    }
+
+    async function loadSectionPage(section, pageIndex) {
+      if (section.loading) return;
+      if (section.pages[pageIndex]) { renderSectionPage(section, pageIndex); return; } // cache hit
+      section.loading = true;
+      section.gridEl.setAttribute('aria-busy', 'true');
+      try {
+        // Catch-all for products with no brand. Firestore can't query a missing field,
+        // so fetch recent published products once and keep only the unassigned ones,
+        // then paginate that set on the client.
+        if (section.mode === 'unassigned') {
+          if (!section.allItems) {
+            const snap = await getDocs(query(collection(db, 'products'),
+              where('published', '==', true), orderBy('createdAt', 'desc'), limit(UNASSIGNED_SCAN)));
+            section.allItems = snap.docs
+              .map(d => ({ id: d.id, data: d.data() }))
+              .filter(it => { const b = it.data.brandId; return !b || b === 'uncategorized'; });
+            section.total = section.allItems.length;
+          }
+          if (!section.allItems.length) {
+            if (section.hideIfEmpty && section.el && section.el.parentNode) section.el.remove();
+            return;
+          }
+          const start = pageIndex * PAGE_SIZE;
+          section.pages[pageIndex] = section.allItems.slice(start, start + PAGE_SIZE);
+          section.hasNext[pageIndex] = (start + PAGE_SIZE) < section.allItems.length;
+          renderSectionPage(section, pageIndex);
+          return;
+        }
+        const afterDoc = pageIndex > 0 ? section.cursors[pageIndex - 1] : null;
+        const snap = await getDocs(productQuery(section, afterDoc));
+        const docs = snap.docs;
+        const hasNext = docs.length > PAGE_SIZE;
+        const display = docs.slice(0, PAGE_SIZE);
+        section.pages[pageIndex] = display.map(d => ({ id: d.id, data: d.data() }));
+        section.hasNext[pageIndex] = hasNext;
+        if (hasNext && display.length) section.cursors[pageIndex] = display[display.length - 1];
+        renderSectionPage(section, pageIndex);
+      } catch (err) {
+        console.error('Brand products load error:', section.id, err);
+        section.gridEl.className = 'catalog-brand-inline-error';
+        section.gridEl.setAttribute('aria-busy', 'false');
+        section.gridEl.innerHTML = `<p class="catalog-error-state" role="alert">${escapeHtml(t('catalog.products.empty', 'Could not load products here.'))} <button type="button" class="brand-pagination-button" data-retry>${escapeHtml(t('catalog.retry', 'Retry'))}</button></p>`;
+        section.gridEl.querySelector('[data-retry]')?.addEventListener('click', () => loadSectionPage(section, pageIndex));
+      } finally {
+        section.loading = false;
+      }
+    }
+
+    // Lightweight horizontal swipe (does not hijack vertical scroll).
+    function attachSwipe(section) {
+      let x0 = null, y0 = null;
+      const host = section.el.querySelector('.catalog-brand-products');
+      host.addEventListener('touchstart', (e) => { const tch = e.changedTouches[0]; x0 = tch.clientX; y0 = tch.clientY; }, { passive: true });
+      host.addEventListener('touchend', (e) => {
+        if (x0 == null) return;
+        const tch = e.changedTouches[0];
+        const dx = tch.clientX - x0, dy = tch.clientY - y0;
+        x0 = null;
+        if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+        if (dx < 0 && section.hasNext[section.pageIndex]) loadSectionPage(section, section.pageIndex + 1);
+        else if (dx > 0 && section.pageIndex > 0) loadSectionPage(section, section.pageIndex - 1);
+      }, { passive: true });
+    }
+
+    async function renderBrandSection(info, beforeEl) {
+      const section = {
+        id: info.id, mode: info.mode, pageIndex: 0,
+        pages: [], cursors: [], hasNext: {}, total: null, loading: false,
+        hideIfEmpty: !!info.hideIfEmpty,
+        el: null, gridEl: null, pagerEl: null
+      };
+      const el = document.createElement('section');
+      el.className = 'catalog-brand-section' + (info.name ? '' : ' catalog-brand-section--untitled');
+      const prevLabel = escapeHtml(t('catalog.previous', 'Previous'));
+      const nextLabel = escapeHtml(t('catalog.next', 'Next'));
+      const navLabel = escapeHtml(info.name || t('catalog.uncategorized', 'Uncategorized'));
+      el.innerHTML = `
+        ${info.name ? `<div class="catalog-brand-header">
+          ${info.image ? `<div class="catalog-brand-media">
+            <img src="${escapeHtml(info.image)}" alt="${escapeHtml(info.imageAlt || info.name || t('catalog.brand.imageAlt', 'Brand logo'))}" loading="lazy" decoding="async" onerror="var m=this.closest('.catalog-brand-media'); if(m){m.remove();}">
+          </div>` : ''}
+          <div class="catalog-brand-heading">
+            <h2 class="catalog-brand-title">${escapeHtml(info.name)}</h2>
+            <p class="catalog-brand-eyebrow">${escapeHtml(t('catalog.brand.productCatalog', 'Product Catalog'))}</p>
+            ${info.description ? `<p class="catalog-brand-description">${escapeHtml(info.description)}</p>` : ''}
+          </div>
+        </div>` : ''}
+        <div class="catalog-brand-products">
+          <button type="button" class="brand-arrow brand-arrow--prev" aria-label="${prevLabel}" hidden>
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="catalog-product-grid" aria-busy="true">${skeletonCards(3)}</div>
+          <button type="button" class="brand-arrow brand-arrow--next" aria-label="${nextLabel}" hidden>
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <nav class="brand-pagination" aria-label="${navLabel}" hidden><span class="brand-page-indicator"></span></nav>
         </div>`;
-      clearPagination();
+      section.el = el;
+      section.gridEl = el.querySelector('.catalog-product-grid');
+      section.pagerEl = el.querySelector('.brand-pagination');
+      section.prevBtn = el.querySelector('.brand-arrow--prev');
+      section.nextBtn = el.querySelector('.brand-arrow--next');
+      section.indicatorEl = el.querySelector('.brand-page-indicator');
+      section.prevBtn.addEventListener('click', () => { if (section.pageIndex > 0) loadSectionPage(section, section.pageIndex - 1); });
+      section.nextBtn.addEventListener('click', () => { if (section.hasNext[section.pageIndex]) loadSectionPage(section, section.pageIndex + 1); });
+      if (beforeEl && beforeEl.parentNode === root) root.insertBefore(el, beforeEl);
+      else root.appendChild(el);
+
+      // Cheap aggregate count for the page indicator (no full read).
+      // 'unassigned' can't be counted server-side (Firestore can't match a missing field),
+      // so its count is derived after the client-side filter in loadSectionPage().
+      if (section.mode !== 'unassigned') {
+        try {
+          const cons = [where('published', '==', true)];
+          if (section.mode !== 'all') cons.push(where('brandId', '==', section.id));
+          const cnt = await getCountFromServer(query(collection(db, 'products'), ...cons));
+          section.total = cnt.data().count;
+        } catch (e) { section.total = null; }
+
+        if (info.hideIfEmpty && section.total === 0) { el.remove(); return null; }
+      }
+
+      attachSwipe(section);
+      await loadSectionPage(section, 0);
+      return section;
     }
 
-    // ── Pagination (10 products per page) ─────────────────────
-    const PER_PAGE = 10;
-    let allItems = [];
-    const state = { page: 1, query: '' };
-
-    function getFiltered() {
-      const q = state.query.trim().toLowerCase();
-      if (!q) return allItems;
-      return allItems.filter(it => (it.p.name || '').toLowerCase().includes(q));
+    function renderCatalogError() {
+      root.setAttribute('aria-busy', 'false');
+      root.innerHTML = `
+        <div class="catalog-error-state" role="alert">
+          <span class="catalog-state-icon" aria-hidden="true">${PKG_ICON}</span>
+          <p>${escapeHtml(t('catalog.error', "We couldn't load the catalog right now."))}</p>
+          <button type="button" class="catalog-load-more" id="catalog-retry">${escapeHtml(t('catalog.retry', 'Retry'))}</button>
+        </div>`;
+      document.getElementById('catalog-retry')?.addEventListener('click', () => location.reload());
+      loadMoreBtn.hidden = true;
     }
 
-    function pageWindow(page, total) {
-      if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
-      const pages = [1];
-      const left = Math.max(2, page - 1), right = Math.min(total - 1, page + 1);
-      if (left > 2) pages.push('…');
-      for (let p = left; p <= right; p++) pages.push(p);
-      if (right < total - 1) pages.push('…');
-      pages.push(total);
-      return pages;
-    }
+    async function initCatalog() {
+      let brands = [];
+      try {
+        const snap = await getDocs(query(collection(db, 'catalogBrands'),
+          where('published', '==', true), orderBy('sortOrder', 'asc'), orderBy('name', 'asc'), limit(BRAND_PAGE + 1)));
+        brands = snap.docs;
+      } catch (e) {
+        // Likely the catalogBrands rules/index aren't deployed yet — fall back gracefully.
+        console.warn('catalogBrands unavailable; showing Uncategorized fallback.', e);
+        brands = [];
+      }
 
-    function renderPagination(page, totalPages) {
-      const nav = document.getElementById('catalog-pagination');
-      if (!nav) return;
-      if (totalPages <= 1) { nav.innerHTML = ''; nav.hidden = true; return; }
-      nav.hidden = false;
-      let html = `<button type="button" class="catalog-page-btn nav" data-page="${page - 1}"${page <= 1 ? ' disabled' : ''} aria-label="Previous page">‹</button>`;
-      pageWindow(page, totalPages).forEach(p => {
-        html += (p === '…')
-          ? '<span class="catalog-page-ellipsis" aria-hidden="true">…</span>'
-          : `<button type="button" class="catalog-page-btn${p === page ? ' is-active' : ''}" data-page="${p}"${p === page ? ' aria-current="page"' : ''}>${p}</button>`;
-      });
-      html += `<button type="button" class="catalog-page-btn nav" data-page="${page + 1}"${page >= totalPages ? ' disabled' : ''} aria-label="Next page">›</button>`;
-      nav.innerHTML = html;
-      nav.querySelectorAll('.catalog-page-btn:not([disabled])').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const p = parseInt(btn.getAttribute('data-page'), 10);
-          if (!p || p === state.page) return;
-          state.page = p;
-          renderPage();
-          document.querySelector('.catalog-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        });
-      });
-    }
+      root.innerHTML = ''; // clear skeleton
 
-    function renderPage() {
-      const items = getFiltered();
-      grid.setAttribute('aria-busy', 'false');
-      if (!items.length) {
-        if (state.query) renderState(t('products.noMatch', 'No products match your search.'), { hideSearch: false });
-        else renderState(t('products.none', 'No products available yet.'));
+      if (!brands.length) {
+        // No brands → one untitled section over ALL published products.
+        await renderBrandSection({ id: '__all__', mode: 'all', name: '', description: '' });
+        loadMoreBtn.hidden = true;
+        root.setAttribute('aria-busy', 'false');
         return;
       }
-      const totalPages = Math.ceil(items.length / PER_PAGE);
-      state.page = Math.min(Math.max(1, state.page), totalPages);
-      const start = (state.page - 1) * PER_PAGE;
-      const slice = items.slice(start, start + PER_PAGE);
-      grid.className = 'catalog-grid';
-      grid.innerHTML = slice.map((it, i) => cardHtml(it.id, it.p, start + i + 1)).join('');
-      renderPagination(state.page, totalPages);
+
+      brandCursor.hasMore = brands.length > BRAND_PAGE;
+      const firstBrands = brands.slice(0, BRAND_PAGE);
+      brandCursor.last = firstBrands[firstBrands.length - 1];
+      for (const bd of firstBrands) {
+        const b = bd.data();
+        await renderBrandSection({ id: bd.id, mode: 'brand', name: firstNonEmpty(b.name) || t('catalog.uncategorized', 'Uncategorized'), description: firstNonEmpty(b.description), image: firstNonEmpty(b.thumbUrl, b.imageUrl), imageAlt: firstNonEmpty(b.imageAlt) });
+      }
+
+      // Catch-all: any published product with no brand (or explicit 'uncategorized'),
+      // shown last in an untitled section. Only appears if such products exist.
+      const unc = await renderBrandSection({ id: '__unassigned__', mode: 'unassigned', name: '', description: '', hideIfEmpty: true });
+      uncategorizedEl = (unc && unc.el && unc.el.parentNode) ? unc.el : null;
+
+      loadMoreBtn.hidden = !brandCursor.hasMore;
+      root.setAttribute('aria-busy', 'false');
     }
 
-    // Local-only sample catalog (clearly fallback content — NOT real products).
-    function localSample() {
-      const base = [
-        { name: 'Hokkaido Crossbred Beef', intro: 'Premium marbled beef, carefully temperature-controlled from Japan to your table.', imageUrl: './images/test.png', netWeight: '500 g', expiration: '12 months (frozen)', packing: '10 packs / carton' },
-        { name: 'Sample Product (image only)', imageUrl: './images/test.png' },
-        { name: 'Yuzu Seasoning (no image)', intro: 'Aromatic Japanese citrus seasoning.', net_weight: '120 ml', expiry: '2026-12-31', packaging: '24 bottles / case' },
-        { name: '' }
-      ];
-      // Duplicate to demonstrate pagination locally (>10 items).
-      const out = [];
-      for (let i = 0; i < 14; i++) out.push({ id: 'sample-' + i, p: normalize(base[i % base.length]) });
-      return out;
-    }
-
-    // Search filters the full list and resets to page 1.
-    if (searchInput) {
-      searchInput.addEventListener('input', () => {
-        state.query = searchInput.value;
-        state.page = 1;
-        renderPage();
-      });
-    }
+    loadMoreBtn.addEventListener('click', async () => {
+      if (brandCursor.done || !brandCursor.last || loadMoreBtn.dataset.loading === '1') return;
+      loadMoreBtn.dataset.loading = '1';
+      loadMoreBtn.disabled = true;
+      const label = loadMoreBtn.textContent;
+      loadMoreBtn.textContent = t('catalog.loadingBrands', 'Loading…');
+      try {
+        const snap = await getDocs(query(collection(db, 'catalogBrands'),
+          where('published', '==', true), orderBy('sortOrder', 'asc'), orderBy('name', 'asc'),
+          startAfter(brandCursor.last), limit(BRAND_PAGE + 1)));
+        const docs = snap.docs;
+        brandCursor.hasMore = docs.length > BRAND_PAGE;
+        const next = docs.slice(0, BRAND_PAGE);
+        if (next.length) brandCursor.last = next[next.length - 1];
+        else brandCursor.done = true;
+        for (const bd of next) {
+          const b = bd.data();
+          await renderBrandSection({ id: bd.id, mode: 'brand', name: firstNonEmpty(b.name) || t('catalog.uncategorized', 'Uncategorized'), description: firstNonEmpty(b.description), image: firstNonEmpty(b.thumbUrl, b.imageUrl), imageAlt: firstNonEmpty(b.imageAlt) }, uncategorizedEl);
+        }
+        loadMoreBtn.hidden = !brandCursor.hasMore;
+        loadMoreBtn.textContent = label;
+      } catch (err) {
+        console.error('Load more brands error:', err);
+        loadMoreBtn.textContent = t('catalog.retry', 'Retry');
+      } finally {
+        loadMoreBtn.dataset.loading = '';
+        loadMoreBtn.disabled = false;
+      }
+    });
 
     try {
       const app = initializeApp(firebaseConfig);
-      const db = getFirestore(app);
-      const snap = await getDocs(query(collection(db, 'products'), where('published', '==', true), orderBy('createdAt', 'desc')));
-      allItems = snap.docs.map(d => ({ id: d.id, p: normalize(d.data()) }));
-      state.page = 1;
-      renderPage();
+      db = getFirestore(app);
+      await initCatalog();
     } catch (err) {
-      console.error('Catalog load error:', err);
-      if (isLocal()) { allItems = localSample(); state.page = 1; renderPage(); }
-      else renderState(t('products.loadError', "We couldn't load the catalog right now."), { error: true });
+      console.error('Catalog init error:', err);
+      renderCatalogError();
     }
   </script>
 </body></html>

@@ -113,7 +113,7 @@
       en: {
         detailTitle: 'Product Detail', eyebrow: 'Product Catalog', productName: 'Product name',
         information: 'Product Information', backToCatalog: 'Back to Catalog', contactUs: 'Contact Us',
-        netWeight: 'Net weight', expiration: 'Expiration', packing: 'Packing',
+        origin: 'Origin', netWeight: 'Net weight', expiration: 'Expiration', packing: 'Packing',
         catalogNote: 'For availability, carton details, or wholesale information, please refer to the catalog or contact A&J HAKKO directly.',
         noId: 'Product not specified', noIdHint: 'Please return to the catalog and choose a product.',
         notFound: 'Product not found', notFoundHint: 'This product may have been moved or is no longer available.',
@@ -123,7 +123,7 @@
       jp: {
         detailTitle: '製品詳細', eyebrow: '製品カタログ', productName: '商品名',
         information: '商品情報', backToCatalog: 'カタログへ戻る', contactUs: 'お問い合わせ',
-        netWeight: '内容量', expiration: '賞味期限', packing: '荷姿',
+        origin: '原産地', netWeight: '内容量', expiration: '賞味期限', packing: '荷姿',
         catalogNote: '在庫状況、カートン情報、卸売に関する詳細は、カタログをご参照いただくか、A&J HAKKOまで直接お問い合わせください。',
         noId: '商品が指定されていません', noIdHint: 'カタログに戻って商品をお選びください。',
         notFound: '商品が見つかりません', notFoundHint: 'この商品は移動されたか、現在ご利用いただけません。',
@@ -133,7 +133,7 @@
       zh: {
         detailTitle: '产品详情', eyebrow: '产品目录', productName: '产品名称',
         information: '产品信息', backToCatalog: '返回目录', contactUs: '联系我们',
-        netWeight: '净重', expiration: '保质期', packing: '包装',
+        origin: '原产地', netWeight: '净重', expiration: '保质期', packing: '包装',
         catalogNote: '如需了解库存、整箱信息或批发详情，请参阅目录或直接联系 A&J HAKKO。',
         noId: '未指定产品', noIdHint: '请返回目录并选择产品。',
         notFound: '未找到该产品', notFoundHint: '该产品可能已被移动或不再提供。',
@@ -171,6 +171,7 @@
       return {
         name: pick('name'),
         intro: pick('intro', 'description', 'desc'),
+        origin: pick('origin', 'productOrigin', 'countryOfOrigin', 'madeIn', 'sourceCountry'),
         netWeight: pick('netWeight', 'net_weight', 'netweight'),
         expiration: pick('expiration', 'expiry', 'expiryDate', 'expirationDate', 'shelfLife'),
         packing: pick('packing', 'packaging', 'package', 'carton', 'cartonInfo'),
@@ -240,7 +241,8 @@
         : renderProductPlaceholder();
 
       // Single facts table — missing values show "—" (no undefined/null).
-      const facts = renderFactRow(t('netWeight', 'Net weight'), p.netWeight, {})
+      const facts = renderFactRow(t('origin', 'Origin'), p.origin, {})
+        + renderFactRow(t('netWeight', 'Net weight'), p.netWeight, {})
         + renderFactRow(t('expiration', 'Expiration'), p.expiration, {})
         + renderFactRow(t('packing', 'Packing'), p.packing, {});
 
