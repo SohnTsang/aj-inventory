@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Catalog — A&J HAKKO</title>
-  <link rel="stylesheet" href="./subpage.css?v=17">
+  <link rel="stylesheet" href="./subpage.css?v=20">
   <link rel="stylesheet" href="./styles.css?v=8">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -114,19 +114,11 @@
 
     const root = document.getElementById('catalog-root');
     const loadMoreBtn = document.getElementById('load-more-brands');
-    const PAGE_SIZE = 6;   // products shown per brand page (2 rows × 3 cols)
+    const PRODUCTS_PER_BRAND_PAGE = 9;                       // render 9 products per brand page (3 rows × 3 cols)
+    const PRODUCT_QUERY_LIMIT = PRODUCTS_PER_BRAND_PAGE + 1; // 10 — fetch +1 only to detect whether a Next page exists
+    const PAGE_SIZE = PRODUCTS_PER_BRAND_PAGE;               // alias used by the render/pager helpers
     const BRAND_PAGE = 5;  // brand sections per "page"
-    const UNASSIGNED_SCAN = 200; // recent published products scanned for the no-brand catch-all
-    const BRAND_PRODUCT_SCAN = 200; // products fetched per brand (sorted newest-first on the client)
-
-    // Firestore Timestamp / {seconds} / number / ISO string → millis (for newest-first sort).
-    const tsMillis = (v) => {
-      if (!v) return 0;
-      if (typeof v.toMillis === 'function') return v.toMillis();
-      if (typeof v.seconds === 'number') return v.seconds * 1000;
-      if (typeof v === 'number') return v;
-      const d = Date.parse(v); return isNaN(d) ? 0 : d;
-    };
+    const UNASSIGNED_SCAN = 200; // products scanned ONLY for the brandless catch-all (Firestore can't paginate a missing field)
 
     // ── Image loading: never hang. A stalled/failed/broken image falls back to the
     // placeholder (product) or is hidden (brand banner) so a section can't load forever.
@@ -197,8 +189,9 @@
     }
 
     function specRow(labelKey, fallbackLabel, value) {
-      const has = value != null && String(value).trim() !== '';
-      return `<div class="catalog-spec-row"><dt>${escapeHtml(t(labelKey, fallbackLabel))}</dt><dd>${has ? escapeHtml(value) : '—'}</dd></div>`;
+      // Compact cards: hide an empty spec instead of showing a "—" row. Never undefined/null.
+      if (value == null || String(value).trim() === '') return '';
+      return `<div class="catalog-spec-row"><dt>${escapeHtml(t(labelKey, fallbackLabel))}</dt><dd>${escapeHtml(String(value).trim())}</dd></div>`;
     }
 
     function productCardHtml(id, raw) {
@@ -214,6 +207,7 @@
           </div>
           <div class="catalog-product-body">
             ${name ? `<h3 class="catalog-product-title">${name}</h3>` : ''}
+            ${p.intro ? `<p class="catalog-product-intro">${escapeLines(p.intro)}</p>` : ''}
             <dl class="catalog-product-specs">
               ${specRow('catalog.spec.origin', 'Origin', p.origin)}
               ${specRow('catalog.spec.netWeight', 'Net weight', p.netWeight)}
@@ -228,15 +222,17 @@
     const brandCursor = { last: null, hasMore: false, done: false };
     let uncategorizedEl = null; // keep the Uncategorized section last
 
-    // Build a per-brand product query (equality-only → no composite index needed;
-    // the "all" mode uses the existing published+createdAt index).
+    // True per-brand cursor pagination, newest first. Fetch 13, render 12, use the
+    // 13th only to know whether a Next page exists; page 2+ uses startAfter(lastDoc).
+    // brand mode requires the composite index (products: published ASC, brandId ASC,
+    // createdAt DESC) — see firestore.indexes.json. "all" mode uses published+createdAt.
     function productQuery(section, afterDoc) {
       const col = collection(db, 'products');
       const cons = [where('published', '==', true)];
-      if (section.mode === 'all') cons.push(orderBy('createdAt', 'desc'));
-      else cons.push(where('brandId', '==', section.id));
+      if (section.mode !== 'all') cons.push(where('brandId', '==', section.id));
+      cons.push(orderBy('createdAt', 'desc'));
       if (afterDoc) cons.push(startAfter(afterDoc));
-      cons.push(limit(PAGE_SIZE + 1)); // +1 to detect a next page
+      cons.push(limit(PRODUCT_QUERY_LIMIT)); // 13 = render 12 + 1 to detect next page
       return query(col, ...cons);
     }
 
@@ -359,46 +355,37 @@
           renderSectionPage(section, pageIndex);
           return;
         }
-        // Per-brand: fetch the brand's products once (equality-only query → no composite
-        // index), sort newest-first by createdAt on the client, then paginate that set.
-        if (section.mode === 'brand') {
-          if (!section.allItems) {
-            const snap = await getDocs(query(collection(db, 'products'),
-              where('published', '==', true), where('brandId', '==', section.id), limit(BRAND_PRODUCT_SCAN)));
-            section.allItems = snap.docs
-              .map(d => ({ id: d.id, data: d.data() }))
-              .sort((a, b) => tsMillis(b.data.createdAt) - tsMillis(a.data.createdAt));
-            section.total = section.allItems.length;
-          }
-          if (!section.allItems.length) {
-            if (section.hideIfEmpty) { if (section.el && section.el.parentNode) section.el.remove(); return; }
-            // Brand with no products: render the empty state (don't leave the skeleton spinning).
-            section.pages[pageIndex] = [];
-            section.hasNext[pageIndex] = false;
-            renderSectionPage(section, pageIndex);
-            return;
-          }
-          const start = pageIndex * PAGE_SIZE;
-          section.pages[pageIndex] = section.allItems.slice(start, start + PAGE_SIZE);
-          section.hasNext[pageIndex] = (start + PAGE_SIZE) < section.allItems.length;
-          renderSectionPage(section, pageIndex);
-          return;
-        }
+        // Per-brand (and the no-brand "all" section): TRUE cursor pagination.
+        // Page 1 loads only when the section appears; page N>1 loads only on Next/swipe,
+        // using startAfter(last doc of the previous page). Each page is cached in
+        // section.pages[pageIndex]; section.cursors[pageIndex] is that page's last doc.
+        // We fetch 13, render 12, and use the 13th only to decide whether Next exists.
         const afterDoc = pageIndex > 0 ? section.cursors[pageIndex - 1] : null;
         const snap = await getDocs(productQuery(section, afterDoc));
         const docs = snap.docs;
-        const hasNext = docs.length > PAGE_SIZE;
-        const display = docs.slice(0, PAGE_SIZE);
+        const hasNext = docs.length > PAGE_SIZE;            // 13th doc → a Next page exists
+        const display = docs.slice(0, PAGE_SIZE);           // render only the first 12
         section.pages[pageIndex] = display.map(d => ({ id: d.id, data: d.data() }));
         section.hasNext[pageIndex] = hasNext;
         if (hasNext && display.length) section.cursors[pageIndex] = display[display.length - 1];
-        renderSectionPage(section, pageIndex);
+        renderSectionPage(section, pageIndex);              // empty page 1 → renders the empty state
       } catch (err) {
-        console.error('Brand products load error:', section.id, err);
-        section.gridEl.className = 'catalog-brand-inline-error';
+        // No silent fallback. If the (published, brandId, createdAt) composite index is
+        // missing, Firestore throws FAILED_PRECONDITION — surface it instead of masking it.
+        const needsIndex = /index/i.test(err && (err.message || err.code || ''));
+        if (needsIndex) {
+          console.error('[catalog] Products query needs the composite index ' +
+            '(products: published ASC, brandId ASC, createdAt DESC). Add it to firestore.indexes.json and run ' +
+            '`firebase deploy --only firestore:indexes`, then wait for it to finish building. Brand:', section.id, err);
+        } else {
+          console.error('Brand products load error:', section.id, err);
+        }
+        section.gridEl.className = 'catalog-product-grid';
         section.gridEl.setAttribute('aria-busy', 'false');
-        section.gridEl.innerHTML = `<p class="catalog-error-state" role="alert">${escapeHtml(t('catalog.products.empty', 'Could not load products here.'))} <button type="button" class="brand-pagination-button" data-retry>${escapeHtml(t('catalog.retry', 'Retry'))}</button></p>`;
-        section.gridEl.querySelector('[data-retry]')?.addEventListener('click', () => loadSectionPage(section, pageIndex));
+        // Show the same neutral "No products in this section yet." message as a genuinely
+        // empty section — no Retry button. The real cause is still logged to the console above.
+        section.gridEl.innerHTML = `<p class="catalog-products-empty">${escapeHtml(t('catalog.products.empty', 'No products in this section yet.'))}</p>`;
+        if (section.pagerEl) section.pagerEl.hidden = true;
       } finally {
         section.loading = false;
       }
@@ -464,12 +451,14 @@
       else root.appendChild(el);
       watchImages(el); // watch the brand banner image (products are watched on render)
 
-      // Page-indicator total. 'brand' and 'unassigned' derive it after their
-      // client-side fetch in loadSectionPage() (brand sorts newest-first there);
-      // only the brandless 'all' section uses a cheap server-side aggregate count.
-      if (section.mode === 'all') {
+      // Page-indicator total via a cheap server-side COUNT (no docs fetched). Uses only
+      // equality filters, so it does NOT need the createdAt composite index. 'unassigned'
+      // derives its count client-side in loadSectionPage().
+      if (section.mode === 'all' || section.mode === 'brand') {
         try {
-          const cnt = await getCountFromServer(query(collection(db, 'products'), where('published', '==', true)));
+          const cons = [where('published', '==', true)];
+          if (section.mode === 'brand') cons.push(where('brandId', '==', section.id));
+          const cnt = await getCountFromServer(query(collection(db, 'products'), ...cons));
           section.total = cnt.data().count;
         } catch (e) { section.total = null; }
       }
