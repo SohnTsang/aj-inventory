@@ -5,10 +5,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Catalog — A&J HAKKO</title>
-  <link rel="stylesheet" href="./subpage.css?v=15">
+  <link rel="stylesheet" href="./subpage.css?v=16">
   <link rel="stylesheet" href="./styles.css?v=8">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://firebasestorage.googleapis.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho&display=swap" rel="stylesheet">
 </head>
@@ -116,6 +117,55 @@
     const PAGE_SIZE = 6;   // products shown per brand page (2 rows × 3 cols)
     const BRAND_PAGE = 5;  // brand sections per "page"
     const UNASSIGNED_SCAN = 200; // recent published products scanned for the no-brand catch-all
+    const BRAND_PRODUCT_SCAN = 200; // products fetched per brand (sorted newest-first on the client)
+
+    // Firestore Timestamp / {seconds} / number / ISO string → millis (for newest-first sort).
+    const tsMillis = (v) => {
+      if (!v) return 0;
+      if (typeof v.toMillis === 'function') return v.toMillis();
+      if (typeof v.seconds === 'number') return v.seconds * 1000;
+      if (typeof v === 'number') return v;
+      const d = Date.parse(v); return isNaN(d) ? 0 : d;
+    };
+
+    // ── Image loading: never hang. A stalled/failed/broken image falls back to the
+    // placeholder (product) or is hidden (brand banner) so a section can't load forever.
+    const IMG_TIMEOUT_MS = 10000; // stalled longer than this after entering view → fallback
+    function failImage(img) {
+      if (!img || img.__failed) return;
+      img.__failed = true;
+      const media = img.closest('.catalog-product-media');
+      if (media) { img.remove(); media.classList.add('is-empty'); return; }
+      const banner = img.closest('.catalog-brand-media');
+      if (banner) banner.remove();
+    }
+    function armImage(img) {
+      if (img.__armed || img.__failed) return;
+      img.__armed = true;
+      if (img.complete) { if (!img.naturalWidth) failImage(img); return; } // already loaded/broken
+      const timer = setTimeout(() => failImage(img), IMG_TIMEOUT_MS);
+      img.addEventListener('load', () => { clearTimeout(timer); if (!img.naturalWidth) failImage(img); }, { once: true });
+      img.addEventListener('error', () => { clearTimeout(timer); failImage(img); }, { once: true });
+    }
+    let __imgIO = null;
+    function imgIO() {
+      if (__imgIO || typeof IntersectionObserver === 'undefined') return __imgIO;
+      __imgIO = new IntersectionObserver((entries, obs) => {
+        for (const e of entries) { if (e.isIntersecting) { obs.unobserve(e.target); armImage(e.target); } }
+      }, { rootMargin: '300px' });
+      return __imgIO;
+    }
+    // Arm the timeout only once an image is near the viewport (so lazy/offscreen
+    // images aren't falsely failed before the browser even requests them).
+    function watchImages(rootEl) {
+      if (!rootEl) return;
+      rootEl.querySelectorAll('img').forEach(img => {
+        if (img.__watched) return;
+        img.__watched = true;
+        const io = imgIO();
+        if (io) io.observe(img); else armImage(img);
+      });
+    }
     const PKG_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>';
 
     // ── Safe helpers ──────────────────────────────────────────
@@ -157,12 +207,11 @@
       return `
         <a class="catalog-product-card" href="/product-detail.html?id=${encodeURIComponent(id)}" aria-label="${ariaLabel}">
           <div class="catalog-product-media${hasImg ? '' : ' is-empty'}">
-            ${hasImg ? `<img src="${escapeHtml(p.image)}" alt="${name ? `${name} product image` : 'Product image'}" loading="lazy" decoding="async" onerror="this.remove(); if(this.parentElement) this.parentElement.classList.add('is-empty');">` : ''}
+            ${hasImg ? `<img src="${escapeHtml(p.image)}" alt="${name ? `${name} product image` : 'Product image'}" loading="lazy" decoding="async">` : ''}
             <span class="catalog-product-ph" aria-hidden="true">${PKG_ICON}</span>
           </div>
           <div class="catalog-product-body">
             ${name ? `<h3 class="catalog-product-title">${name}</h3>` : ''}
-            ${p.intro ? `<p class="catalog-product-intro">${escapeHtml(p.intro)}</p>` : ''}
             <dl class="catalog-product-specs">
               ${specRow('catalog.spec.origin', 'Origin', p.origin)}
               ${specRow('catalog.spec.netWeight', 'Net weight', p.netWeight)}
@@ -233,6 +282,7 @@
           return;
         }
         grid.replaceChildren(buildGridFragment(items));
+        watchImages(grid);
         renderPager(section);
         // Lock the grid to the tallest page seen so a shorter page (e.g. the last
         // page with fewer cards) can't collapse the section and jump the scroll.
@@ -294,7 +344,36 @@
             section.total = section.allItems.length;
           }
           if (!section.allItems.length) {
-            if (section.hideIfEmpty && section.el && section.el.parentNode) section.el.remove();
+            if (section.hideIfEmpty) { if (section.el && section.el.parentNode) section.el.remove(); return; }
+            // Brand with no products: render the empty state (don't leave the skeleton spinning).
+            section.pages[pageIndex] = [];
+            section.hasNext[pageIndex] = false;
+            renderSectionPage(section, pageIndex);
+            return;
+          }
+          const start = pageIndex * PAGE_SIZE;
+          section.pages[pageIndex] = section.allItems.slice(start, start + PAGE_SIZE);
+          section.hasNext[pageIndex] = (start + PAGE_SIZE) < section.allItems.length;
+          renderSectionPage(section, pageIndex);
+          return;
+        }
+        // Per-brand: fetch the brand's products once (equality-only query → no composite
+        // index), sort newest-first by createdAt on the client, then paginate that set.
+        if (section.mode === 'brand') {
+          if (!section.allItems) {
+            const snap = await getDocs(query(collection(db, 'products'),
+              where('published', '==', true), where('brandId', '==', section.id), limit(BRAND_PRODUCT_SCAN)));
+            section.allItems = snap.docs
+              .map(d => ({ id: d.id, data: d.data() }))
+              .sort((a, b) => tsMillis(b.data.createdAt) - tsMillis(a.data.createdAt));
+            section.total = section.allItems.length;
+          }
+          if (!section.allItems.length) {
+            if (section.hideIfEmpty) { if (section.el && section.el.parentNode) section.el.remove(); return; }
+            // Brand with no products: render the empty state (don't leave the skeleton spinning).
+            section.pages[pageIndex] = [];
+            section.hasNext[pageIndex] = false;
+            renderSectionPage(section, pageIndex);
             return;
           }
           const start = pageIndex * PAGE_SIZE;
@@ -354,12 +433,10 @@
       el.innerHTML = `
         ${info.name ? `<div class="catalog-brand-header">
           ${info.image ? `<div class="catalog-brand-media">
-            <img src="${escapeHtml(info.image)}" alt="${escapeHtml(info.imageAlt || info.name || t('catalog.brand.imageAlt', 'Brand logo'))}" loading="lazy" decoding="async" onerror="var m=this.closest('.catalog-brand-media'); if(m){m.remove();}">
+            <img src="${escapeHtml(info.image)}" alt="${escapeHtml(info.imageAlt || info.name || t('catalog.brand.imageAlt', 'Brand logo'))}" loading="lazy" decoding="async">
           </div>` : ''}
           <div class="catalog-brand-heading">
             <h2 class="catalog-brand-title">${escapeHtml(info.name)}</h2>
-            <p class="catalog-brand-eyebrow">${escapeHtml(t('catalog.brand.productCatalog', 'Product Catalog'))}</p>
-            ${info.description ? `<p class="catalog-brand-description">${escapeHtml(info.description)}</p>` : ''}
           </div>
         </div>` : ''}
         <div class="catalog-brand-products">
@@ -382,19 +459,16 @@
       section.nextBtn.addEventListener('click', () => { if (section.hasNext[section.pageIndex]) loadSectionPage(section, section.pageIndex + 1); });
       if (beforeEl && beforeEl.parentNode === root) root.insertBefore(el, beforeEl);
       else root.appendChild(el);
+      watchImages(el); // watch the brand banner image (products are watched on render)
 
-      // Cheap aggregate count for the page indicator (no full read).
-      // 'unassigned' can't be counted server-side (Firestore can't match a missing field),
-      // so its count is derived after the client-side filter in loadSectionPage().
-      if (section.mode !== 'unassigned') {
+      // Page-indicator total. 'brand' and 'unassigned' derive it after their
+      // client-side fetch in loadSectionPage() (brand sorts newest-first there);
+      // only the brandless 'all' section uses a cheap server-side aggregate count.
+      if (section.mode === 'all') {
         try {
-          const cons = [where('published', '==', true)];
-          if (section.mode !== 'all') cons.push(where('brandId', '==', section.id));
-          const cnt = await getCountFromServer(query(collection(db, 'products'), ...cons));
+          const cnt = await getCountFromServer(query(collection(db, 'products'), where('published', '==', true)));
           section.total = cnt.data().count;
         } catch (e) { section.total = null; }
-
-        if (info.hideIfEmpty && section.total === 0) { el.remove(); return null; }
       }
 
       attachSwipe(section);
