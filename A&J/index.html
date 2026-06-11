@@ -787,18 +787,21 @@
             )
           );
 
-          const cards = ps.docs.map(d => {
-            const p = d.data();
-            // Thumbnail for performance, falling back through the image fields.
-            const imgSrc = p.thumbUrl || p.imageUrl || p.displayUrl || p.originalUrl;
-            // Inline onclick (survives the marquee's cloneNode) → product detail.
-            return `
-              <article class="product-card" onclick="window.location.href='/product-detail.html?id=${encodeURIComponent(d.id)}'" style="cursor: pointer;">
-                ${imgSrc ? `<img src="${imgSrc}" alt="${p.name||''}" loading="lazy" decoding="async">` : ''}
-                <h4>${p.name || ''}</h4>
-              </article>
-            `;
-          });
+          // Homepage slide: only show products that have an image (skip imageless ones).
+          // The full catalog (/products) still shows every product.
+          const cards = ps.docs
+            .map(d => ({ id: d.id, p: d.data() }))
+            .filter(({ p }) => p.thumbUrl || p.imageUrl || p.displayUrl || p.originalUrl)
+            .map(({ id, p }) => {
+              const imgSrc = p.thumbUrl || p.imageUrl || p.displayUrl || p.originalUrl;
+              // Inline onclick (survives the marquee's cloneNode) → product detail.
+              return `
+                <article class="product-card" onclick="window.location.href='/product-detail.html?id=${encodeURIComponent(id)}'" style="cursor: pointer;">
+                  <img src="${imgSrc}" alt="${p.name||''}" loading="lazy" decoding="async">
+                  <h4>${p.name || ''}</h4>
+                </article>
+              `;
+            });
           if (window.initProductsSlider) {
               window.initProductsSlider(cards, { immediate: true });
           }
