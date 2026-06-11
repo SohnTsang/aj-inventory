@@ -13,6 +13,17 @@ service cloud.firestore {
       allow read: if true;            // public (catalog page brand sections)
       allow create, update, delete: if request.auth != null; // admin only
     }
+    // Brand events (e.g. Jungnammi). Path: brand_events/{brandId}/events/{eventId}.
+    // Restores access that lived only in the Firebase Console and was dropped when
+    // the repo rules were deployed over production. Public read, admin (signed-in) write.
+    match /brand_events/{brandId} {
+      allow read: if true;            // public (event display, e.g. /event/jungnammi)
+      allow create, update, delete: if request.auth != null; // admin only
+      match /events/{eventId} {
+        allow read: if true;          // public (event list)
+        allow create, update, delete: if request.auth != null; // admin only
+      }
+    }
     match /settings/{id} {
       allow read: if true;            // public (for banner display on frontend)
       allow create, update, delete: if request.auth != null; // admin only
