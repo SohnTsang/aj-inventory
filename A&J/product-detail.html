@@ -50,7 +50,7 @@
       <div class="hero-mesh"></div>
       <div class="container">
         <div class="hero-content">
-          <span class="hero-eyebrow" id="product-hero-eyebrow">Product Catalog</span>
+          <span class="hero-eyebrow" id="product-hero-eyebrow">Product Detail</span>
           <h1 class="hero-title" id="product-hero-title">Product Detail</h1>
         </div>
       </div>
@@ -111,7 +111,7 @@
     // shared keys like nav.home / products.catalog.title still come from script.js).
     const PD_I18N = {
       en: {
-        detailTitle: 'Product Detail', eyebrow: 'Product Catalog', productName: 'Product name',
+        detailTitle: 'Product Detail', eyebrow: 'Product Detail', productName: 'Product name',
         information: 'Product Information', backToCatalog: 'Back to Catalog', contactUs: 'Contact Us',
         origin: 'Origin', netWeight: 'Net weight', expiration: 'Expiration', packing: 'Packing',
         catalogNote: 'For availability, carton details, or wholesale information, please refer to the catalog or contact A&J HAKKO directly.',
@@ -121,7 +121,7 @@
         imageUnavailable: 'Product image unavailable'
       },
       jp: {
-        detailTitle: '製品詳細', eyebrow: '製品カタログ', productName: '商品名',
+        detailTitle: '製品詳細', eyebrow: '製品詳細', productName: '商品名',
         information: '商品情報', backToCatalog: 'カタログへ戻る', contactUs: 'お問い合わせ',
         origin: '原産地', netWeight: '内容量', expiration: '賞味期限', packing: '荷姿',
         catalogNote: '在庫状況、カートン情報、卸売に関する詳細は、カタログをご参照いただくか、A&J HAKKOまで直接お問い合わせください。',
@@ -131,7 +131,7 @@
         imageUnavailable: '商品画像はありません'
       },
       zh: {
-        detailTitle: '产品详情', eyebrow: '产品目录', productName: '产品名称',
+        detailTitle: '产品详情', eyebrow: '产品详情', productName: '产品名称',
         information: '产品信息', backToCatalog: '返回目录', contactUs: '联系我们',
         origin: '原产地', netWeight: '净重', expiration: '保质期', packing: '包装',
         catalogNote: '如需了解库存、整箱信息或批发详情，请参阅目录或直接联系 A&J HAKKO。',
@@ -252,7 +252,7 @@
         <div class="product-detail-card">
           <div class="product-media-panel">${imageBlock}</div>
           <div class="product-summary-panel">
-            <span class="product-eyebrow">${esc(t('eyebrow', 'Product Catalog'))}</span>
+            <span class="product-eyebrow">${esc(t('eyebrow', 'Product Detail'))}</span>
             ${name ? `<h1 class="product-title">${esc(name)}</h1>` : ''}
             ${p.intro ? `<p class="product-overview">${escLines(p.intro)}</p>` : ''}
             <dl class="product-facts">${facts}</dl>
@@ -289,7 +289,7 @@
     function updateHero() {
       const eyebrow = document.getElementById('product-hero-eyebrow');
       const title = document.getElementById('product-hero-title');
-      if (eyebrow) eyebrow.textContent = t('eyebrow', 'Product Catalog');
+      if (eyebrow) eyebrow.textContent = t('eyebrow', 'Product Detail');
       if (title) {
         const name = currentProduct && currentProduct.name;
         title.textContent = (name && name.length <= 48) ? name : t('detailTitle', 'Product Detail');
