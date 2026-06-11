@@ -152,6 +152,8 @@
       return String(s == null ? '' : s).replace(/[&<>"']/g, c =>
         ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
     }
+    // Escape, then keep the author's line breaks (改行) as <br> instead of merging them.
+    function escLines(s) { return esc(s).replace(/\r\n|\r|\n/g, '<br>'); }
     function stripHtml(value) {
       return String(value == null ? '' : value).replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
     }
@@ -252,7 +254,7 @@
           <div class="product-summary-panel">
             <span class="product-eyebrow">${esc(t('eyebrow', 'Product Catalog'))}</span>
             ${name ? `<h1 class="product-title">${esc(name)}</h1>` : ''}
-            ${p.intro ? `<p class="product-overview">${esc(p.intro)}</p>` : ''}
+            ${p.intro ? `<p class="product-overview">${escLines(p.intro)}</p>` : ''}
             <dl class="product-facts">${facts}</dl>
             <p class="product-catalog-note">${esc(t('catalogNote', 'For availability, carton details, or wholesale information, please refer to the catalog or contact A&J HAKKO directly.'))}</p>
           </div>

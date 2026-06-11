@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Catalog — A&J HAKKO</title>
-  <link rel="stylesheet" href="./subpage.css?v=16">
+  <link rel="stylesheet" href="./subpage.css?v=17">
   <link rel="stylesheet" href="./styles.css?v=8">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -171,6 +171,8 @@
     // ── Safe helpers ──────────────────────────────────────────
     const escapeHtml = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, c =>
       ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    // Escape, then preserve the author's line breaks (改行) as <br> instead of merging them.
+    const escapeLines = (s) => escapeHtml(s).replace(/\r\n|\r|\n/g, '<br>');
     const firstNonEmpty = (...vals) => {
       for (const v of vals) { if (v != null && String(v).trim() !== '') return String(v).trim(); }
       return '';
@@ -437,6 +439,7 @@
           </div>` : ''}
           <div class="catalog-brand-heading">
             <h2 class="catalog-brand-title">${escapeHtml(info.name)}</h2>
+            ${info.description ? `<p class="catalog-brand-description">${escapeLines(info.description)}</p>` : ''}
           </div>
         </div>` : ''}
         <div class="catalog-brand-products">
