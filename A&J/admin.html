@@ -759,7 +759,22 @@
       grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
       gap: var(--space-5);
     }
-    
+
+    /* Admin product list: controls, pagination, status */
+    .pl-controls { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-bottom: var(--space-5); }
+    .pl-controls .input { flex: 0 1 auto; width: auto; min-width: 150px; }
+    .pl-controls .pl-search { flex: 1 1 220px; min-width: 180px; }
+    .pl-pager { display: flex; align-items: center; justify-content: center; gap: var(--space-4); margin-top: var(--space-5); flex-wrap: wrap; }
+    .pl-info { font-size: 13px; color: #6b7280; min-width: 140px; text-align: center; }
+    .pl-pager .btn:disabled { opacity: .45; cursor: not-allowed; }
+    .pl-badge { display: inline-block; font-size: 10.5px; font-weight: 700; border-radius: 999px; padding: 1px 8px; }
+    .pl-badge--on { color: #1c7a4a; background: rgba(34,160,94,.12); }
+    .pl-badge--off { color: #9a6b00; background: rgba(220,160,20,.16); }
+    .product-card-status { display: flex; align-items: center; gap: 8px; margin: 0 0 var(--space-2); flex-wrap: wrap; }
+    .pl-date { font-size: 11px; color: #8a98a3; }
+    .products-state { grid-column: 1 / -1; text-align: center; padding: 44px 20px; color: #6b7280; font-size: 14px; }
+    .products-state .btn { margin-top: 12px; }
+
     .product-card {
       background: var(--white);
       border-radius: var(--radius-lg);
@@ -1556,11 +1571,36 @@
           </h2>
         </div>
         <div class="card-body">
+          <div class="pl-controls">
+            <input id="pl_search" class="input pl-search" type="search" placeholder="Search product name…" autocomplete="off">
+            <select id="pl_brand" class="input" aria-label="Filter by brand"><option value="">All brands</option></select>
+            <select id="pl_status" class="input" aria-label="Filter by status">
+              <option value="">All status</option>
+              <option value="published">Published</option>
+              <option value="draft">Draft / unpublished</option>
+            </select>
+            <select id="pl_sort" class="input" aria-label="Sort">
+              <option value="createdAt_desc">Newest first</option>
+              <option value="createdAt_asc">Oldest first</option>
+              <option value="name_asc">Name A–Z</option>
+              <option value="name_desc">Name Z–A</option>
+            </select>
+            <select id="pl_size" class="input" aria-label="Per page">
+              <option value="20">20 / page</option>
+              <option value="50">50 / page</option>
+              <option value="100">100 / page</option>
+            </select>
+          </div>
           <div id="p_list" class="products-grid"></div>
+          <div class="pl-pager">
+            <button id="pl_prev" type="button" class="btn btn-secondary" disabled>← Previous</button>
+            <span id="pl_info" class="pl-info"></span>
+            <button id="pl_next" type="button" class="btn btn-secondary" disabled>Next →</button>
+          </div>
         </div>
       </div>
     </section>
-    
+
     <!-- Brand Banner Section -->
     <section id="banner-section" style="display: none;">
       <div class="page-header">
@@ -1790,7 +1830,7 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, addDoc, serverTimestamp, Timestamp, collection, query, orderBy, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, addDoc, serverTimestamp, Timestamp, collection, query, where, orderBy, limit, startAfter, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getStorage, ref, uploadBytesResumable, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 import { firebaseConfig } from "./firebase-config.js";
 
@@ -2384,6 +2424,7 @@ async function loadBrands() {
   brandsCache.forEach(b => { brandsById[b.id] = b; });
   renderBrandDropdown();
   renderBrandList();
+  if (typeof populateProductFilterBrands === 'function') populateProductFilterBrands();
 }
 
 function renderBrandDropdown(selectId) {
@@ -2670,22 +2711,79 @@ document.getElementById('p_save').addEventListener('click', async (e) => {
   }
 });
 
-async function loadProducts(){
+// ── Admin product list: cursor pagination + sort + filter + (prefix) search ──
+const plState = {
+  pageSize: 20, sort: 'createdAt_desc', brandId: '', status: '', search: '',
+  pageIndex: 0, cursors: [], pages: [], hasNext: {}, loading: false
+};
+
+// Firestore Timestamp / {seconds} / ISO / Date → "YYYY-MM-DD"; safe for missing/old createdAt.
+function fmtDate(v) {
+  try {
+    let d = null;
+    if (v && typeof v.toDate === 'function') d = v.toDate();
+    else if (v && typeof v.seconds === 'number') d = new Date(v.seconds * 1000);
+    else if (v instanceof Date) d = v;
+    else if (typeof v === 'string') { const t = Date.parse(v); if (!isNaN(t)) d = new Date(t); }
+    if (!d || isNaN(d.getTime())) return '';
+    const p = (n) => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+  } catch (e) { return ''; }
+}
+
+const SEARCH_SCAN = 500; // when searching, scan up to this many products (matching the filters) and match the name client-side, case-insensitively
+
+// One page query (no search): equality filters + sort + limit(pageSize+1) + optional startAfter.
+// A brand/status filter combined with a createdAt/name orderBy needs a composite index
+// (firestore.indexes.json; deploy with `firebase deploy --only firestore:indexes`).
+function buildProductsQuery(afterDoc) {
+  const cons = [];
+  if (plState.brandId) cons.push(where('brandId', '==', plState.brandId));
+  if (plState.status === 'published') cons.push(where('published', '==', true));
+  else if (plState.status === 'draft') cons.push(where('published', '==', false));
+  const parts = plState.sort.split('_');
+  cons.push(orderBy(parts[0], parts[1] || 'desc'));
+  if (afterDoc) cons.push(startAfter(afterDoc));
+  cons.push(limit(plState.pageSize + 1)); // +1 to detect whether a Next page exists
+  return query(collection(db, 'products'), ...cons);
+}
+
+// Bounded scan used ONLY for search: same filters + sort, capped at SEARCH_SCAN (no startAfter).
+function buildProductsScanQuery() {
+  const cons = [];
+  if (plState.brandId) cons.push(where('brandId', '==', plState.brandId));
+  if (plState.status === 'published') cons.push(where('published', '==', true));
+  else if (plState.status === 'draft') cons.push(where('published', '==', false));
+  const parts = plState.sort.split('_');
+  cons.push(orderBy(parts[0], parts[1] || 'desc'));
+  cons.push(limit(SEARCH_SCAN));
+  return query(collection(db, 'products'), ...cons);
+}
+
+function plStateMsg(html) {
   const grid = document.getElementById('p_list');
-  const snap = await getDocs(query(collection(db,'products'), orderBy('createdAt','desc')));
-  if (!snap.size) {
-    grid.innerHTML = `
-      <div class="empty-state" style="grid-column: 1/-1;">
-        <svg class="empty-state-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/>
-          <path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/>
-        </svg>
-        <p>No products yet. Add your first product above.</p>
-      </div>
-    `;
-    return;
+  if (grid) grid.innerHTML = `<div class="products-state">${html}</div>`;
+}
+
+function updateProductPager(itemCount) {
+  const prev = document.getElementById('pl_prev');
+  const next = document.getElementById('pl_next');
+  const info = document.getElementById('pl_info');
+  const hasNext = !!plState.hasNext[plState.pageIndex];
+  if (prev) prev.disabled = plState.pageIndex === 0;
+  if (next) next.disabled = !hasNext;
+  if (info) {
+    if (!itemCount) { info.textContent = plState.pageIndex === 0 ? '' : `Page ${plState.pageIndex + 1}`; return; }
+    const start = plState.pageIndex * plState.pageSize + 1;
+    const end = start + itemCount - 1;
+    info.textContent = `Showing ${start}–${end}`;
   }
-  grid.innerHTML = snap.docs.map(d=>{
+}
+
+function renderProductRows(docs) {
+  const grid = document.getElementById('p_list');
+  if (!grid) return;
+  grid.innerHTML = docs.map(d => {
     const p = d.data();
     const img = pickField(p, ['thumbUrl', 'imageUrl', 'displayUrl']);
     const name = pickField(p, ['name']) || 'Unnamed product';
@@ -2697,8 +2795,10 @@ async function loadProducts(){
     const isUnc = !brandId || brandId === 'uncategorized';
     const brandMissing = !isUnc && !brandsById[brandId];
     const brandLabel = isUnc ? 'Uncategorized' : (pickField(p, ['brandName']) || (brandsById[brandId] && brandsById[brandId].name) || 'Missing brand');
+    const isPub = p.published === true;
+    const date = fmtDate(p.createdAt) || fmtDate(p.updatedAt);
     const details = [
-      origin ? `Origin: ${escAdmin(origin)}` : '',
+      `Origin: ${origin ? escAdmin(origin) : '—'}`,
       nw ? `Net weight: ${escAdmin(nw)}` : '',
       exp ? `Expiration: ${escAdmin(exp)}` : '',
       pk ? `Packing: ${escAdmin(pk)}` : ''
@@ -2712,6 +2812,10 @@ async function loadProducts(){
       <div class="product-card-body">
         <span class="product-card-brand${brandMissing ? ' is-missing' : ''}">${escAdmin(brandLabel)}</span>
         <h4 class="product-card-title">${escAdmin(name)}</h4>
+        <p class="product-card-status">
+          <span class="pl-badge pl-badge--${isPub ? 'on' : 'off'}">${isPub ? 'Published' : 'Draft'}</span>
+          ${date ? `<span class="pl-date">${escAdmin(date)}</span>` : ''}
+        </p>
         ${details ? `<p class="product-card-meta">${details}</p>` : ''}
         <div class="product-card-actions">
           <button class="btn btn-primary" data-action="p-edit" data-id="${d.id}">Edit</button>
@@ -2720,14 +2824,14 @@ async function loadProducts(){
       </div>
     </article>`;
   }).join('');
-  grid.querySelectorAll('button[data-action="p-edit"]').forEach(btn=>btn.addEventListener('click', async()=>{
-    const id = btn.getAttribute('data-id')||'';
-    const snap = await getDoc(doc(db,'products', id));
+  // (re)attach edit / delete — behaviour unchanged from before.
+  grid.querySelectorAll('button[data-action="p-edit"]').forEach(btn => btn.addEventListener('click', async () => {
+    const id = btn.getAttribute('data-id') || '';
+    const snap = await getDoc(doc(db, 'products', id));
     if (!snap.exists()) return showToast('Product not found', 'error');
     const p = snap.data();
     pName.value = p.name || '';
     pIntro.value = pickField(p, ['intro', 'description', 'desc']);
-    // Map legacy/lowercase field variants into the form.
     if (pOrigin) pOrigin.value = pickField(p, ['origin', 'productOrigin', 'countryOfOrigin', 'madeIn', 'sourceCountry']);
     pNetWeight.value = pickField(p, ['netWeight', 'net_weight', 'netweight']);
     pExpiration.value = pickField(p, ['expiration', 'expiry', 'expiryDate', 'expirationDate']);
@@ -2742,15 +2846,111 @@ async function loadProducts(){
     document.getElementById('p-form-title-text').textContent = 'Edit Product';
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }));
-  grid.querySelectorAll('button[data-action="p-del"]').forEach(btn=>btn.addEventListener('click', async()=>{
-    const id = btn.getAttribute('data-id')||'';
-    const ok = await showConfirm('Delete this product?','Delete');
+  grid.querySelectorAll('button[data-action="p-del"]').forEach(btn => btn.addEventListener('click', async () => {
+    const id = btn.getAttribute('data-id') || '';
+    const ok = await showConfirm('Delete this product?', 'Delete');
     if (!ok) return;
-    await deleteDoc(doc(db,'products', id));
-    showToast('Deleted','success');
-    loadProducts();
+    await deleteDoc(doc(db, 'products', id));
+    showToast('Deleted', 'success');
+    loadProducts(); // data changed → reset to page 1 with current filters/sort
   }));
 }
+
+async function loadProductPage(pageIndex) {
+  if (plState.loading) return;
+  // cache hit → render from cache, no Firestore read
+  if (plState.pages[pageIndex]) {
+    plState.pageIndex = pageIndex;
+    renderProductRows(plState.pages[pageIndex]);
+    updateProductPager(plState.pages[pageIndex].length);
+    return;
+  }
+  plState.loading = true;
+  const term = (plState.search || '').trim().toLowerCase();
+  plStateMsg(term ? 'Searching…' : 'Loading products…');
+  try {
+    if (term) {
+      // Case-insensitive search: scan up to SEARCH_SCAN products matching the current
+      // brand/status filter + sort, then match the name client-side (lowercased), and
+      // paginate that result client-side. Names are NOT lowercased in the database.
+      if (!plState.searchAll) {
+        const snap = await getDocs(buildProductsScanQuery());
+        plState.searchScanned = snap.docs.length;
+        plState.searchAll = snap.docs.filter(d => String((d.data() && d.data().name) || '').toLowerCase().includes(term));
+      }
+      const all = plState.searchAll;
+      const start = pageIndex * plState.pageSize;
+      const display = all.slice(start, start + plState.pageSize);
+      plState.pages[pageIndex] = display;
+      plState.hasNext[pageIndex] = (start + plState.pageSize) < all.length;
+      plState.pageIndex = pageIndex;
+      if (!display.length) plStateMsg(pageIndex === 0 ? 'No products found.' : 'No more products.');
+      else renderProductRows(display);
+      updateProductPager(display.length);
+      return;
+    }
+    const afterDoc = pageIndex > 0 ? plState.cursors[pageIndex - 1] : null;
+    const snap = await getDocs(buildProductsQuery(afterDoc));
+    const docs = snap.docs;
+    const hasNext = docs.length > plState.pageSize;       // (pageSize+1)th doc → a Next page exists
+    const display = docs.slice(0, plState.pageSize);
+    plState.pages[pageIndex] = display;
+    plState.hasNext[pageIndex] = hasNext;
+    if (hasNext && display.length) plState.cursors[pageIndex] = display[display.length - 1];
+    plState.pageIndex = pageIndex;
+    if (!display.length) plStateMsg(pageIndex === 0 ? 'No products found.' : 'No more products.');
+    else renderProductRows(display);
+    updateProductPager(display.length);
+  } catch (err) {
+    console.error('[admin] Could not load products. If this error mentions an index, this brand/status/sort ' +
+      'combination needs a Firestore composite index (defined in firestore.indexes.json) to be deployed via ' +
+      '`firebase deploy --only firestore:indexes` and finish building:', err);
+    plStateMsg('Could not load products.<br><button type="button" class="btn btn-secondary" id="pl_retry" style="margin-top:12px;">Retry</button>');
+    const r = document.getElementById('pl_retry');
+    if (r) r.addEventListener('click', () => loadProductPage(pageIndex));
+    updateProductPager(0);
+  } finally {
+    plState.loading = false;
+  }
+}
+
+// Reset cache + go to page 1 (call when filters / sort / page size / search change).
+function resetProductList() {
+  plState.pageIndex = 0; plState.cursors = []; plState.pages = []; plState.hasNext = {};
+  plState.searchAll = null; // re-scan on next search
+  loadProductPage(0);
+}
+
+// Public refresh used by save / delete / init.
+async function loadProducts() { resetProductList(); }
+
+// Populate the brand filter from catalogBrands (falls back to just "All brands" if unavailable).
+function populateProductFilterBrands() {
+  const sel = document.getElementById('pl_brand');
+  if (!sel) return;
+  const keep = sel.value;
+  let html = '<option value="">All brands</option><option value="uncategorized">Uncategorized</option>';
+  (brandsCache || []).forEach(b => { html += `<option value="${escAdmin(b.id)}">${escAdmin(b.name || '(unnamed brand)')}</option>`; });
+  sel.innerHTML = html;
+  if (keep) sel.value = keep;
+}
+
+// Wire the controls once (DOM is ready — module scripts are deferred).
+(function wireProductListControls() {
+  const $ = (id) => document.getElementById(id);
+  const brand = $('pl_brand'), status = $('pl_status'), sort = $('pl_sort'), size = $('pl_size'),
+        prev = $('pl_prev'), next = $('pl_next'), search = $('pl_search');
+  if (brand) brand.addEventListener('change', () => { plState.brandId = brand.value; resetProductList(); });
+  if (status) status.addEventListener('change', () => { plState.status = status.value; resetProductList(); });
+  if (sort) sort.addEventListener('change', () => { plState.sort = sort.value; resetProductList(); });
+  if (size) size.addEventListener('change', () => { plState.pageSize = parseInt(size.value, 10) || 20; resetProductList(); });
+  if (prev) prev.addEventListener('click', () => { if (plState.pageIndex > 0) loadProductPage(plState.pageIndex - 1); });
+  if (next) next.addEventListener('click', () => { if (plState.hasNext[plState.pageIndex]) loadProductPage(plState.pageIndex + 1); });
+  if (search) {
+    let timer = null;
+    search.addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(() => { plState.search = search.value.trim(); resetProductList(); }, 350); });
+  }
+})();
 
 function generateSlug() {
   const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
