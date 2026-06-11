@@ -801,8 +801,8 @@
 .catalog-product-card {
   position: relative;
   display: grid;
-  grid-template-columns: 108px minmax(0, 1fr); /* image left, info right */
-  min-height: 144px;
+  grid-template-columns: 150px minmax(0, 1fr); /* image left, info right */
+  min-height: 160px;
   border: 1px solid #e9eef0;
   border-radius: 14px;
   overflow: hidden;
@@ -816,8 +816,8 @@
 
 .catalog-product-media {
   position: relative;
-  width: 108px;
-  min-height: 144px;
+  width: 150px;
+  min-height: 160px;
   background: #f6f8f8;
   display: flex;
   align-items: center;
@@ -825,12 +825,9 @@
   overflow: hidden;
 }
 .catalog-product-media img {
-  max-width: 100%;
-  max-height: 100%;
-  width: auto;
-  height: auto;
-  object-fit: contain; /* keep full image, no crop, no oversize */
-  padding: 8px;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* fill the full height (and width) of the image panel */
   display: block;
 }
 .catalog-product-ph { display: none; position: absolute; inset: 0; align-items: center; justify-content: center; color: rgba(15, 60, 76, 0.22); }
@@ -852,10 +849,11 @@
   font-weight: 650;
   line-height: 1.25;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  min-height: 3.75em; /* always reserve 3 lines (extra may be empty) so the specs sit lower / consistently */
 }
 .catalog-product-intro {
   margin: 0;
@@ -869,19 +867,19 @@
   overflow: hidden;
 }
 .catalog-product-specs {
-  margin: 5px 0 0;
+  margin: 7px 0 0;
   display: flex;
   flex-direction: column;
   gap: 1px;
 }
-.catalog-spec-row { display: flex; gap: 6px; font-size: 11px; line-height: 1.32; }
-.catalog-spec-row dt { flex: 0 0 auto; min-width: 56px; margin: 0; color: #8a98a3; font-weight: 500; }
+.catalog-spec-row { display: flex; gap: 8px; font-size: 12.5px; line-height: 1.35; }
+.catalog-spec-row dt { flex: 0 0 auto; min-width: 64px; margin: 0; color: #8a98a3; font-weight: 500; }
 .catalog-spec-row dd { margin: 0; min-width: 0; color: #3a4a54; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 /* Mobile: image a touch smaller, keep image-left / info-right (never image-top) */
 @media (max-width: 560px) {
-  .catalog-product-card { grid-template-columns: 100px minmax(0, 1fr); }
-  .catalog-product-media { width: 100px; }
+  .catalog-product-card { grid-template-columns: 132px minmax(0, 1fr); }
+  .catalog-product-media { width: 132px; }
 }
 
 /* Per-brand pagination — arrows centered on the section's left/right edges */
