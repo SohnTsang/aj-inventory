@@ -5,8 +5,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Catalog — A&J HAKKO</title>
-  <link rel="stylesheet" href="./subpage.css?v=25">
-  <link rel="stylesheet" href="./styles.css?v=8">
+  <link rel="stylesheet" href="./subpage.css?v=30">
+  <link rel="stylesheet" href="./styles.css?v=9">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://firebasestorage.googleapis.com" crossorigin>
@@ -65,20 +65,27 @@
 
     <section class="section catalog-page">
       <div class="container">
-        <div id="catalog-root" aria-live="polite" aria-busy="true">
-          <!-- Skeleton brand section (replaced by JS) -->
-          <section class="catalog-brand-section catalog-brand-section--skeleton" aria-hidden="true">
-            <div class="catalog-brand-header"><div class="sk-line sk-line--brand"></div></div>
-            <div class="catalog-product-grid">
-              <div class="catalog-product-card catalog-product-card--skeleton"><div class="catalog-product-media"></div><div class="catalog-product-body"><div class="sk-line lg"></div><div class="sk-line"></div><div class="sk-line sm"></div></div></div>
-              <div class="catalog-product-card catalog-product-card--skeleton"><div class="catalog-product-media"></div><div class="catalog-product-body"><div class="sk-line lg"></div><div class="sk-line"></div><div class="sk-line sm"></div></div></div>
-              <div class="catalog-product-card catalog-product-card--skeleton"><div class="catalog-product-media"></div><div class="catalog-product-body"><div class="sk-line lg"></div><div class="sk-line"></div><div class="sk-line sm"></div></div></div>
-            </div>
-          </section>
-        </div>
+        <div class="catalog-layout">
+          <!-- Brand 目次: sticky sidebar on desktop, horizontal chip strip on mobile (filled by JS) -->
+          <aside class="catalog-toc" id="catalog-toc" aria-label="Brands" hidden></aside>
 
-        <div class="catalog-load-more-wrap">
-          <button id="load-more-brands" class="catalog-load-more" type="button" hidden data-i18n="catalog.loadMoreBrands">Load more brands</button>
+          <div class="catalog-main">
+            <div id="catalog-root" aria-live="polite" aria-busy="true">
+              <!-- Skeleton brand section (replaced by JS) -->
+              <section class="catalog-brand-section catalog-brand-section--skeleton" aria-hidden="true">
+                <div class="catalog-brand-header"><div class="sk-line sk-line--brand"></div></div>
+                <div class="catalog-product-grid">
+                  <div class="catalog-product-card catalog-product-card--skeleton"><div class="catalog-product-media"></div><div class="catalog-product-body"><div class="sk-line lg"></div><div class="sk-line"></div><div class="sk-line sm"></div></div></div>
+                  <div class="catalog-product-card catalog-product-card--skeleton"><div class="catalog-product-media"></div><div class="catalog-product-body"><div class="sk-line lg"></div><div class="sk-line"></div><div class="sk-line sm"></div></div></div>
+                  <div class="catalog-product-card catalog-product-card--skeleton"><div class="catalog-product-media"></div><div class="catalog-product-body"><div class="sk-line lg"></div><div class="sk-line"></div><div class="sk-line sm"></div></div></div>
+                </div>
+              </section>
+            </div>
+
+            <div class="catalog-load-more-wrap" hidden>
+              <button id="load-more-brands" class="catalog-load-more" type="button" hidden data-i18n="catalog.loadMoreBrands">Load more brands</button>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -112,10 +119,10 @@
 
     const root = document.getElementById('catalog-root');
     const loadMoreBtn = document.getElementById('load-more-brands');
-    const PRODUCTS_PER_BRAND_PAGE = 9;                       // render 9 products per brand page (3 rows × 3 cols)
-    const PRODUCT_QUERY_LIMIT = PRODUCTS_PER_BRAND_PAGE + 1; // 10 — fetch +1 only to detect whether a Next page exists
+    const PRODUCTS_PER_BRAND_PAGE = 16;                      // render 16 products per brand page (desktop 4 rows × 4 cols)
+    const PRODUCT_QUERY_LIMIT = PRODUCTS_PER_BRAND_PAGE + 1; // 17 — fetch +1 only to detect whether a Next page exists
     const PAGE_SIZE = PRODUCTS_PER_BRAND_PAGE;               // alias used by the render/pager helpers
-    const BRAND_PAGE = 5;  // brand sections per "page"
+    const BRAND_PAGE = 5;  // (legacy) brand sections per "page" — all brands now render up front for the 目次
     const UNASSIGNED_SCAN = 200; // products scanned ONLY for the brandless catch-all (Firestore can't paginate a missing field)
 
     // ── Image loading: never hang. A stalled/failed/broken image falls back to the
@@ -172,6 +179,8 @@
       return (window.translations && (window.translations[lang] || window.translations.en)) || {};
     };
     const t = (key, fallback) => dict()[key] || fallback;
+    // Stable DOM id for a brand section, used as the 目次 (table-of-contents) anchor.
+    const tocId = (id) => 'brand-' + String(id).replace(/[^a-zA-Z0-9_-]/g, '-');
 
     function normalize(p) {
       return {
@@ -220,6 +229,7 @@
     let db = null;
     const brandCursor = { last: null, hasMore: false, done: false };
     let uncategorizedEl = null; // keep the Uncategorized section last
+    let brandSections = [];     // every rendered brand section (for the 目次 + scroll-spy)
 
     // True per-brand cursor pagination, newest first. Fetch 13, render 12, use the
     // 13th only to know whether a Next page exists; page 2+ uses startAfter(lastDoc).
@@ -406,15 +416,17 @@
       }, { passive: true });
     }
 
-    async function renderBrandSection(info, beforeEl) {
+    function renderBrandSection(info, beforeEl) {
       const section = {
         id: info.id, mode: info.mode, pageIndex: 0,
         pages: [], cursors: [], hasNext: {}, total: null, loading: false,
+        activated: false,
         hideIfEmpty: !!info.hideIfEmpty,
         el: null, gridEl: null, pagerEl: null
       };
       const el = document.createElement('section');
       el.className = 'catalog-brand-section' + (info.name ? '' : ' catalog-brand-section--untitled');
+      if (info.tocId) el.id = info.tocId; // 目次 anchor
       const prevLabel = escapeHtml(t('catalog.previous', 'Previous'));
       const nextLabel = escapeHtml(t('catalog.next', 'Next'));
       const navLabel = escapeHtml(info.name || t('catalog.uncategorized', 'Uncategorized'));
@@ -450,8 +462,17 @@
       else root.appendChild(el);
       watchImages(el); // watch the brand banner image (products are watched on render)
 
-      // Page-indicator total via a cheap server-side COUNT (no docs fetched). Uses only
-      // equality filters, so it does NOT need the createdAt composite index. 'unassigned'
+      attachSwipe(section);
+      return section; // products + count load later, via activateBrandSection()
+    }
+
+    // Load a section's product count + first page. Deferred so the brand 目次 and every
+    // section skeleton can paint immediately, then each section fills in.
+    async function activateBrandSection(section) {
+      if (!section || section.activated) return;
+      section.activated = true;
+      // Page-indicator total via a cheap server-side COUNT (no docs fetched). Equality
+      // filters only, so it does NOT need the createdAt composite index. 'unassigned'
       // derives its count client-side in loadSectionPage().
       if (section.mode === 'all' || section.mode === 'brand') {
         try {
@@ -461,10 +482,7 @@
           section.total = cnt.data().count;
         } catch (e) { section.total = null; }
       }
-
-      attachSwipe(section);
       await loadSectionPage(section, 0);
-      return section;
     }
 
     function renderCatalogError() {
@@ -480,42 +498,138 @@
     }
 
     async function initCatalog() {
-      let brands = [];
+      let brandDocs = [];
       try {
+        // Fetch EVERY published brand (no paging) so the 目次 lists them all up front.
         const snap = await getDocs(query(collection(db, 'catalogBrands'),
-          where('published', '==', true), orderBy('sortOrder', 'asc'), orderBy('name', 'asc'), limit(BRAND_PAGE + 1)));
-        brands = snap.docs;
+          where('published', '==', true), orderBy('sortOrder', 'asc'), orderBy('name', 'asc')));
+        brandDocs = snap.docs;
       } catch (e) {
         // Likely the catalogBrands rules/index aren't deployed yet — fall back gracefully.
         console.warn('catalogBrands unavailable; showing Uncategorized fallback.', e);
-        brands = [];
+        brandDocs = [];
       }
 
-      root.innerHTML = ''; // clear skeleton
+      root.innerHTML = '';        // clear skeleton
+      loadMoreBtn.hidden = true;  // all brands render up front now — no brand-level paging
 
-      if (!brands.length) {
-        // No brands → one untitled section over ALL published products.
-        await renderBrandSection({ id: '__all__', mode: 'all', name: '', description: '' });
-        loadMoreBtn.hidden = true;
+      if (!brandDocs.length) {
+        // No brands → one untitled section over ALL published products. No 目次.
+        const all = renderBrandSection({ id: '__all__', mode: 'all', name: '', description: '' });
+        await activateBrandSection(all);
         root.setAttribute('aria-busy', 'false');
         return;
       }
 
-      brandCursor.hasMore = brands.length > BRAND_PAGE;
-      const firstBrands = brands.slice(0, BRAND_PAGE);
-      brandCursor.last = firstBrands[firstBrands.length - 1];
-      for (const bd of firstBrands) {
+      // Full brand list — drives both the 目次 and the sections.
+      const brandInfos = brandDocs.map(bd => {
         const b = bd.data();
-        await renderBrandSection({ id: bd.id, mode: 'brand', name: firstNonEmpty(b.name) || t('catalog.uncategorized', 'Uncategorized'), description: firstNonEmpty(b.description), image: firstNonEmpty(b.thumbUrl, b.imageUrl), imageAlt: firstNonEmpty(b.imageAlt) });
-      }
+        return {
+          id: bd.id, mode: 'brand', tocId: tocId(bd.id),
+          name: firstNonEmpty(b.name) || t('catalog.uncategorized', 'Uncategorized'),
+          description: firstNonEmpty(b.description),
+          image: firstNonEmpty(b.thumbUrl, b.imageUrl),
+          imageAlt: firstNonEmpty(b.imageAlt)
+        };
+      });
 
-      // Catch-all: any published product with no brand (or explicit 'uncategorized'),
-      // shown last in an untitled section. Only appears if such products exist.
-      const unc = await renderBrandSection({ id: '__unassigned__', mode: 'unassigned', name: '', description: '', hideIfEmpty: true });
+      // Create every brand section (skeletons) so the page structure + 目次 anchors exist now.
+      brandSections = brandInfos.map(info => renderBrandSection(info));
+      // Catch-all: any published product with no brand. Shown last; removes itself if empty.
+      const unc = renderBrandSection({ id: '__unassigned__', mode: 'unassigned', name: '', description: '', hideIfEmpty: true });
       uncategorizedEl = (unc && unc.el && unc.el.parentNode) ? unc.el : null;
 
-      loadMoreBtn.hidden = !brandCursor.hasMore;
+      // Brand 目次 (sidebar on desktop, top chip strip on mobile) — visible immediately.
+      buildBrandTOC(brandInfos);
       root.setAttribute('aria-busy', 'false');
+
+      // Fill in each section's products (sequential → keeps order, avoids a request burst).
+      for (const s of brandSections) await activateBrandSection(s);
+      await activateBrandSection(unc);
+
+      // Highlight the current brand in the 目次 as the user scrolls.
+      setupBrandScrollSpy();
+    }
+
+    // ── Brand 目次 (table of contents) ──────────────────────────
+    function brandScrollOffset() {
+      const header = document.querySelector('.site-header');
+      let off = header ? header.offsetHeight : 0;
+      const toc = document.getElementById('catalog-toc');
+      // On mobile the 目次 is a sticky strip under the header — clear it too.
+      if (toc && !toc.hidden && window.matchMedia('(max-width: 860px)').matches
+          && getComputedStyle(toc).position === 'sticky') {
+        off += toc.offsetHeight;
+      }
+      return off + 12;
+    }
+
+    function scrollToBrand(id) {
+      const target = document.getElementById(id);
+      if (!target) return;
+      const y = target.getBoundingClientRect().top + window.scrollY - brandScrollOffset();
+      window.scrollTo({ top: Math.max(0, y), behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
+    }
+
+    function setActiveBrand(id) {
+      const toc = document.getElementById('catalog-toc');
+      if (!toc) return;
+      toc.querySelectorAll('.catalog-toc-link').forEach(a => {
+        const on = a.dataset.target === id;
+        a.classList.toggle('is-active', on);
+        if (on) {
+          a.setAttribute('aria-current', 'true');
+          // Keep the active chip in view within the mobile horizontal strip.
+          if (window.matchMedia('(max-width: 860px)').matches && typeof a.scrollIntoView === 'function') {
+            a.scrollIntoView({ inline: 'center', block: 'nearest', behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
+          }
+        } else {
+          a.removeAttribute('aria-current');
+        }
+      });
+    }
+
+    function buildBrandTOC(brandInfos) {
+      const toc = document.getElementById('catalog-toc');
+      if (!toc) return;
+      const layout = toc.closest('.catalog-layout');
+      if (!brandInfos || brandInfos.length < 2) { // 1 brand → no 目次, full-width content
+        toc.hidden = true;
+        if (layout) layout.classList.remove('has-toc');
+        return;
+      }
+      if (layout) layout.classList.add('has-toc');
+      const heading = escapeHtml(t('catalog.brands.heading', 'Brands'));
+      const items = brandInfos.map(info =>
+        `<li><a class="catalog-toc-link" href="#${info.tocId}" data-target="${info.tocId}">${escapeHtml(info.name)}</a></li>`
+      ).join('');
+      toc.innerHTML = `<div class="catalog-toc-inner">
+          <p class="catalog-toc-title">${heading}</p>
+          <ul class="catalog-toc-list">${items}</ul>
+        </div>`;
+      toc.hidden = false;
+      toc.querySelectorAll('.catalog-toc-link').forEach(a => {
+        a.addEventListener('click', (e) => {
+          e.preventDefault();
+          const id = a.dataset.target;
+          setActiveBrand(id);
+          scrollToBrand(id);
+        });
+      });
+    }
+
+    function setupBrandScrollSpy() {
+      const toc = document.getElementById('catalog-toc');
+      if (!toc || toc.hidden || typeof IntersectionObserver === 'undefined') return;
+      const targets = (brandSections || []).map(s => s.el).filter(el => el && el.id && el.parentNode);
+      if (!targets.length) return;
+      const spy = new IntersectionObserver((entries) => {
+        const inBand = entries.filter(e => e.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+        if (inBand.length) setActiveBrand(inBand[0].target.id); // topmost crossing the mid band
+      }, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
+      targets.forEach(el => spy.observe(el));
+      setActiveBrand(targets[0].id); // default: first brand
     }
 
     loadMoreBtn.addEventListener('click', async () => {

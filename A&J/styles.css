@@ -46,7 +46,10 @@ body {
   font-family: "Shippori Mincho", "Hiragino Sans", "Yu Gothic", "Meiryo", "Noto Sans JP", serif;
 }
 /* Prevent horizontal scroll gaps */
-html, body { overflow-x: hidden; }
+/* `clip` prevents horizontal scroll WITHOUT making body a scroll container,
+   so `position: sticky` (catalog brand sidebar/strip) keeps working. `hidden` is the
+   fallback for browsers without `overflow: clip` (Safari < 16). */
+html, body { overflow-x: hidden; overflow-x: clip; }
 img { max-width: 100%; height: auto; display: block; }
 /* Force smooth rendering on all object-fit cover images */
 img[style*="object-fit"], img[style*="cover"] {

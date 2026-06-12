@@ -781,30 +781,82 @@
    ───────────────────────────────────────────────────────────── */
 .catalog-page .catalog-intro { margin: 0 0 36px; max-width: 760px; color: #4a5568; font-size: 16px; line-height: 1.7; }
 
+/* ── Catalog layout: brand 目次 (sidebar on desktop / chip strip on mobile) + product column ── */
+.catalog-layout { display: block; }
+.catalog-main { min-width: 0; }
+/* Reclaim the page's wide side gutters for the catalog so the content isn't boxed in. */
+.catalog-page .container { padding-inline: clamp(16px, 2.2vw, 36px); }
+.catalog-brand-section { scroll-margin-top: 84px; } /* land below the fixed header on jump */
+
+.catalog-toc-title { margin: 0 0 10px; font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #9aa7af; }
+.catalog-toc-list { list-style: none; margin: 0; padding: 0; }
+.catalog-toc-link {
+  display: block; text-decoration: none; color: #46555d;
+  font-size: 14px; font-weight: 600; line-height: 1.3;
+  padding: 8px 12px; border-radius: 8px; border-left: 3px solid transparent;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  transition: background-color .15s ease, color .15s ease, border-color .15s ease;
+}
+.catalog-toc-link:hover { background: #f3f7f8; color: #0f3c4c; }
+.catalog-toc-link.is-active { background: #eaf3f6; color: #0f3c4c; border-left-color: #0f3c4c; }
+.catalog-toc-link:focus-visible { outline: 3px solid #165a72; outline-offset: 2px; }
+
+/* Desktop / wide tablet: two columns, sticky 目次 sidebar on the left. */
+@media (min-width: 861px) {
+  .catalog-layout.has-toc {
+    display: grid;
+    grid-template-columns: 200px minmax(0, 1fr);
+    gap: 44px; /* = pagination-arrow width so the arrows clear the sidebar */
+    align-items: start;
+  }
+  .catalog-layout.has-toc .catalog-toc {
+    position: sticky; top: 96px; align-self: start;
+    max-height: calc(100vh - 120px); overflow: auto;
+  }
+}
+
+/* Mobile / narrow tablet: 目次 becomes a sticky horizontal brand-chip strip on top. */
+@media (max-width: 860px) {
+  .catalog-toc {
+    position: sticky; top: 64px; z-index: 6;
+    margin: 0 0 14px; padding: 8px 0;
+    background: rgba(255, 255, 255, .96);
+    border-bottom: 1px solid #eef1f4;
+    overflow-x: auto; -webkit-overflow-scrolling: touch;
+  }
+  .catalog-toc-title { display: none; }
+  .catalog-toc-list { display: flex; flex-wrap: nowrap; gap: 8px; width: max-content; padding: 0 2px; }
+  .catalog-toc-link {
+    border-left: 0; border: 1px solid #e1e8eb; border-radius: 999px;
+    padding: 6px 13px; font-size: 13px; background: #fff;
+  }
+  .catalog-toc-link.is-active { background: #0f3c4c; color: #fff; border-color: #0f3c4c; }
+}
+
 .catalog-brand-section { margin-bottom: 48px; }
 .catalog-brand-section:last-child { margin-bottom: 0; }
 .catalog-brand-header { margin-bottom: 22px; padding-bottom: 14px; border-bottom: 2px solid #0f3c4c; }
 .catalog-brand-title { margin: 0; color: #0f3c4c; font-size: clamp(20px, 2.4vw, 26px); font-weight: 600; line-height: 1.25; }
 .catalog-brand-description { margin: 8px 0 0; color: #5a6b73; font-size: 14px; line-height: 1.6; max-width: 720px; }
 
-/* Compact horizontal product card — image LEFT, info RIGHT. 3 per row desktop. */
+/* Compact horizontal product card — image LEFT, info RIGHT. 4 per row desktop (4×4 = 16/page). */
 .catalog-product-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
   align-items: stretch;
   align-content: start; /* reserved height from the per-brand height-lock stays at the bottom */
 }
-@media (max-width: 1024px) { .catalog-product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 560px)  { .catalog-product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; } }
+@media (max-width: 1199px) { .catalog-product-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 560px)  { .catalog-product-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; } }
 
 .catalog-product-card {
   position: relative;
   display: grid;
-  grid-template-columns: 150px minmax(0, 1fr); /* image left, info right */
-  min-height: 160px;
+  grid-template-columns: 96px minmax(0, 1fr); /* image left, info right — compact for 4-up */
+  min-height: 118px;
   border: 1px solid #e9eef0;
-  border-radius: 14px;
+  border-radius: 12px;
   overflow: hidden;
   background: #fff;
   text-decoration: none;
@@ -816,8 +868,8 @@
 
 .catalog-product-media {
   position: relative;
-  width: 150px;
-  min-height: 160px;
+  width: 96px;
+  min-height: 118px;
   background: #f6f8f8;
   display: flex;
   align-items: center;
@@ -837,28 +889,28 @@
 
 .catalog-product-body {
   min-width: 0;
-  padding: 10px 12px;
+  padding: 8px 10px;
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
 }
 .catalog-product-title {
   margin: 0;
   color: #18323d;
-  font-size: 13.5px;
+  font-size: 12.5px;
   font-weight: 650;
-  line-height: 1.25;
+  line-height: 1.22;
   display: -webkit-box;
-  -webkit-line-clamp: 3;
-  line-clamp: 3;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  min-height: 3.75em; /* always reserve 3 lines (extra may be empty) so the specs sit lower / consistently */
+  min-height: 2.44em; /* reserve 2 lines so specs across cards stay aligned */
 }
 .catalog-product-intro {
   margin: 0;
   color: #5b6b75;
-  font-size: 11.5px;
+  font-size: 11px;
   line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 1;
@@ -867,47 +919,56 @@
   overflow: hidden;
 }
 .catalog-product-specs {
-  margin: 7px 0 0;
+  margin: 5px 0 0;
   display: flex;
   flex-direction: column;
   gap: 1px;
 }
-.catalog-spec-row { display: flex; gap: 8px; font-size: 12.5px; line-height: 1.35; }
-.catalog-spec-row dt { flex: 0 0 auto; min-width: 64px; margin: 0; color: #8a98a3; font-weight: 500; }
+.catalog-spec-row { display: flex; gap: 6px; font-size: 11.5px; line-height: 1.3; }
+.catalog-spec-row dt { flex: 0 0 auto; min-width: 58px; margin: 0; color: #8a98a3; font-weight: 500; }
 .catalog-spec-row dd { margin: 0; min-width: 0; color: #3a4a54; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 /* Mobile (≤560px): 2 cards per row. Keep image-left / info-right (never image-top),
    but make every card compact so two fit without horizontal scroll. */
 @media (max-width: 560px) {
+  /* Tighten the whole catalog page so it reads compact (less side/vertical 余白). */
+  .catalog-page.section { padding-block: 22px; }
+  .catalog-page .container { padding-inline: 12px; }
+  .catalog-brand-section { padding: 8px 0; margin-bottom: 22px; }
+  .catalog-brand-header { padding-bottom: 11px; margin-bottom: 13px; }
+
   .catalog-product-card {
-    grid-template-columns: 48px minmax(0, 1fr);
-    min-height: 104px;
-    border-radius: 10px;
+    grid-template-columns: 44px minmax(0, 1fr);
+    min-height: 78px; /* give the left image enough height to read */
+    border-radius: 9px;
   }
-  .catalog-product-media { width: 48px; min-height: 104px; }
-  .catalog-product-body { padding: 7px 8px; gap: 2px; }
+  .catalog-product-media { width: 44px; min-height: 78px; }
+  .catalog-product-media img { object-fit: contain; padding: 3px; } /* show the WHOLE product, no crop */
+  .catalog-product-body { padding: 4px 5px; gap: 1px; }
   .catalog-product-title {
-    font-size: 11.5px;
-    line-height: 1.2;
+    font-size: 9.5px;
+    line-height: 1.18;
     -webkit-line-clamp: 2;
     line-clamp: 2;
-    min-height: 2.4em; /* reserve 2 lines (not 3) so names align without wasted height */
+    min-height: 0; /* drop the reserved blank line for short names */
   }
   .catalog-product-intro { display: none; } /* low priority on a narrow card */
-  .catalog-product-specs { margin-top: 4px; gap: 1px; }
-  .catalog-spec-row { font-size: 10px; line-height: 1.2; gap: 4px; }
+  .catalog-product-specs { margin-top: 2px; gap: 0; }
+  .catalog-spec-row { font-size: 8.5px; line-height: 1.18; gap: 3px; }
   .catalog-spec-row dt { min-width: 0; }
+  .catalog-spec-row dd { white-space: normal; overflow: visible; text-overflow: clip; } /* wrap, don't trim */
   /* Priority order: image, name, Origin, Net weight. Drop the rest on narrow cards. */
   .catalog-spec-row--expiration,
   .catalog-spec-row--packing { display: none; }
 }
 
-/* Very small phones (≤400px): trim the image a touch more so text keeps room. */
+/* Very small phones (≤400px): keep 3 columns, trim padding a touch more. */
 @media (max-width: 400px) {
-  .catalog-product-grid { gap: 7px; }
-  .catalog-product-card { grid-template-columns: 44px minmax(0, 1fr); min-height: 96px; }
-  .catalog-product-media { width: 44px; min-height: 96px; }
-  .catalog-product-body { padding: 6px 7px; }
+  .catalog-page .container { padding-inline: 10px; }
+  .catalog-product-grid { gap: 5px; }
+  .catalog-product-card { grid-template-columns: 42px minmax(0, 1fr); min-height: 78px; }
+  .catalog-product-media { width: 42px; min-height: 78px; }
+  .catalog-product-body { padding: 4px 5px; }
 }
 
 /* Per-brand pagination — arrows centered on the section's left/right edges */
