@@ -943,7 +943,7 @@
     border-radius: 9px;
   }
   .catalog-product-media { width: 44px; min-height: 78px; }
-  .catalog-product-media img { object-fit: contain; padding: 3px; } /* show the WHOLE product, no crop */
+  .catalog-product-media img { object-fit: cover; padding: 0; } /* zoom to fill the whole image panel */
   .catalog-product-body { padding: 4px 5px; gap: 1px; }
   .catalog-product-title {
     font-size: 9.5px;
