@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Catalog — A&J HAKKO</title>
-  <link rel="stylesheet" href="./subpage.css?v=23">
+  <link rel="stylesheet" href="./subpage.css?v=25">
   <link rel="stylesheet" href="./styles.css?v=8">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -65,8 +65,6 @@
 
     <section class="section catalog-page">
       <div class="container">
-        <p class="catalog-intro" data-i18n="catalog.lead">Browse our product catalog by brand. Each section highlights available products and key product information for quick comparison.</p>
-
         <div id="catalog-root" aria-live="polite" aria-busy="true">
           <!-- Skeleton brand section (replaced by JS) -->
           <section class="catalog-brand-section catalog-brand-section--skeleton" aria-hidden="true">
@@ -188,10 +186,11 @@
       };
     }
 
-    function specRow(labelKey, fallbackLabel, value) {
+    function specRow(labelKey, fallbackLabel, value, slug) {
       // Compact cards: hide an empty spec instead of showing a "—" row. Never undefined/null.
       if (value == null || String(value).trim() === '') return '';
-      return `<div class="catalog-spec-row"><dt>${escapeHtml(t(labelKey, fallbackLabel))}</dt><dd>${escapeHtml(String(value).trim())}</dd></div>`;
+      const mod = slug ? ` catalog-spec-row--${slug}` : '';
+      return `<div class="catalog-spec-row${mod}"><dt>${escapeHtml(t(labelKey, fallbackLabel))}</dt><dd>${escapeHtml(String(value).trim())}</dd></div>`;
     }
 
     function productCardHtml(id, raw) {
@@ -209,10 +208,10 @@
             ${name ? `<h3 class="catalog-product-title">${name}</h3>` : ''}
             ${p.intro ? `<p class="catalog-product-intro">${escapeLines(p.intro)}</p>` : ''}
             <dl class="catalog-product-specs">
-              ${specRow('catalog.spec.origin', 'Origin', p.origin)}
-              ${specRow('catalog.spec.netWeight', 'Net weight', p.netWeight)}
-              ${specRow('catalog.spec.expiration', 'Expiration', p.expiration)}
-              ${specRow('catalog.spec.packing', 'Packing', p.packing)}
+              ${specRow('catalog.spec.origin', 'Origin', p.origin, 'origin')}
+              ${specRow('catalog.spec.netWeight', 'Net weight', p.netWeight, 'net-weight')}
+              ${specRow('catalog.spec.expiration', 'Expiration', p.expiration, 'expiration')}
+              ${specRow('catalog.spec.packing', 'Packing', p.packing, 'packing')}
             </dl>
           </div>
         </a>`;

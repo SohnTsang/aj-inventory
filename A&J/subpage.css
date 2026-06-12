@@ -796,7 +796,7 @@
   align-content: start; /* reserved height from the per-brand height-lock stays at the bottom */
 }
 @media (max-width: 1024px) { .catalog-product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 560px)  { .catalog-product-grid { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 560px)  { .catalog-product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; } }
 
 .catalog-product-card {
   position: relative;
@@ -876,10 +876,38 @@
 .catalog-spec-row dt { flex: 0 0 auto; min-width: 64px; margin: 0; color: #8a98a3; font-weight: 500; }
 .catalog-spec-row dd { margin: 0; min-width: 0; color: #3a4a54; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-/* Mobile: image a touch smaller, keep image-left / info-right (never image-top) */
+/* Mobile (≤560px): 2 cards per row. Keep image-left / info-right (never image-top),
+   but make every card compact so two fit without horizontal scroll. */
 @media (max-width: 560px) {
-  .catalog-product-card { grid-template-columns: 132px minmax(0, 1fr); }
-  .catalog-product-media { width: 132px; }
+  .catalog-product-card {
+    grid-template-columns: 48px minmax(0, 1fr);
+    min-height: 104px;
+    border-radius: 10px;
+  }
+  .catalog-product-media { width: 48px; min-height: 104px; }
+  .catalog-product-body { padding: 7px 8px; gap: 2px; }
+  .catalog-product-title {
+    font-size: 11.5px;
+    line-height: 1.2;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    min-height: 2.4em; /* reserve 2 lines (not 3) so names align without wasted height */
+  }
+  .catalog-product-intro { display: none; } /* low priority on a narrow card */
+  .catalog-product-specs { margin-top: 4px; gap: 1px; }
+  .catalog-spec-row { font-size: 10px; line-height: 1.2; gap: 4px; }
+  .catalog-spec-row dt { min-width: 0; }
+  /* Priority order: image, name, Origin, Net weight. Drop the rest on narrow cards. */
+  .catalog-spec-row--expiration,
+  .catalog-spec-row--packing { display: none; }
+}
+
+/* Very small phones (≤400px): trim the image a touch more so text keeps room. */
+@media (max-width: 400px) {
+  .catalog-product-grid { gap: 7px; }
+  .catalog-product-card { grid-template-columns: 44px minmax(0, 1fr); min-height: 96px; }
+  .catalog-product-media { width: 44px; min-height: 96px; }
+  .catalog-product-body { padding: 6px 7px; }
 }
 
 /* Per-brand pagination — arrows centered on the section's left/right edges */
