@@ -36,5 +36,3 @@ User-agent: PetalBot
 User-agent: serpstatbot
 User-agent: BLEXBot
 Disallow: /
-
-Sitemap: https://aj-hakko.com/sitemap.xml
