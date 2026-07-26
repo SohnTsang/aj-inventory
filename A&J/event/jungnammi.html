@@ -272,30 +272,43 @@
             color: var(--warm-orange);
         }
 
-        /* Shop Now Button in Products Section */
+        /* Shop Now Banner in Products Section */
         .products-cta {
             text-align: center;
-            margin-top: 50px;
+            margin-top: 70px;
         }
 
-        .shop-now-btn {
-            background: var(--warm-orange);
-            color: white;
-            padding: 1.2rem 3.5rem;
-            border-radius: 60px;
-            font-weight: 600;
-            font-size: 1.1rem;
-            text-decoration: none;
-            display: inline-block;
+        .shop-now-banner {
+            display: block;
+            max-width: 760px;
+            margin: 0 auto;
+        }
+
+        .shop-now-banner img {
+            width: 100%;
+            display: block;
+            border-radius: 20px;
             transition: all 0.3s;
-            border: none;
-            cursor: pointer;
         }
 
-        .shop-now-btn:hover {
-            background: var(--deep-brown);
+        .shop-now-banner:hover img {
             transform: translateY(-2px);
             box-shadow: 0 10px 30px rgba(45, 27, 14, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .products-cta {
+                margin-top: 50px;
+            }
+
+            .shop-now-banner {
+                max-width: 100%;
+                padding: 0 8px;
+            }
+
+            .shop-now-banner img {
+                border-radius: 14px;
+            }
         }
 
         /* Coming Soon Section - Cute Jungnammi Style */
@@ -1336,9 +1349,11 @@
             </div>
         </div>
 
-        <!-- Shop Now Button -->
+        <!-- Shop Now Banner -->
         <div class="products-cta">
-            <a href="https://docs.google.com/forms/d/e/1FAIpQLSeHxMXO6UPhHQ6LNxvoxeM6qfRml_qijF09Qp4HtcHXQyCjiQ/viewform" class="shop-now-btn">Shop Now</a>
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSeHxMXO6UPhHQ6LNxvoxeM6qfRml_qijF09Qp4HtcHXQyCjiQ/viewform" class="shop-now-banner">
+                <img src="../images/jungnammi/shop-now.jpg" alt="Shop Now" loading="lazy">
+            </a>
         </div>
     </section>
 
