@@ -1445,54 +1445,45 @@
 
     <script>
         // ============================================
-        // INSTAGRAM FEED - USING BEHOLD (behold.so)
+        // INSTAGRAM FEED - SELF-HOSTED CACHE
         // ============================================
-        // Setup Instructions:
-        // 1. Go to https://behold.so and create free account
-        // 2. Connect your Instagram Business/Creator account
-        // 3. Create a JSON feed (not Widget)
-        // 4. Copy your Feed URL and paste below
-        
-        const BEHOLD_CONFIG = {
-            feedUrl: 'https://feeds.behold.so/gVBvyJLFhh7S28fR8r4D', // Paste your Behold JSON feed URL here (e.g., 'https://feeds.behold.so/xxxxxxxx')
+        // The feed is served from /data/instagram.json on this site, so
+        // visitors never call the Behold API (whose free tier has a
+        // monthly view limit). To refresh the feed with the latest posts,
+        // run update-instagram.sh at the repo root and redeploy.
+
+        const INSTAGRAM_CONFIG = {
+            feedUrl: '/data/instagram.json',
             postsToShow: 4 // Show 4 posts in rectangle grid
         };
 
-        // Fallback images if Behold is not configured
+        // Fallback images if the cached feed is unavailable
         const fallbackImages = [
-            { url: 'images/JUNGNAMMI_1.jpg', permalink: 'https://instagram.com/jungnammi_sg' },
-            { url: 'images/JUNGNAMMI_2.jpg', permalink: 'https://instagram.com/jungnammi_sg' },
-            { url: 'images/JUNGNAMMI_3.jpg', permalink: 'https://instagram.com/jungnammi_sg' },
-            { url: 'images/JUNGNAMMI_4.jpg', permalink: 'https://instagram.com/jungnammi_sg' }
+            { url: '/images/jungnammi/instagram/post-1.jpg', permalink: 'https://instagram.com/jungnammi_sg' },
+            { url: '/images/jungnammi/instagram/post-2.jpg', permalink: 'https://instagram.com/jungnammi_sg' },
+            { url: '/images/jungnammi/instagram/post-3.jpg', permalink: 'https://instagram.com/jungnammi_sg' },
+            { url: '/images/jungnammi/instagram/post-4.jpg', permalink: 'https://instagram.com/jungnammi_sg' }
         ];
 
-        // Fetch Instagram posts from Behold
+        // Fetch Instagram posts from the self-hosted cache
         async function fetchInstagramPosts() {
             const grid = document.getElementById('instagramGrid');
-            
-            // If no Behold feed URL, use fallback images
-            if (!BEHOLD_CONFIG.feedUrl) {
-                console.log('Behold feed URL not configured. Using fallback images.');
-                renderInstagramPosts(fallbackImages);
-                return;
-            }
 
             try {
-                const response = await fetch(BEHOLD_CONFIG.feedUrl);
-                
+                const response = await fetch(INSTAGRAM_CONFIG.feedUrl);
+
                 if (!response.ok) {
-                    throw new Error('Behold API request failed');
+                    throw new Error('Instagram feed request failed');
                 }
 
                 const data = await response.json();
-                
-                // Behold returns array directly or in data property
+
                 const postsArray = Array.isArray(data) ? data : (data.posts || data);
-                
+
                 const posts = postsArray
-                    .slice(0, BEHOLD_CONFIG.postsToShow)
+                    .slice(0, INSTAGRAM_CONFIG.postsToShow)
                     .map(post => ({
-                        url: post.sizes?.medium?.mediaUrl || post.mediaUrl || post.thumbnailUrl,
+                        url: post.url || post.sizes?.medium?.mediaUrl || post.mediaUrl || post.thumbnailUrl,
                         permalink: post.permalink
                     }));
 
