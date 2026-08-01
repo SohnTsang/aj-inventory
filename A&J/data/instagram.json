@@ -1,10 +1,22 @@
 {
-  "updated": "2026-07-31",
-  "source": "local-placeholder",
+  "updated": "2026-08-01",
+  "source": "behold",
   "posts": [
-    { "url": "/images/jungnammi/instagram/post-1.jpg", "permalink": "https://instagram.com/jungnammi_sg" },
-    { "url": "/images/jungnammi/instagram/post-2.jpg", "permalink": "https://instagram.com/jungnammi_sg" },
-    { "url": "/images/jungnammi/instagram/post-3.jpg", "permalink": "https://instagram.com/jungnammi_sg" },
-    { "url": "/images/jungnammi/instagram/post-4.jpg", "permalink": "https://instagram.com/jungnammi_sg" }
+    {
+      "url": "/images/jungnammi/instagram/post-1.jpg",
+      "permalink": "https://www.instagram.com/reel/DbIcRc9zD4Y/"
+    },
+    {
+      "url": "/images/jungnammi/instagram/post-2.jpg",
+      "permalink": "https://www.instagram.com/reel/DaekcL4Tv7O/"
+    },
+    {
+      "url": "/images/jungnammi/instagram/post-3.jpg",
+      "permalink": "https://www.instagram.com/reel/DaSBUEqz6Kr/"
+    },
+    {
+      "url": "/images/jungnammi/instagram/post-4.jpg",
+      "permalink": "https://www.instagram.com/reel/DZton0vBrep/"
+    }
   ]
 }
