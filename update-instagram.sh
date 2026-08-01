@@ -21,13 +21,16 @@ JSON_OUT="A&J/data/instagram.json"
 POSTS_TO_SHOW=4
 
 echo "Fetching Behold feed..."
-FEED=$(curl -sf "$FEED_URL") || { echo "ERROR: Behold feed unavailable (over limit or down). Keeping current cache."; exit 1; }
+FEED_FILE=$(mktemp)
+trap 'rm -f "$FEED_FILE"' EXIT
+curl -sf "$FEED_URL" -o "$FEED_FILE" || { echo "ERROR: Behold feed unavailable (over limit or down). Keeping current cache."; exit 1; }
 
-echo "$FEED" | python3 - "$IMG_DIR" "$JSON_OUT" "$POSTS_TO_SHOW" <<'PYEOF'
+python3 - "$IMG_DIR" "$JSON_OUT" "$POSTS_TO_SHOW" "$FEED_FILE" <<'PYEOF'
 import json, sys, subprocess, urllib.request, datetime, os
 
 img_dir, json_out, n = sys.argv[1], sys.argv[2], int(sys.argv[3])
-data = json.load(sys.stdin)
+with open(sys.argv[4]) as f:
+    data = json.load(f)
 posts = data if isinstance(data, list) else data.get("posts", data)
 if not isinstance(posts, list) or not posts:
     sys.exit("ERROR: no posts in feed response")
