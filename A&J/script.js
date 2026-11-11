@@ -402,93 +402,65 @@
     }
   })();
 
-  // Simple loop: scroll original Firebase logos, reset when last logo appears on right
+  // Rebuild the logo loop whenever the Storage inventory is rendered.
   (function initBrandMarquee(){
     const track = document.querySelector('.brand-track');
     if (!track) return;
-    
+
     let position = 0;
     let isPaused = false;
-    const speed = 1; // Pixels per frame
-    let frameCount = 0;
     let trackWidth = 0;
-    let viewportWidth = 0;
-    
-    function setupAnimation() {
-      const originalLogos = Array.from(track.children);
-      if (originalLogos.length === 0) return;
-      
-      // Duplicate logos for seamless scrolling
-      originalLogos.forEach(logo => {
+    let animationFrame = 0;
+    let originalLogos = [];
+
+    function animate() {
+      if (!isPaused && trackWidth > 0) {
+        position = (position + 1) % trackWidth;
+        track.style.transform = `translateX(${-position}px)`;
+      }
+      animationFrame = requestAnimationFrame(animate);
+    }
+
+    function updateLayout() {
+      cancelAnimationFrame(animationFrame);
+      animationFrame = 0;
+      track.querySelectorAll('[data-brand-clone]').forEach(logo => logo.remove());
+      position = 0;
+      track.style.transform = '';
+
+      const visibleLogos = originalLogos.filter(logo => !logo.classList.contains('is-broken'));
+      const gap = parseFloat(getComputedStyle(track).columnGap) || 48;
+      trackWidth = visibleLogos.reduce((width, logo) => width + logo.offsetWidth + gap, 0);
+      const viewport = document.querySelector('.brand-viewport');
+      const viewportWidth = viewport ? viewport.offsetWidth : window.innerWidth;
+      const needsScroll = visibleLogos.length > 0 && trackWidth - gap > viewportWidth;
+      track.classList.toggle('centered', !needsScroll);
+      if (!needsScroll) return;
+
+      visibleLogos.forEach(logo => {
         const clone = logo.cloneNode(true);
+        clone.dataset.brandClone = 'true';
+        clone.alt = '';
+        clone.setAttribute('aria-hidden', 'true');
         track.appendChild(clone);
       });
-      
-      console.log('� SIMPLE LOOP SETUP: Found', originalLogos.length, 'Firebase logos');
-      
-      // Calculate track width properly
-      trackWidth = 0;
-      originalLogos.forEach((logo, index) => {
-        trackWidth += logo.offsetWidth;
-        if (index < originalLogos.length - 1) {
-          trackWidth += 48; // gap between logos
-        }
-      });
-      
-      // Get viewport width
-      const viewport = document.querySelector('.brand-viewport');
-      viewportWidth = viewport ? viewport.offsetWidth : window.innerWidth;
-      
-      console.log('📐 Track width:', trackWidth + 'px');
-      console.log('📐 Viewport width:', viewportWidth + 'px');
-      console.log('🎯 Will reset when position reaches:', -(trackWidth - viewportWidth) + 'px');
-      
-      function animate() {
-        if (!isPaused) {
-          position -= 1;
-          
-          // Reset when first half completely scrolled
-          if (Math.abs(position) >= trackWidth) {
-            position = 0;
-          }
-          
-          track.style.transform = `translateX(${position}px)`;
-        }
-        requestAnimationFrame(animate);
-      }
-      
-      track.addEventListener('mouseenter', () => { isPaused = true; });
-      track.addEventListener('mouseleave', () => { isPaused = false; });
-      
-      // Recalculate on resize
-      window.addEventListener('resize', () => {
-        trackWidth = 0;
-        originalLogos.forEach((logo, index) => {
-          trackWidth += logo.offsetWidth;
-          if (index < originalLogos.length - 1) {
-            trackWidth += 48;
-          }
-        });
-      });
-      
-      animate();
+      animationFrame = requestAnimationFrame(animate);
     }
-    
-    let lastCount = 0;
-    let stableCount = 0;
-    const checkInterval = setInterval(() => {
-      const currentCount = track.children.length;
-      if (currentCount === lastCount) {
-        stableCount++;
-        if (stableCount >= 3 && currentCount > 0) {
-          clearInterval(checkInterval);
-          setTimeout(setupAnimation, 1500);
-        }
-      } else {
-        stableCount = 0;
-        lastCount = currentCount;
-      }
-    }, 500);
+
+    function setupAnimation() {
+      originalLogos = Array.from(track.children).filter(logo => !logo.dataset.brandClone);
+      originalLogos.forEach(logo => {
+        logo.addEventListener('load', updateLayout, { once: true });
+        logo.addEventListener('error', updateLayout, { once: true });
+      });
+      updateLayout();
+    }
+
+    track.addEventListener('mouseenter', () => { isPaused = true; });
+    track.addEventListener('mouseleave', () => { isPaused = false; });
+    track.addEventListener('customerlogoschange', setupAnimation);
+    window.addEventListener('resize', updateLayout);
+    setupAnimation();
   })();
 
   // Language memory + i18n (minimal demo content)

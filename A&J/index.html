@@ -600,7 +600,7 @@
       </div>
     </footer>
 
-    <script src="./script.js" defer></script>
+    <script src="./script.js?v=20261111-brands" defer></script>
     <script>
       // ── Homepage "Latest News" preview ──────────────────────────────────────
       // Safe data helpers (never inject raw Firestore HTML into the cards).
@@ -720,7 +720,7 @@
       // reserves layout with fixed CSS dimensions, and hides any logo that fails to load.
       function renderCustomerLogos(logos) {
         const track = document.querySelector('.brand-track');
-        if (!track || !Array.isArray(logos) || logos.length === 0) return false;
+        if (!track || !Array.isArray(logos)) return false;
         const frag = document.createDocumentFragment();
         logos.forEach((logo, i) => {
           if (!logo || !logo.src) return;
@@ -735,11 +735,12 @@
         });
         track.innerHTML = '';
         track.appendChild(frag);
+        track.dispatchEvent(new Event('customerlogoschange'));
         return true;
       }
       window.renderCustomerLogos = renderCustomerLogos;
 
-      // Fallback: load the bundled local customer logos from ./images/customers/
+      // Local file previews only: deployed pages always use the Storage inventory.
       function loadLocalCustomerLogos() {
         const files = [
           'CFC-Logo.webp',
@@ -814,26 +815,24 @@
             const customersRef = ref(storage, 'customers');
             const customersList = await listAll(customersRef);
 
-            if (customersList.items.length > 0) {
-              const settled = await Promise.allSettled(customersList.items.map(item => getDownloadURL(item)));
-              const logos = [];
-              settled.forEach((res, i) => {
-                if (res.status === 'fulfilled' && res.value) {
-                  const item = customersList.items[i];
-                  logos.push({ src: res.value, name: item.name.replace(/\.[^/.]+$/, '').replace(/[_-]/g, ' ') });
-                }
-              });
-              if (window.renderCustomerLogos(logos)) {
-                console.log('Loaded', logos.length, 'customer logos from Firebase Storage');
-              } else {
-                window.loadLocalCustomerLogos();
+            const imageItems = customersList.items.filter(item => /\.(png|jpe?g|webp|gif|avif|svg|bmp)$/i.test(item.name));
+            const settled = await Promise.allSettled(imageItems.map(item => getDownloadURL(item)));
+            const logos = [];
+            settled.forEach((res, i) => {
+              if (res.status === 'fulfilled' && res.value) {
+                const item = imageItems[i];
+                const name = item.name
+                  .replace(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}--/i, '')
+                  .replace(/\.[^/.]+$/, '').replace(/[_-]/g, ' ');
+                logos.push({ src: res.value, name });
               }
-            } else {
-              window.loadLocalCustomerLogos();
-            }
+            });
+            // An empty inventory is intentional; never restore removed logos.
+            window.renderCustomerLogos(logos);
+            console.log('Loaded', logos.length, 'customer logos from Firebase Storage');
           } catch (logoErr) {
-            console.warn('Customer logos: Storage unavailable, using local fallback.', logoErr);
-            window.loadLocalCustomerLogos();
+            console.warn('Customer logos: Storage unavailable; keeping logos hidden.', logoErr);
+            window.renderCustomerLogos([]);
           }
 
           // Load brand banner from Firestore.
